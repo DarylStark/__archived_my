@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "module": "flask",
-            "cwd": "${workspaceFolder}/src/services",
+            "cwd": "${workspaceFolder}/src",
             "env": {
                 "FLASK_APP": "my_backend",
                 "FLASK_ENV": "development"
@@ -27,7 +27,7 @@
             "type": "python",
             "request": "launch",
             "module": "flask",
-            "cwd": "${workspaceFolder}/src/services",
+            "cwd": "${workspaceFolder}/src",
             "env": {
                 "FLASK_APP": "my_oauth",
                 "FLASK_ENV": "development"
@@ -45,7 +45,7 @@
             "type": "python",
             "request": "launch",
             "module": "flask",
-            "cwd": "${workspaceFolder}/src/services",
+            "cwd": "${workspaceFolder}/src",
             "env": {
                 "FLASK_APP": "my_rest_api_v1",
                 "FLASK_ENV": "development"

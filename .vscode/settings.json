@@ -1,22 +1,26 @@
 {
+    // Python configuration
     "python.pythonPath": "env/bin/python",
+    // Python linting
     "python.linting.pylintEnabled": true,
     "python.linting.pycodestyleEnabled": true,
     "python.linting.enabled": true,
-    "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [
-        "src/services/tests"
-    ],
-    "python.testing.cwd": "${workspaceFolder}/src/services",
-    "python.testing.unittestEnabled": false,
-    "python.testing.nosetestsEnabled": false,
+    "python.analysis.extraPaths": [
+        "src"
+    ]
+    // Python formatting
+    "editor.formatOnSave": true,
     "python.formatting.provider": "autopep8",
     "python.formatting.autopep8Args": [
         "--ignore",
         "E402"
     ],
-    "editor.formatOnSave": true,
-    "python.analysis.extraPaths": [
-        "src/services"
-    ]
+    // Python unit testing
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "${workspaceFolder}/tests/"
+    ],
+    "python.testing.cwd": "${workspaceFolder}/src",
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
 }
