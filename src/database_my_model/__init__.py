@@ -10,5 +10,5 @@ from database.database import Database
 from database_my_model.user import User
 # ---------------------------------------------------------------------
 if __name__ == '__main__':
-    raise NotImplementedError('This file can not be ran as script')
+    raise NotImplementedError('This file can not be used as script')
 # ---------------------------------------------------------------------

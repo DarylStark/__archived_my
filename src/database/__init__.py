@@ -26,5 +26,5 @@ from database.database import Database
 from database.database_session import DatabaseSession
 # ---------------------------------------------------------------------
 if __name__ == '__main__':
-    raise NotImplementedError('This file can not be ran as script')
+    raise NotImplementedError('This file can not be used as script')
 # ---------------------------------------------------------------------
