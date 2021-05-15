@@ -2,12 +2,15 @@
     // Python configuration
     "python.pythonPath": "env/bin/python",
     // Python linting
-    "python.linting.pylintEnabled": true,
-    "python.linting.pycodestyleEnabled": true,
     "python.linting.enabled": true,
     "python.analysis.extraPaths": [
         "src"
-    ]
+    ],
+    "python.linting.ignorePatterns": [
+        "tests/**/*"
+    ],
+    "python.linting.pylintEnabled": true,
+    "python.linting.pycodestyleEnabled": true,
     // Python formatting
     "editor.formatOnSave": true,
     "python.formatting.provider": "autopep8",
@@ -16,11 +19,11 @@
         "E402"
     ],
     // Python unit testing
+    "python.testing.cwd": "${workspaceFolder}/src",
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "${workspaceFolder}/tests/"
     ],
-    "python.testing.cwd": "${workspaceFolder}/src",
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
 }
