@@ -5,7 +5,8 @@
 # ---------------------------------------------------------------------
 # Imports
 from database import Database
-from typing import Optional, Type, TracebackType
+from typing import Optional, Type
+from types import TracebackType
 # ---------------------------------------------------------------------
 
 
