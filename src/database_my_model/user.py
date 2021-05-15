@@ -6,7 +6,7 @@
 # Imports
 import datetime
 from passlib.hash import argon2
-from sqlalchemy import Column, Integer, DateTime, String, Boolean
+from sqlalchemy import Column, Integer, DateTime, String, UniqueConstraint
 from database import Database
 # ---------------------------------------------------------------------
 
@@ -16,6 +16,12 @@ class User(Database.base_class):
 
     # Mandatory argument for Database objects within SQLAlchemy
     __tablename__ = 'users'
+
+    # Set constrains for this table
+    __table_args__ = (
+        UniqueConstraint('username'),
+        UniqueConstraint('email')
+    )
 
     # Database columns for this table
     id = Column(Integer, primary_key=True)

@@ -11,4 +11,7 @@ env*
 
 # Exclude VIM swap files
 *swp
+
+# Exclude enviroment-variable files
+.environment/*
 #---------------------------------------------------------------------------------------------------

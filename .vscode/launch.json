@@ -20,7 +20,8 @@
                 "--no-reload"
             ],
             "jinja": false,
-            "justMyCode": true
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.environment/development.env"
         },
         {
             "name": "Debug - REST API v1",
@@ -38,7 +39,8 @@
                 "--no-reload"
             ],
             "jinja": false,
-            "justMyCode": true
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.environment/development.env"
         }
     ]
 }
