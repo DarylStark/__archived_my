@@ -23,24 +23,6 @@
             "justMyCode": true
         },
         {
-            "name": "Debug - OAuth",
-            "type": "python",
-            "request": "launch",
-            "module": "flask",
-            "cwd": "${workspaceFolder}/src",
-            "env": {
-                "FLASK_APP": "my_oauth",
-                "FLASK_ENV": "development"
-            },
-            "args": [
-                "run",
-                "--no-debugger",
-                "--no-reload"
-            ],
-            "jinja": false,
-            "justMyCode": true
-        },
-        {
             "name": "Debug - REST API v1",
             "type": "python",
             "request": "launch",
