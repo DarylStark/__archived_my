@@ -54,3 +54,4 @@ def test_user_password_verification_wrong_password() -> None:
 
     # Check if the password is correct
     assert not test_user.verify_password('!321tset')
+# ---------------------------------------------------------------------
