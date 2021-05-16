@@ -5,26 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug - Backend",
+            "name": "Debug - Tools - Database - Create",
             "type": "python",
             "request": "launch",
-            "module": "flask",
-            "cwd": "${workspaceFolder}/src",
-            "env": {
-                "FLASK_APP": "my_backend",
-                "FLASK_ENV": "development"
-            },
+            "program": "${workspaceFolder}/tools/database-create.py",
+            "console": "integratedTerminal",
             "args": [
-                "run",
-                "--no-debugger",
-                "--no-reload"
-            ],
-            "jinja": false,
-            "justMyCode": true,
-            "envFile": "${workspaceFolder}/.environment/development.env"
+                "${workspaceFolder}/.environment/development.env",
+                "--create-data"
+            ]
         },
         {
-            "name": "Debug - REST API v1",
+            "name": "Debug - Services - REST API v1",
             "type": "python",
             "request": "launch",
             "module": "flask",

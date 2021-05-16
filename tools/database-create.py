@@ -15,8 +15,10 @@ sys.path.append(
 import argparse
 import logging
 import pymysql
+import sqlalchemy
 from rich.logging import RichHandler
 from database import Database, DatabaseSession
+from database.exceptions import DatabaseConnectionError
 from database_my_model import *
 # ---------------------------------------------------------------------
 if __name__ == '__main__':
@@ -73,26 +75,33 @@ if __name__ == '__main__':
     connection_string = \
         f'mysql+pymysql://{username}:{password}@{server}/{database}'
 
-    Database.connect(
-        connection=connection_string,
-        create_tables=True
-    )
+    try:
+        Database.connect(
+            connection=connection_string,
+            create_tables=True
+        )
+    except DatabaseConnectionError:
+        logger.critical('Couldn\'t connect to the database!')
+        sys.exit(1)
 
     # Add test data
     if args.create_data:
-        with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
-                as session:
+        try:
+            with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                    as session:
 
-            # Create a new user-object and set the password
-            new_user = User(fullname='Daryl Stark',
-                            username='daryl.stark',
-                            email='daryl@dstark.nl'
-                            )
-            new_user.set_password('test')
+                # Create a new user-object and set the password
+                new_user = User(fullname='Daryl Stark',
+                                username='daryl.stark',
+                                email='daryl@dstark.nl'
+                                )
+                new_user.set_password('test')
 
-            # Add the user to the database
-            logger.info(f'Creating user "{new_user.fullname}"')
-            session.add(new_user)
+                # Add the user to the database
+                logger.info(f'Creating user "{new_user.fullname}"')
+                session.add(new_user)
+        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+            logger.warning('User not added; already in the database')
 
     # Done!
     logger.info('Script done')
