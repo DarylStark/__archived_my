@@ -1,6 +1,6 @@
 """
     This module includes the RESTAPIGenerator class that can be used to
-    generate the REST API blueprint
+    generate the REST API blueprint.
 """
 # ---------------------------------------------------------------------
 # Imports
