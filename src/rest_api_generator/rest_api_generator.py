@@ -6,6 +6,8 @@
 # Imports
 from flask import Blueprint
 from typing import Optional
+from rest_api_generator.exceptions import InvalidGroupError
+from rest_api_generator.rest_api_group import RESTAPIGroup
 # ---------------------------------------------------------------------
 
 
@@ -18,6 +20,11 @@ class RESTAPIGenerator:
                  bp_url_prefix: Optional[str] = None) -> None:
         """ The initiator can be used to configure the Flask Blueprint
         """
+
+        # Create a empty set with registered groups. The user can add
+        # groups with the 'register_group' command. We make this a set
+        # to make sure no groups are added more then once.
+        self.groups = set()
 
         # Create a Flask Blueprint. This can be used to connect the
         # REST API to a existing Flask app
@@ -59,8 +66,16 @@ class RESTAPIGenerator:
         def execute_url(path: str):
             return f'Requested path: {path}'
 
-    @property
-    def flask_blueprint(self) -> Blueprint:
-        """ Property that returns the blueprint """
-        return self.blueprint
+    def register_group(self, group: RESTAPIGroup) -> None:
+        """ Method to register a group for the REST API """
+
+        # Check if the group is of the correct type. If it isn't, the
+        # user made a mistake and we raise an exception
+        if isinstance(group, RESTAPIGroup):
+            # Add the group to the set
+            self.groups.add(group)
+        else:
+            # Wrong type, give error
+            raise InvalidGroupError(
+                f'Group is of type "{type(group)}", expected "{RESTAPIGroup}"')
 # ---------------------------------------------------------------------
