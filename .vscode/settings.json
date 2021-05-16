@@ -1,6 +1,7 @@
 {
     // Python configuration
     "python.pythonPath": "env/bin/python",
+    "python.analysis.typeCheckingMode": "basic",
     // Python linting
     "python.linting.enabled": true,
     "python.analysis.extraPaths": [
