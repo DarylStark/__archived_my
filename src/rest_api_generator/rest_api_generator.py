@@ -25,8 +25,8 @@ class RESTAPIGenerator:
             bp_name, bp_import_name, url_prefix=bp_url_prefix)
 
         # Create a list with acceptable HTTP methods. By default, we
-        # only accept 'GET' requests. The user can add methods to
-        # accept.
+        # only accept 'GET' requests, but the user can add methods to
+        # accept with the 'add_method' method.
         self.accepted_http_methods = [
             'GET'
         ]
