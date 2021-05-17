@@ -5,6 +5,7 @@
 # ---------------------------------------------------------------------
 # Imports
 from rest_api_generator.rest_api_generator import RESTAPIGenerator
+from rest_api_generator.rest_api_endpoint import RESTAPIGEndpoint
 from rest_api_generator.rest_api_group import RESTAPIGroup
 # ---------------------------------------------------------------------
 if __name__ == '__main__':
