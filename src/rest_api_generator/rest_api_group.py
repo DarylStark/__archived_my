@@ -54,6 +54,23 @@ class RESTAPIGroup:
         # Create a empty list of endpoint
         self.endpoints: List[RESTAPIEndpoint] = list()
 
+        # Create a empty list of subgroups
+        self.subgroups: List[RESTAPIGroup] = list()
+
+    def add_subgroup(self, group: 'RESTAPIGroup') -> None:
+        """ Method to add a subgroup to this group
+
+            Parameters
+            ----------
+            group : RESTAPIGroup
+                The group object to add
+
+            Returns
+            -------
+            None        
+        """
+        self.subgroups.append(group)
+
     def register_endpoint(self,
                           url_suffix: str,
                           name: str = None,
