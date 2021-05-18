@@ -39,7 +39,7 @@ class RESTAPIGenerator:
         ]
 
         # Register the routes
-        self.register_routes()
+        self.add_routes()
 
     def add_method(self, method: str) -> None:
         """ Method to add HTTP methods to the accepted list """
@@ -54,7 +54,7 @@ class RESTAPIGenerator:
             # exception. We don't do anything in that case.
             pass
 
-    def register_routes(self) -> None:
+    def add_routes(self) -> None:
         """ Method to register the routes for the Blueprint """
 
         # We create a callback method for the Blueprint and make sure
