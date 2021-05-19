@@ -5,6 +5,7 @@
 # Imports
 from typing import List
 from rest_api_generator.rest_api_endpoint import RESTAPIEndpoint
+from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 # ---------------------------------------------------------------------
 
 
@@ -38,9 +39,9 @@ class RESTAPIGroup:
         """
 
         # Set the class variables for the given arguments
-        self.url_prefix = api_url_prefix
-        self.name = api_url_prefix
-        self.description = description
+        self.url_prefix: str = api_url_prefix
+        self.name: str = api_url_prefix
+        self.description: str = description
 
         # If the user didn't add a trailing slash to the URL prefix, we
         # add it manually
@@ -67,7 +68,7 @@ class RESTAPIGroup:
 
             Returns
             -------
-            None        
+            None
         """
         self.subgroups.append(group)
 
@@ -112,7 +113,7 @@ class RESTAPIGroup:
                     The function that is given
             """
             # Add the endpoint to the list
-            endpoint = RESTAPIEndpoint(
+            endpoint: RESTAPIEndpoint = RESTAPIEndpoint(
                 url_suffix=url_suffix,
                 func=func,
                 name=name,
@@ -126,4 +127,48 @@ class RESTAPIGroup:
 
         # Return the decorator
         return decorator
+
+    def get_endpoints(self) -> List[RESTAPIEndpointURL]:
+        """ Method that returns a list with RESTAPIEndpointURL objects.
+            These objects contain the URL and RESTAPIEndpoint objects
+            for all registered endpoints in this group and subgroup.
+
+            Parameter
+            ---------
+            None
+
+            Returns
+            -------
+            list[RESTAPIEndpointURL]
+                A list with RESTAPIEndpointURLs for this group and it's
+                subgroups
+        """
+
+        # Create a empty list that we can fill to return
+        return_list: List[RESTAPIEndpointURL] = list()
+
+        # Add local endpoints
+        for endpoint in self.endpoints:
+            # Create a object
+            endpoint = RESTAPIEndpointURL(
+                url=f'{self.url_prefix}{endpoint.url_suffix}',
+                endpoint=endpoint
+            )
+
+            # Add it to the list
+            return_list.append(endpoint)
+
+        # Add endpoints from subgroups. We prepend the URL prefix for
+        # this group to it so we get a full URL
+        for group in self.subgroups:
+            # Get the endpoints and prepend the local prefix
+            endpoint_list: List[RESTAPIEndpointURL] = group.get_endpoints()
+            for endpoint in endpoint_list:
+                endpoint.url = f'{self.url_prefix}{endpoint.url}'
+
+            # Add the endpoints to the return list
+            return_list += endpoint_list
+
+        # Return the list
+        return return_list
 # ---------------------------------------------------------------------

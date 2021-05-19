@@ -3,7 +3,7 @@
     endpoint.
 """
 # ---------------------------------------------------------------------
-from typing import List
+from typing import List, Optional
 # ---------------------------------------------------------------------
 
 
@@ -13,9 +13,9 @@ class RESTAPIEndpoint:
     def __init__(self,
                  url_suffix: str,
                  func,
-                 name: str = None,
-                 description: str = None,
-                 http_methods: List[str] = None):
+                 name: Optional[str] = None,
+                 description: Optional[str] = None,
+                 http_methods: Optional[List[str]] = None):
         """ Inititator sets default values for the endpoint.
 
             Parameters
@@ -40,5 +40,11 @@ class RESTAPIEndpoint:
             method
                 The decorator
         """
-        pass
+
+        # Set the values
+        self.url_suffix: str = url_suffix
+        self.func = func
+        self.name: Optional[str] = name
+        self.description: Optional[str] = description
+        self.http_methods: Optional[List[str]] = http_methods
 # ---------------------------------------------------------------------

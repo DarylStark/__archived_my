@@ -5,8 +5,9 @@
 # ---------------------------------------------------------------------
 # Imports
 from flask import Blueprint
-from typing import Optional
+from typing import List, Optional, Set
 from rest_api_generator.exceptions import InvalidGroupError
+from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 from rest_api_generator.rest_api_group import RESTAPIGroup
 # ---------------------------------------------------------------------
 
@@ -24,7 +25,7 @@ class RESTAPIGenerator:
         # Create a empty set with registered groups. The user can add
         # groups with the 'register_group' command. We make this a set
         # to make sure no groups are added more then once.
-        self.groups = set()
+        self.groups: Set[RESTAPIGroup] = set()
 
         # Create a Flask Blueprint. This can be used to connect the
         # REST API to a existing Flask app
@@ -64,7 +65,10 @@ class RESTAPIGenerator:
         @self.blueprint.route('/<path:path>',
                               methods=self.accepted_http_methods)
         def execute_url(path: str):
-            return f'Requested path: {path}'
+            url_list = self.get_all_endpoints()
+            for endpoint in url_list:
+                if endpoint.url == path:
+                    return endpoint.endpoint.func()
 
     def register_group(self, group: RESTAPIGroup) -> None:
         """ Method to register a group for the REST API """
@@ -78,4 +82,28 @@ class RESTAPIGenerator:
             # Wrong type, give error
             raise InvalidGroupError(
                 f'Group is of type "{type(group)}", expected "{RESTAPIGroup}"')
+
+    def get_all_endpoints(self) -> List[RESTAPIEndpointURL]:
+        """ Method that returns all RESTAPIEndpoints for this REST API
+            in a list with RESTAPIEndpointURL objects
+
+            Parameter
+            ---------
+            None
+
+            Returns
+            -------
+            list[RESTAPIEndpointURL]
+                A list with RESTAPIEndpointURLs for this REST API
+        """
+
+        # Create a empty list that we can return later on
+        return_list: List[RESTAPIEndpointURL] = list()
+
+        # Add endpoints from groups.
+        for group in self.groups:
+            return_list += group.get_endpoints()
+
+        # Return the list
+        return return_list
 # ---------------------------------------------------------------------
