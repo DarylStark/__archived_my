@@ -3,8 +3,8 @@
     endpoint.
 """
 # ---------------------------------------------------------------------
-from typing import List, Optional
-from dataclasses import dataclass
+from typing import Callable, List, Optional
+from dataclasses import dataclass, field
 # ---------------------------------------------------------------------
 
 
@@ -14,26 +14,40 @@ class RESTAPIEndpoint:
 
         Members
         -------
-        url_suffix: str
+        url_suffix : str
             The URL suffix for the endpoint.
 
-        func:
-            The method / function to run for this endpoint
+        func : Callable[[], str]
+            The function to run for this endpoint.
 
-        name: str(default=None)
-            The name for the API endpoint. Is used in help pages
+        http_methods : List[str](default=None)
+            HTTP methods that this API endpoint supports.
 
-        description: str(default=None)
-            Description for the API endpoint. Is used in help pages
+        name : str(default=None)
+            The name for the API endpoint. Is used in help pages.
 
-        http_methods: List[str](default=None)
-            HTTP methods that this API endpoint supports
+        description : str(default=None)
+            Description for the API endpoint. Is used in help pages.
+
+        auth_needed : bool
+            Determines if there is authorization needed for this
+            endpoint.
+
+        auth_permissions : List[str]
+            A list of permissions which the user needs at least one of
+            to authorize for this endpoint. 
     """
 
-    # Set the values
+    # Mandatory members
     url_suffix: str
-    func: str
-    name: Optional[str]
-    description: Optional[str]
-    http_methods: Optional[List[str]]
+    func: Callable[[], str]
+    http_methods: List[str] = field(default_factory=list)
+
+    # Members for help pages
+    name: Optional[str] = ''
+    description: Optional[str] = ''
+
+    # Members for authentication
+    auth_needed: Optional[bool] = False
+    auth_permissions: Optional[List[str]] = field(default_factory=list)
 # ---------------------------------------------------------------------

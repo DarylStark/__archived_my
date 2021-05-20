@@ -5,7 +5,7 @@
 # ---------------------------------------------------------------------
 # Imports
 from flask import Blueprint
-from typing import List, Optional, Set
+from typing import Callable, List, Optional, Set
 from rest_api_generator.exceptions import InvalidGroupError
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 from rest_api_generator.rest_api_group import RESTAPIGroup
@@ -29,7 +29,7 @@ class RESTAPIGenerator:
 
         # Create a Flask Blueprint. This can be used to connect the
         # REST API to a existing Flask app
-        self.blueprint = Blueprint(
+        self.blueprint: Blueprint = Blueprint(
             bp_name, bp_import_name, url_prefix=bp_url_prefix)
 
         # Create a list with acceptable HTTP methods. By default, we
@@ -38,6 +38,11 @@ class RESTAPIGenerator:
         self.accepted_http_methods = [
             'GET'
         ]
+
+        # Set default values for the authorization options
+        self.use_authorization: bool = False
+        self.authorization_function: Optional[Callable[[
+            str, str], bool]] = None
 
         # Register the routes
         self.add_routes()
@@ -64,10 +69,13 @@ class RESTAPIGenerator:
                               methods=self.accepted_http_methods)
         @self.blueprint.route('/<path:path>',
                               methods=self.accepted_http_methods)
-        def execute_url(path: str):
-            url_list = self.get_all_endpoints()
+        def execute_url(path: str) -> str:
+            url_list: List[RESTAPIEndpointURL] = self.get_all_endpoints()
             for endpoint in url_list:
                 if endpoint.url == path:
+                    if endpoint.endpoint.auth_needed:
+                        return 'Authorization needed'
+
                     return endpoint.endpoint.func()
             return ''
 
@@ -83,6 +91,24 @@ class RESTAPIGenerator:
             # Wrong type, give error
             raise InvalidGroupError(
                 f'Group is of type "{type(group)}", expected "{RESTAPIGroup}"')
+
+    def register_authorization_method(self, func: Callable[[str, str], bool]) -> None:
+        """ Method to set a authorization method for the REST API.
+            Should be used as a decorator
+
+            Parameter
+            ---------
+            func : Callable[[str, str], bool]
+                Function that takes in two strings (one for the
+                authorization data and one for the requested
+                permission). Should return True if the request is
+                authorized and False if the request is not authorized
+
+            Returns
+            -------
+            None
+        """
+        self.authorization_function = func
 
     def get_all_endpoints(self) -> List[RESTAPIEndpointURL]:
         """ Method that returns all RESTAPIEndpoints for this REST API

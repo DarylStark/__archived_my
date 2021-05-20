@@ -3,7 +3,7 @@
 """
 # ---------------------------------------------------------------------
 # Imports
-from typing import List
+from typing import List, Optional
 from rest_api_generator.rest_api_endpoint import RESTAPIEndpoint
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 # ---------------------------------------------------------------------
@@ -74,9 +74,11 @@ class RESTAPIGroup:
 
     def register_endpoint(self,
                           url_suffix: str,
+                          http_methods: List[str] = None,
                           name: str = None,
                           description: str = None,
-                          http_methods: List[str] = None):
+                          auth_needed: bool = False,
+                          auth_permissions: Optional[List[str]] = None):
         """ Decorator to register a endpoint for this REST API group
 
             Parameters
@@ -116,9 +118,11 @@ class RESTAPIGroup:
             endpoint: RESTAPIEndpoint = RESTAPIEndpoint(
                 url_suffix=url_suffix,
                 func=func,
+                http_methods=http_methods,
                 name=name,
                 description=description,
-                http_methods=http_methods
+                auth_needed=auth_needed,
+                auth_permissions=auth_permissions
             )
             self.endpoints.append(endpoint)
 
