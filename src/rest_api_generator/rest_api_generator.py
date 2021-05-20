@@ -69,6 +69,7 @@ class RESTAPIGenerator:
             for endpoint in url_list:
                 if endpoint.url == path:
                     return endpoint.endpoint.func()
+            return ''
 
     def register_group(self, group: RESTAPIGroup) -> None:
         """ Method to register a group for the REST API """
