@@ -12,7 +12,16 @@ from dataclasses import dataclass
 @dataclass
 class RESTAPIEndpointURL:
     """ Class used to create objects that contain a URL as string and
-        a RESTAPIEndpoint object """
+        a RESTAPIEndpoint object.
+
+        Members
+        -------
+        url : str
+            The URL for the endpoint
+
+        endpoint : RESTAPIEndpoint
+            The endpoint object for the endpoint
+    """
 
     url: str
     endpoint: RESTAPIEndpoint
