@@ -3,7 +3,9 @@
 """
 # ---------------------------------------------------------------------
 # Imports
-from typing import List, Optional
+from typing import Callable, List, Optional
+from rest_api_generator.rest_api_endpoint_permissions\
+    import RESTAPIEndpointPermissions
 from rest_api_generator.rest_api_endpoint import RESTAPIEndpoint
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 # ---------------------------------------------------------------------
@@ -78,7 +80,8 @@ class RESTAPIGroup:
                           name: str = None,
                           description: str = None,
                           auth_needed: bool = False,
-                          auth_permissions: Optional[List[str]] = None):
+                          auth_permissions:
+                          Optional[RESTAPIEndpointPermissions] = None) -> Callable:
         """ Decorator to register a endpoint for this REST API group
 
             Parameters
@@ -87,13 +90,15 @@ class RESTAPIGroup:
                 The URL suffix for the endpoint.
 
             name : str (default=None)
-                The name for the API endpoint. Is used in help pages
+                The name for the API endpoint. Is used in help pages.
 
             description : str (default=None)
-                Description for the API endpoint. Is used in help pages
+                Description for the API endpoint. Is used in help
+                pages.
 
-            http_methods : List[str] (default=None)
-                HTTP methods that this API endpoint supports
+            http_methods : Optional[RESTAPIEndpointPermissions]
+                RESTAPIEndpointPermissions object that specifies the
+                needed OAuth permissions for this endpoint.
 
             Returns
             -------

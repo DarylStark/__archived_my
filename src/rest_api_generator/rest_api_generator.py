@@ -41,8 +41,7 @@ class RESTAPIGenerator:
 
         # Set default values for the authorization options
         self.use_authorization: bool = False
-        self.authorization_function: Optional[Callable[[
-            str, str], bool]] = None
+        self.authorization_function: Optional[Callable[[str, List[str]], bool]]
 
         # Register the routes
         self.add_routes()
@@ -65,19 +64,29 @@ class RESTAPIGenerator:
 
         # We create a callback method for the Blueprint and make sure
         # the Flask routing redirects every request to this method.
-        @self.blueprint.route('/', defaults={'path': ''},
-                              methods=self.accepted_http_methods)
-        @self.blueprint.route('/<path:path>',
-                              methods=self.accepted_http_methods)
+        @ self.blueprint.route('/', defaults={'path': ''},
+                               methods=self.accepted_http_methods)
+        @ self.blueprint.route('/<path:path>',
+                               methods=self.accepted_http_methods)
         def execute_url(path: str) -> str:
             url_list: List[RESTAPIEndpointURL] = self.get_all_endpoints()
             for endpoint in url_list:
                 if endpoint.url == path:
-                    if endpoint.endpoint.auth_needed:
-                        return 'Authorization needed'
+                    if self.authorization_function \
+                            and endpoint.endpoint.auth_needed:
+                        if endpoint.endpoint.auth_permissions.GET:
+                            if self.authorization_function(
+                                'my_api_key',
+                                endpoint.endpoint.auth_permissions.GET
+                            ):
+                                return f'Auth: {endpoint.endpoint.func()}'
+                            else:
+                                return 'Not authorized'
 
                     return endpoint.endpoint.func()
-            return ''
+
+            # No matching URL found
+            return '404: Page not found'
 
     def register_group(self, group: RESTAPIGroup) -> None:
         """ Method to register a group for the REST API """
@@ -92,7 +101,9 @@ class RESTAPIGenerator:
             raise InvalidGroupError(
                 f'Group is of type "{type(group)}", expected "{RESTAPIGroup}"')
 
-    def register_authorization_method(self, func: Callable[[str, str], bool]) -> None:
+    def register_authorization_method(self,
+                                      func: Callable[[str, List[str]], bool]
+                                      ) -> None:
         """ Method to set a authorization method for the REST API.
             Should be used as a decorator
 

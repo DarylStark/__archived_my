@@ -5,6 +5,8 @@
 # ---------------------------------------------------------------------
 from typing import Callable, List, Optional
 from dataclasses import dataclass, field
+from rest_api_generator.rest_api_endpoint_permissions\
+    import RESTAPIEndpointPermissions
 # ---------------------------------------------------------------------
 
 
@@ -49,5 +51,5 @@ class RESTAPIEndpoint:
 
     # Members for authentication
     auth_needed: Optional[bool] = False
-    auth_permissions: Optional[List[str]] = field(default_factory=list)
+    auth_permissions: Optional[RESTAPIEndpointPermissions] = None
 # ---------------------------------------------------------------------
