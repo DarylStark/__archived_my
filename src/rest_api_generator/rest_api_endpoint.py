@@ -37,7 +37,7 @@ class RESTAPIEndpoint:
 
         auth_permissions : List[str]
             A list of permissions which the user needs at least one of
-            to authorize for this endpoint. 
+            to authorize for this endpoint.
     """
 
     # Mandatory members

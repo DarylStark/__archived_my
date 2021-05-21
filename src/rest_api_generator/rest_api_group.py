@@ -16,8 +16,8 @@ class RESTAPIGroup:
 
     def __init__(self,
                  api_url_prefix: str,
-                 name: str = None,
-                 description: str = None) -> None:
+                 name: Optional[str] = None,
+                 description: Optional[str] = None) -> None:
         """ The initiator sets a empty list of endpoint and initializes
             the API group.
 
@@ -42,8 +42,8 @@ class RESTAPIGroup:
 
         # Set the class variables for the given arguments
         self.url_prefix: str = api_url_prefix
-        self.name: str = api_url_prefix
-        self.description: str = description
+        self.name: Optional[str] = api_url_prefix
+        self.description: Optional[str] = description
 
         # If the user didn't add a trailing slash to the URL prefix, we
         # add it manually
@@ -74,14 +74,15 @@ class RESTAPIGroup:
         """
         self.subgroups.append(group)
 
-    def register_endpoint(self,
-                          url_suffix: str,
-                          http_methods: List[str] = None,
-                          name: str = None,
-                          description: str = None,
-                          auth_needed: bool = False,
-                          auth_permissions:
-                          Optional[RESTAPIEndpointPermissions] = None) -> Callable:
+    def register_endpoint(
+            self,
+            url_suffix: str,
+            http_methods: List[str] = None,
+            name: str = None,
+            description: str = None,
+            auth_needed: bool = False,
+            auth_permissions:
+            Optional[RESTAPIEndpointPermissions] = None) -> Callable:
         """ Decorator to register a endpoint for this REST API group
 
             Parameters
