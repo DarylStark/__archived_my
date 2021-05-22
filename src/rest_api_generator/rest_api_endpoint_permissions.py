@@ -17,21 +17,25 @@ class RESTAPIEndpointPermissions:
 
         Members
         -------
-        GET : str
-            The permissions for a GET request
-
-        POST : str
+        POST : List[str]
             The permissions for a POST request
 
-        PUT : str
+        GET : List[str]
+            The permissions for a GET request
+
+        PUT : List[str]
             The permissions for a PUT request
 
-        DELETE : str
+        PATCH : List[str]
+            The permissions for a PATCH request
+
+        DELETE : List[str]
             The permissions for a DELETE request
     """
 
-    GET: Optional[List[str]] = None
     POST: Optional[List[str]] = None
+    GET: Optional[List[str]] = None
     PUT: Optional[List[str]] = None
+    PATCH: Optional[List[str]] = None
     DELETE: Optional[List[str]] = None
 # ---------------------------------------------------------------------

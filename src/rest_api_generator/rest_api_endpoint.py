@@ -5,6 +5,7 @@
 # ---------------------------------------------------------------------
 from typing import Callable, List, Optional
 from dataclasses import dataclass, field
+from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
 from rest_api_generator.rest_api_endpoint_permissions\
     import RESTAPIEndpointPermissions
 # ---------------------------------------------------------------------
@@ -42,7 +43,9 @@ class RESTAPIEndpoint:
 
     # Mandatory members
     url_suffix: str
-    func: Callable[[], str]
+    func: Callable[[
+        Optional[RESTAPIAuthorization]
+    ], str]
     http_methods: List[str] = field(default_factory=list)
 
     # Members for help pages

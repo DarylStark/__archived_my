@@ -4,11 +4,12 @@
 """
 # ---------------------------------------------------------------------
 # Imports
-from flask import Blueprint
+from flask import Blueprint, request
 from typing import Callable, List, Optional, Set
 from rest_api_generator.exceptions import InvalidGroupError
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 from rest_api_generator.rest_api_group import RESTAPIGroup
+from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
 # ---------------------------------------------------------------------
 
 
@@ -41,7 +42,8 @@ class RESTAPIGenerator:
 
         # Set default values for the authorization options
         self.use_authorization: bool = False
-        self.authorization_function: Optional[Callable[[str, List[str]], bool]]
+        self.authorization_function: Optional[Callable[[
+            str, Optional[List[str]]], RESTAPIAuthorization]]
 
         # Register the routes
         self.add_routes()
@@ -69,23 +71,63 @@ class RESTAPIGenerator:
         @ self.blueprint.route('/<path:path>',
                                methods=self.accepted_http_methods)
         def execute_url(path: str) -> str:
+            """ Method that gets run as soon as a REST API Endpoint
+                gets requested.
+
+                Parameter
+                ---------
+                path : str
+                    The path the user requested
+
+                Returns
+                -------
+                str
+                    The requested API end result
+            """
+            # Get a list of all endpoints registered in this REST API
             url_list: List[RESTAPIEndpointURL] = self.get_all_endpoints()
-            for endpoint in url_list:
-                if endpoint.url == path:
-                    if self.authorization_function \
-                            and endpoint.endpoint.auth_needed:
-                        if endpoint.endpoint.auth_permissions.GET:
-                            if self.authorization_function(
-                                'my_api_key',
-                                endpoint.endpoint.auth_permissions.GET
-                            ):
-                                return f'Auth: {endpoint.endpoint.func()}'
-                            else:
-                                return 'Not authorized'
 
-                    return endpoint.endpoint.func()
+            # Filter the list to only include the URL that we need
+            filtered_url_list = [
+                endpoint for endpoint in url_list if endpoint.url == path]
 
-            # No matching URL found
+            # Loop through the endpoints and fine one that matches the
+            # requested url
+            if len(filtered_url_list) == 1:
+                # Found the requested endpoint. Retrieve the endpoint
+                # object from it
+                endpoint = filtered_url_list[0].endpoint
+
+                # First we check if the HTTP method is valid for this
+                # endpoint
+                if request.method in endpoint.http_methods:
+                    # Method is allowed, check if permissions are
+                    # needed
+                    if endpoint.auth_needed and self.authorization_function:
+                        # Permissions needed, get if the user is
+                        # authorized to run this endpoint
+                        try:
+                            # Check if the user is authorized
+                            auth: RESTAPIAuthorization = \
+                                self.authorization_function(
+                                    request.headers['Authorization'],
+                                    endpoint.auth_permissions.__getattribute__(
+                                        request.method)
+                                )
+                        except (AttributeError, KeyError):
+                            auth = RESTAPIAuthorization(authorized=False)
+
+                        # Check the given value
+                        if auth.authorized:
+                            return endpoint.func(auth)
+                        else:
+                            return '403: Request not authorized'
+
+                    # Done! Run the endpoint method
+                    return endpoint.func(None)
+
+            # No matching URL found for this HTTP method. We return a
+            # error page
             return '404: Page not found'
 
     def register_group(self, group: RESTAPIGroup) -> None:
@@ -102,7 +144,8 @@ class RESTAPIGenerator:
                 f'Group is of type "{type(group)}", expected "{RESTAPIGroup}"')
 
     def register_authorization_method(self,
-                                      func: Callable[[str, List[str]], bool]
+                                      func: Callable[[
+                                          str, Optional[List[str]]], RESTAPIAuthorization]
                                       ) -> None:
         """ Method to set a authorization method for the REST API.
             Should be used as a decorator
