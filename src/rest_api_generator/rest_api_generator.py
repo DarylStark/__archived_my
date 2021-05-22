@@ -49,11 +49,11 @@ class RESTAPIGenerator:
         # Register the routes
         self.add_routes()
 
-    def add_method(self, method: str) -> None:
+    def accept_method(self, method: str) -> None:
         """ Method to add HTTP methods to the accepted list """
         self.accepted_http_methods.append(method)
 
-    def remove_method(self, method: str) -> None:
+    def deny_method(self, method: str) -> None:
         """ Method to remove HTTP methods from the accepted list """
         try:
             self.accepted_http_methods.remove(method)
@@ -125,7 +125,7 @@ class RESTAPIGenerator:
                         if auth.authorized:
                             return endpoint.func(auth, filtered_url_list[0][1])
                         else:
-                            return '403: Request not authorized'
+                            return '405: Method not allowed'
 
                     # Done! Run the endpoint method
                     return endpoint.func(None, filtered_url_list[0][1])
