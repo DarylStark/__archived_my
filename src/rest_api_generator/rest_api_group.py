@@ -76,7 +76,7 @@ class RESTAPIGroup:
 
     def register_endpoint(
             self,
-            url_suffix: str,
+            url_suffix: List[str],
             http_methods: List[str] = None,
             name: str = None,
             description: str = None,
@@ -159,14 +159,16 @@ class RESTAPIGroup:
 
         # Add local endpoints
         for endpoint in self.endpoints:
-            # Create a object
-            endpoint = RESTAPIEndpointURL(
-                url=f'{self.url_prefix}{endpoint.url_suffix}',
-                endpoint=endpoint
-            )
+            # Loop through all suffixes for this endpoint
+            for suffixes in endpoint.url_suffix:
+                # Create a object
+                endpoint_url = RESTAPIEndpointURL(
+                    url=f'{self.url_prefix}{suffixes}',
+                    endpoint=endpoint
+                )
 
-            # Add it to the list
-            return_list.append(endpoint)
+                # Add it to the list
+                return_list.append(endpoint_url)
 
         # Add endpoints from subgroups. We prepend the URL prefix for
         # this group to it so we get a full URL

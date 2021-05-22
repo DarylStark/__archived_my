@@ -4,6 +4,7 @@
 """
 # ---------------------------------------------------------------------
 # Imports
+import re
 from flask import Blueprint, request
 from typing import Callable, List, Optional, Set
 from rest_api_generator.exceptions import InvalidGroupError
@@ -89,14 +90,17 @@ class RESTAPIGenerator:
 
             # Filter the list to only include the URL that we need
             filtered_url_list = [
-                endpoint for endpoint in url_list if endpoint.url == path]
+                (endpoint, re.fullmatch('^' + endpoint.url + '$', path))
+                for endpoint in url_list
+                if re.fullmatch(endpoint.url, path)
+            ]
 
             # Loop through the endpoints and fine one that matches the
             # requested url
             if len(filtered_url_list) == 1:
                 # Found the requested endpoint. Retrieve the endpoint
                 # object from it
-                endpoint = filtered_url_list[0].endpoint
+                endpoint = filtered_url_list[0][0].endpoint
 
                 # First we check if the HTTP method is valid for this
                 # endpoint
@@ -119,12 +123,12 @@ class RESTAPIGenerator:
 
                         # Check the given value
                         if auth.authorized:
-                            return endpoint.func(auth)
+                            return endpoint.func(auth, filtered_url_list[0][1])
                         else:
                             return '403: Request not authorized'
 
                     # Done! Run the endpoint method
-                    return endpoint.func(None)
+                    return endpoint.func(None, filtered_url_list[0][1])
 
             # No matching URL found for this HTTP method. We return a
             # error page
@@ -143,20 +147,22 @@ class RESTAPIGenerator:
             raise InvalidGroupError(
                 f'Group is of type "{type(group)}", expected "{RESTAPIGroup}"')
 
-    def register_authorization_method(self,
-                                      func: Callable[[
-                                          str, Optional[List[str]]], RESTAPIAuthorization]
-                                      ) -> None:
+    def register_authorization_method(
+        self,
+        func: Callable[[str, Optional[List[str]]], RESTAPIAuthorization]
+    ) -> None:
         """ Method to set a authorization method for the REST API.
             Should be used as a decorator
 
             Parameter
             ---------
-            func : Callable[[str, str], bool]
-                Function that takes in two strings (one for the
+            func : Callable[[str, Optional[List[str]]],
+                   RESTAPIAuthorization]
+                Function that takes in two variables (one for the
                 authorization data and one for the requested
-                permission). Should return True if the request is
-                authorized and False if the request is not authorized
+                permission). Should return a RESTAPIAuthorization
+                object that defines if the request is authorized or
+                not.
 
             Returns
             -------
@@ -166,7 +172,7 @@ class RESTAPIGenerator:
 
     def get_all_endpoints(self) -> List[RESTAPIEndpointURL]:
         """ Method that returns all RESTAPIEndpoints for this REST API
-            in a list with RESTAPIEndpointURL objects
+            in a list with RESTAPIEndpointURL objects.
 
             Parameter
             ---------
@@ -175,7 +181,7 @@ class RESTAPIGenerator:
             Returns
             -------
             list[RESTAPIEndpointURL]
-                A list with RESTAPIEndpointURLs for this REST API
+                A list with RESTAPIEndpointURLs for this REST API.
         """
 
         # Create a empty list that we can return later on

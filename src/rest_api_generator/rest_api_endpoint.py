@@ -3,6 +3,7 @@
     endpoint.
 """
 # ---------------------------------------------------------------------
+import re
 from typing import Callable, List, Optional
 from dataclasses import dataclass, field
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
@@ -42,9 +43,10 @@ class RESTAPIEndpoint:
     """
 
     # Mandatory members
-    url_suffix: str
+    url_suffix: List[str]
     func: Callable[[
-        Optional[RESTAPIAuthorization]
+        Optional[RESTAPIAuthorization],
+        Optional[re.Match]
     ], str]
     http_methods: List[str] = field(default_factory=list)
 
