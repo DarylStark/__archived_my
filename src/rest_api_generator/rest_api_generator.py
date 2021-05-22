@@ -125,7 +125,7 @@ class RESTAPIGenerator:
                         if auth.authorized:
                             return endpoint.func(auth, filtered_url_list[0][1])
                         else:
-                            return '405: Method not allowed'
+                            return '403: Request not authorized'
 
                     # Done! Run the endpoint method
                     return endpoint.func(None, filtered_url_list[0][1])
