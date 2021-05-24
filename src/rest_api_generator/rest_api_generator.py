@@ -11,9 +11,10 @@ from rest_api_generator.exceptions import InvalidGroupError
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 from rest_api_generator.rest_api_group import RESTAPIGroup
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
-from rest_api_generator.rest_api_json_serializer import RESTAPIJSONEncoder
-from rest_api_generator.rest_api_response import RESTAPIResponse
+from rest_api_generator.rest_api_json_encoder import RESTAPIJSONEncoder
+from rest_api_generator.rest_api_response import RESTAPIResponse, ResponseType
 from json import dumps
+from math import ceil
 # ---------------------------------------------------------------------
 
 
@@ -152,7 +153,35 @@ class RESTAPIGenerator:
                     return_value: RESTAPIResponse = endpoint.func(
                         auth, filtered_url_list[0][1])
 
-                    # TODO: Paginate the result (if requested)
+                    # Paginate the result (if requested)
+                    if return_value.paginate and \
+                            return_value.type == \
+                            ResponseType.RESOURCE_SET and \
+                            hasattr(return_value.data, '__len__'):
+
+                        # Set the total items, limit and the page
+                        return_value.limit = limit
+                        return_value.page = page
+                        return_value.total_items = return_value.data.__len__()
+
+                        # Calculate the max page
+                        return_value.last_page = ceil(
+                            return_value.total_items / limit)
+
+                        # Check if the page is correct, and if it
+                        # isn't, fix it
+                        if return_value.page > return_value.last_page:
+                            return_value.page = return_value.last_page
+                        elif return_value.page < 1:
+                            return_value.page = 1
+
+                        # Calculate the start and end index for the
+                        # results
+                        start = (return_value.page - 1) * limit
+                        end = start + limit
+
+                        # Filter the data
+                        return_value.data = return_value.data[start:end]
 
                     # Return the result
                     return Response(

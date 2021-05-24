@@ -82,7 +82,7 @@ class RESTAPIJSONEncoder(JSONEncoder):
 
         # Add the data and pagination (if specified)
         return_dict['data'] = object.data
-        if object.page > 0 and object.type == ResponseType.RESOURCE_SET:
+        if object.type == ResponseType.RESOURCE_SET:
             return_dict['page'] = object.page
             return_dict['limit'] = object.limit
             return_dict['total_items'] = object.total_items
