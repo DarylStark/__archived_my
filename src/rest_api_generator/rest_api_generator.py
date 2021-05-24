@@ -183,9 +183,20 @@ class RESTAPIGenerator:
                         # Filter the data
                         return_value.data = return_value.data[start:end]
 
+                    # Add 'pretty' JSON results, if the user requested it
+                    json_options = dict()
+                    if pretty:
+                        json_options = {
+                            'indent': 4,
+                            'sort_keys': True
+                        }
+
                     # Return the result
                     return Response(
-                        response=dumps(return_value, cls=RESTAPIJSONEncoder),
+                        response=dumps(
+                            return_value, cls=RESTAPIJSONEncoder,
+                            **json_options
+                        ),
                         mimetype='application/json'
                     )
 
