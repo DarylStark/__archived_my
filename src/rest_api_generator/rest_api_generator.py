@@ -152,6 +152,8 @@ class RESTAPIGenerator:
                     return_value: RESTAPIResponse = endpoint.func(
                         auth, filtered_url_list[0][1])
 
+                    # TODO: Paginate the result (if requested)
+
                     # Return the result
                     return Response(
                         response=dumps(return_value, cls=RESTAPIJSONEncoder),

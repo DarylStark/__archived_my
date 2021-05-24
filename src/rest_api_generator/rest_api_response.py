@@ -5,7 +5,25 @@
 # ---------------------------------------------------------------------
 from typing import Any, Optional
 from dataclasses import dataclass
+from enum import Enum
 # ---------------------------------------------------------------------
+
+
+class ResponseType(Enum):
+    """ Enum that dictates the type of API response.
+
+        Constants
+        ---------
+        RESOURCE_SET
+            Indicates that this response contains a list of resources
+            in it's data field.
+
+        SINGLE_RESOURCE
+            Indicates that this respoonse contains one resource in it's
+            data field.
+    """
+    RESOURCE_SET = 1
+    SINGLE_RESOURCE = 2
 
 
 @dataclass
@@ -42,6 +60,7 @@ class RESTAPIResponse:
     """
 
     # Mandatory members
+    type: ResponseType = ResponseType.RESOURCE_SET
     success: bool = True
     data: Optional[Any] = None
 

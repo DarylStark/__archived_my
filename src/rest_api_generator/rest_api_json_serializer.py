@@ -5,15 +5,15 @@
 # ---------------------------------------------------------------------
 # Imports
 from json import JSONEncoder
-from typing import Any, Dict
-from rest_api_generator.rest_api_response import RESTAPIResponse
+from typing import Any, Dict, Union
+from rest_api_generator.rest_api_response import RESTAPIResponse, ResponseType
 # ---------------------------------------------------------------------
 
 
 class RESTAPIJSONEncoder(JSONEncoder):
     """ Class that can be used to serialize RESTAPIResponse objects """
 
-    def default(self, object: Any) -> Dict:
+    def default(self, object: Any) -> Union[Dict, int]:
         """ The default method of the encoder gets the objects that the
             JSON encoder cannot encode. In this method, we check what
             type of object it is and create a dict of it so the JSON
@@ -34,6 +34,9 @@ class RESTAPIJSONEncoder(JSONEncoder):
         if isinstance(object, RESTAPIResponse):
             # REST API Responses can be converted to a dict
             return self.encode_rest_api_response(object=object)
+        elif isinstance(object, ResponseType):
+            # ResponseTypes can be converted to a integer
+            return object.value
         else:
             # If we get a object that we can't encode, we raise a
             # TypeError.
@@ -56,13 +59,15 @@ class RESTAPIJSONEncoder(JSONEncoder):
 
         # Create a default dict that we can fill
         return_dict: Dict = {
+            'type': object.type,
             'success': object.success,
             'error_code': 0,
             'error_message': '',
             'data': None,
             'page': 0,
             'limit': 0,
-            'last_page': 0
+            'last_page': 0,
+            'total_items': 0
         }
 
         # If there was an error, we add error information
@@ -77,11 +82,16 @@ class RESTAPIJSONEncoder(JSONEncoder):
 
         # Add the data and pagination (if specified)
         return_dict['data'] = object.data
-        if object.page > 0:
+        if object.page > 0 and object.type == ResponseType.RESOURCE_SET:
             return_dict['page'] = object.page
             return_dict['limit'] = object.limit
             return_dict['total_items'] = object.total_items
             return_dict['last_page'] = object.last_page
+        elif object.type == ResponseType.SINGLE_RESOURCE:
+            return_dict.pop('page')
+            return_dict.pop('limit')
+            return_dict.pop('total_items')
+            return_dict.pop('last_page')
 
         # Return the object
         return return_dict
