@@ -3,11 +3,14 @@
 """
 # ---------------------------------------------------------------------
 # Imports
+import re
 from typing import Callable, List, Optional
+from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
 from rest_api_generator.rest_api_endpoint_permissions\
     import RESTAPIEndpointPermissions
 from rest_api_generator.rest_api_endpoint import RESTAPIEndpoint
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
+from rest_api_generator.rest_api_response import RESTAPIResponse
 # ---------------------------------------------------------------------
 
 
@@ -107,7 +110,10 @@ class RESTAPIGroup:
                 The decorator
         """
 
-        def decorator(func):
+        def decorator(func: Callable[[
+            Optional[RESTAPIAuthorization],
+            Optional[re.Match]
+        ], RESTAPIResponse]):
             """ The decorator registers the API endpoint
 
                 Parameters

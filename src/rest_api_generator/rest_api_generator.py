@@ -5,12 +5,15 @@
 # ---------------------------------------------------------------------
 # Imports
 import re
-from flask import Blueprint, request
-from typing import Callable, List, Optional, Set
+from flask import Blueprint, request, Response
+from typing import Callable, List, Optional, Set, Union
 from rest_api_generator.exceptions import InvalidGroupError
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 from rest_api_generator.rest_api_group import RESTAPIGroup
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
+from rest_api_generator.rest_api_json_serializer import RESTAPIJSONEncoder
+from rest_api_generator.rest_api_response import RESTAPIResponse
+from json import dumps
 # ---------------------------------------------------------------------
 
 
@@ -46,6 +49,10 @@ class RESTAPIGenerator:
         self.authorization_function: Optional[Callable[[
             str, Optional[List[str]]], RESTAPIAuthorization]]
 
+        # Set defaults for API results
+        self.default_limit: int = 25
+        self.default_pretty: bool = False
+
         # Register the routes
         self.add_routes()
 
@@ -67,11 +74,11 @@ class RESTAPIGenerator:
 
         # We create a callback method for the Blueprint and make sure
         # the Flask routing redirects every request to this method.
-        @ self.blueprint.route('/', defaults={'path': ''},
-                               methods=self.accepted_http_methods)
-        @ self.blueprint.route('/<path:path>',
-                               methods=self.accepted_http_methods)
-        def execute_url(path: str) -> str:
+        @self.blueprint.route('/', defaults={'path': ''},
+                              methods=self.accepted_http_methods)
+        @self.blueprint.route('/<path:path>',
+                              methods=self.accepted_http_methods)
+        def execute_url(path: str) -> Union[str, Response]:
             """ Method that gets run as soon as a REST API Endpoint
                 gets requested.
 
@@ -90,7 +97,7 @@ class RESTAPIGenerator:
 
             # Filter the list to only include the URL that we need
             filtered_url_list = [
-                (endpoint, re.fullmatch('^' + endpoint.url + '$', path))
+                (endpoint, re.fullmatch(endpoint.url, path))
                 for endpoint in url_list
                 if re.fullmatch(endpoint.url, path)
             ]
@@ -105,6 +112,9 @@ class RESTAPIGenerator:
                 # First we check if the HTTP method is valid for this
                 # endpoint
                 if request.method in endpoint.http_methods:
+                    # Set empty auth variable
+                    auth: Optional[RESTAPIAuthorization] = None
+
                     # Method is allowed, check if permissions are
                     # needed
                     if endpoint.auth_needed and self.authorization_function:
@@ -112,7 +122,7 @@ class RESTAPIGenerator:
                         # authorized to run this endpoint
                         try:
                             # Check if the user is authorized
-                            auth: RESTAPIAuthorization = \
+                            auth = \
                                 self.authorization_function(
                                     request.headers['Authorization'],
                                     endpoint.auth_permissions.__getattribute__(
@@ -122,13 +132,31 @@ class RESTAPIGenerator:
                             auth = RESTAPIAuthorization(authorized=False)
 
                         # Check the given value
-                        if auth.authorized:
-                            return endpoint.func(auth, filtered_url_list[0][1])
-                        else:
+                        if not auth.authorized:
                             return '403: Request not authorized'
 
+                    # Get the variables given in the URL (if any are
+                    # given).
+                    page: int = 1
+                    limit: int = self.default_limit
+                    pretty: bool = self.default_pretty
+
+                    if 'page' in request.args.keys():
+                        page = int(request.args['page'])
+                    if 'limit' in request.args.keys():
+                        limit = int(request.args['limit'])
+                    if 'pretty' in request.args.keys():
+                        pretty = True
+
                     # Done! Run the endpoint method
-                    return endpoint.func(None, filtered_url_list[0][1])
+                    return_value: RESTAPIResponse = endpoint.func(
+                        auth, filtered_url_list[0][1])
+
+                    # Return the result
+                    return Response(
+                        response=dumps(return_value, cls=RESTAPIJSONEncoder),
+                        mimetype='application/json'
+                    )
 
             # No matching URL found for this HTTP method. We return a
             # error page

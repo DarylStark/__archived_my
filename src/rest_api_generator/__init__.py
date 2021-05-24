@@ -11,6 +11,8 @@ from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
 from rest_api_generator.rest_api_endpoint_permissions \
     import RESTAPIEndpointPermissions
+from rest_api_generator.rest_api_response import RESTAPIResponse
+from rest_api_generator.rest_api_json_serializer import RESTAPIJSONEncoder
 # ---------------------------------------------------------------------
 if __name__ == '__main__':
     raise NotImplementedError('This file can not be ran as script')

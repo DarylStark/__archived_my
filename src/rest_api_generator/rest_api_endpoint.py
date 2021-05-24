@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
 from rest_api_generator.rest_api_endpoint_permissions\
     import RESTAPIEndpointPermissions
+from rest_api_generator.rest_api_response import RESTAPIResponse
 # ---------------------------------------------------------------------
 
 
@@ -21,7 +22,7 @@ class RESTAPIEndpoint:
         url_suffix : str
             The URL suffix for the endpoint.
 
-        func : Callable[[], str]
+        func : Callable[[], RESTAPIResponse]
             The function to run for this endpoint.
 
         http_methods : List[str](default=None)
@@ -47,7 +48,7 @@ class RESTAPIEndpoint:
     func: Callable[[
         Optional[RESTAPIAuthorization],
         Optional[re.Match]
-    ], str]
+    ], RESTAPIResponse]
     http_methods: List[str] = field(default_factory=list)
 
     # Members for help pages
