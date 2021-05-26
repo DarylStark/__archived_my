@@ -54,6 +54,7 @@ class RESTAPIGenerator:
         # Set defaults for API results
         self.default_limit: int = 25
         self.default_pretty: bool = False
+        self.abort_on_error: bool = False
 
         # Register the routes
         self.add_routes()
@@ -71,6 +72,26 @@ class RESTAPIGenerator:
             # exception. We don't do anything in that case.
             pass
 
+    def raise_error(self,
+                    code: int,
+                    msg: Optional[str] = None
+                    ) -> Optional[RESTAPIResponse]:
+        """ Method that either aborts the request, or returns a
+            RESTAPIRespone with a error code. """
+
+        # If the 'abort_on_error' is set to True, we abort the request
+        # with the given parameter
+        if self.abort_on_error:
+            abort(code)
+
+        # Otherwise, we create a RESTAPIResponse that we can return
+        if not self.abort_on_error:
+            error_response = RESTAPIResponse(ResponseType.ERROR)
+            error_response.error_code = code
+            error_response.error_message = msg
+            error_response.success = False
+            return error_response
+
     def add_routes(self) -> None:
         """ Method to register the routes for the Blueprint """
 
@@ -80,7 +101,7 @@ class RESTAPIGenerator:
                               methods=self.accepted_http_methods)
         @self.blueprint.route('/<path:path>',
                               methods=self.accepted_http_methods)
-        def execute_url(path: str) -> Union[str, Response]:
+        def execute_url(path: str) -> Optional[Union[str, Response]]:
             """ Method that gets run as soon as a REST API Endpoint
                 gets requested.
 
@@ -104,6 +125,23 @@ class RESTAPIGenerator:
                 if re.fullmatch(endpoint.url, path)
             ]
 
+            # Set JSON options
+            json_options = dict()
+
+            # Add 'pretty' JSON results, if the user requested it
+            pretty: bool = self.default_pretty
+            if 'pretty' in request.args.keys():
+                pretty = True
+
+            if pretty:
+                json_options = {
+                    'indent': 4,
+                    'sort_keys': True
+                }
+
+            # Set empty return value
+            return_value: Optional[RESTAPIResponse] = None
+
             # Loop through the endpoints and fine one that matches the
             # requested url
             if len(filtered_url_list) == 1:
@@ -116,6 +154,7 @@ class RESTAPIGenerator:
                 if request.method in endpoint.http_methods:
                     # Set empty auth variable
                     auth: Optional[RESTAPIAuthorization] = None
+                    error_return: Optional[RESTAPIResponse] = None
 
                     # Method is allowed, check if permissions are
                     # needed
@@ -136,36 +175,52 @@ class RESTAPIGenerator:
                         # Check the given value. If the user is not
                         # authorized, we raise a 403 error
                         if not auth.authorized:
-                            abort(403)
+                            error = self.raise_error(403)
+                            if error:
+                                error_return = error
+                            else:
+                                return None
 
                     # Get the variables given in the URL (if any are
                     # given).
                     page: int = 1
                     limit: int = self.default_limit
-                    pretty: bool = self.default_pretty
 
                     if 'page' in request.args.keys():
                         page = int(request.args['page'])
                     if 'limit' in request.args.keys():
                         limit = int(request.args['limit'])
-                    if 'pretty' in request.args.keys():
-                        pretty = True
 
                     # Done! Run the endpoint method
                     try:
-                        return_value: RESTAPIResponse = endpoint.func(
-                            auth,
-                            filtered_url_list[0][1]
-                        )
-                    except UnauthorizedForResourceError:
+                        if error_return:
+                            return_value = error_return
+                        else:
+                            return_value = endpoint.func(
+                                auth,
+                                filtered_url_list[0][1]
+                            )
+                    except UnauthorizedForResourceError as exception:
                         # User is not authorized, raise a 401-error
-                        abort(401)
-                    except ResourceForbiddenError:
+                        error = self.raise_error(401, str(exception))
+                        if error:
+                            return_value = error
+                        else:
+                            return None
+                    except ResourceForbiddenError as exception:
                         # User is not authorized, raise a 403-error
-                        abort(403)
-                    except ResourceNotFoundError:
+                        error = self.raise_error(401, str(exception))
+                        if error:
+                            return_value = error
+                        else:
+                            return None
+                    except ResourceNotFoundError as exception:
                         # User is not authorized, raise a 404-error
-                        abort(404)
+                        error = self.raise_error(401, str(exception))
+                        if error:
+                            return_value = error
+                        else:
+                            return None
 
                     # Paginate the result (if requested)
                     if return_value.paginate and \
@@ -196,27 +251,23 @@ class RESTAPIGenerator:
 
                         # Filter the data
                         return_value.data = return_value.data[start:end]
+            else:
+                # No matching URL found for this HTTP method. We abort the
+                # request with a 404 error
+                error = self.raise_error(404, 'Endpoint not found')
+                if error:
+                    return_value = error
+                else:
+                    return None
 
-                    # Add 'pretty' JSON results, if the user requested it
-                    json_options = dict()
-                    if pretty:
-                        json_options = {
-                            'indent': 4,
-                            'sort_keys': True
-                        }
-
-                    # Return the result
-                    return Response(
-                        response=dumps(
-                            return_value, cls=RESTAPIJSONEncoder,
-                            **json_options
-                        ),
-                        mimetype='application/json'
-                    )
-
-            # No matching URL found for this HTTP method. We abort the
-            # request with a 404 error
-            abort(404)
+            # Return the result
+            return Response(
+                response=dumps(
+                    return_value, cls=RESTAPIJSONEncoder,
+                    **json_options
+                ),
+                mimetype='application/json'
+            )
 
     def register_group(self, group: RESTAPIGroup) -> None:
         """ Method to register a group for the REST API """

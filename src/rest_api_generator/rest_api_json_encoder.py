@@ -75,23 +75,30 @@ class RESTAPIJSONEncoder(JSONEncoder):
             return_dict['error_code'] = object.error_code
             if object.error_message:
                 return_dict['error_message'] = object.error_message
+
+            # Remove the unneeded fields
+            return_dict.pop('data')
+            return_dict.pop('page')
+            return_dict.pop('limit')
+            return_dict.pop('last_page')
+            return_dict.pop('total_items')
         else:
             # If there wasn't a error, we remove the error fields
             return_dict.pop('error_code')
             return_dict.pop('error_message')
 
-        # Add the data and pagination (if specified)
-        return_dict['data'] = object.data
-        if object.type == ResponseType.RESOURCE_SET:
-            return_dict['page'] = object.page
-            return_dict['limit'] = object.limit
-            return_dict['total_items'] = object.total_items
-            return_dict['last_page'] = object.last_page
-        elif object.type == ResponseType.SINGLE_RESOURCE:
-            return_dict.pop('page')
-            return_dict.pop('limit')
-            return_dict.pop('total_items')
-            return_dict.pop('last_page')
+            # Add the data and pagination (if specified)
+            return_dict['data'] = object.data
+            if object.type == ResponseType.RESOURCE_SET:
+                return_dict['page'] = object.page
+                return_dict['limit'] = object.limit
+                return_dict['total_items'] = object.total_items
+                return_dict['last_page'] = object.last_page
+            elif object.type == ResponseType.SINGLE_RESOURCE:
+                return_dict.pop('page')
+                return_dict.pop('limit')
+                return_dict.pop('total_items')
+                return_dict.pop('last_page')
 
         # Return the object
         return return_dict

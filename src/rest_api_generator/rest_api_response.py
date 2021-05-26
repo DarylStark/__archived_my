@@ -14,6 +14,9 @@ class ResponseType(Enum):
 
         Constants
         ---------
+        ERROR
+            Indiciates that this is a error response.
+
         RESOURCE_SET
             Indicates that this response contains a list of resources
             in it's data field.
@@ -22,8 +25,9 @@ class ResponseType(Enum):
             Indicates that this respoonse contains one resource in it's
             data field.
     """
-    RESOURCE_SET = 1
-    SINGLE_RESOURCE = 2
+    ERROR = 1
+    RESOURCE_SET = 2
+    SINGLE_RESOURCE = 3
 
 
 @dataclass
