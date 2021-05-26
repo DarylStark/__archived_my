@@ -5,6 +5,8 @@
 # ---------------------------------------------------------------------
 # Imports
 import re
+import timeit
+import time
 from flask import Blueprint, request, Response, abort
 from typing import Callable, List, Optional, Set, Union
 from rest_api_generator.exceptions import InvalidGroupError, \
@@ -115,6 +117,9 @@ class RESTAPIGenerator:
                 str
                     The requested API end result
             """
+            # Get the starttime
+            time_start = timeit.default_timer()
+
             # Get a list of all endpoints registered in this REST API
             url_list: List[RESTAPIEndpointURL] = self.get_all_endpoints()
 
@@ -259,6 +264,10 @@ class RESTAPIGenerator:
                     return_value = error
                 else:
                     return None
+
+            # Get the end time and calculate the runtime in ms
+            time_end = timeit.default_timer()
+            return_value.runtime = (time_end - time_start) * 1000
 
             # Return the result
             return Response(

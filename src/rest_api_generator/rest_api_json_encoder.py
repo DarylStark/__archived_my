@@ -67,7 +67,8 @@ class RESTAPIJSONEncoder(JSONEncoder):
             'page': 0,
             'limit': 0,
             'last_page': 0,
-            'total_items': 0
+            'total_items': 0,
+            'runtime': 0.0
         }
 
         # If there was an error, we add error information
@@ -99,6 +100,9 @@ class RESTAPIJSONEncoder(JSONEncoder):
                 return_dict.pop('limit')
                 return_dict.pop('total_items')
                 return_dict.pop('last_page')
+
+        # Add other fields
+        return_dict['runtime'] = round(object.runtime, 3)
 
         # Return the object
         return return_dict
