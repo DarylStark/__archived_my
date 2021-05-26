@@ -5,18 +5,42 @@
 
 
 class RESTAPIGeneratorError(Exception):
-    """ Base exception for RESTAPIGenerator-exceptions """
+    """ Base exception for RESTAPIGenerator-exceptions. """
     pass
 
 
 class RESTAPIGeneratorCriticalError(RESTAPIGeneratorError):
     """ Exception that should result in complete termination of the
-        application """
+        application. """
+    pass
+
+
+class RESTAPIGeneratorEndpointError(Exception):
+    """ Base exception for exceptions that endpoints can throw """
     pass
 
 
 class InvalidGroupError(RESTAPIGeneratorCriticalError):
-    """ Error that happens when the database credentials are not
-        correct """
+    """ Error that happens when the programmer tries to add a invalid
+        group to the generator. """
+    pass
+
+
+class UnauthorizedForResourceError(RESTAPIGeneratorEndpointError):
+    """ Exception that indicates that a user is trying to access a
+        resource that he or she has no permissions to. Should be
+        handled as HTTP 401 error. """
+    pass
+
+
+class ResourceForbiddenError(RESTAPIGeneratorEndpointError):
+    """ Exception that indicates that a user is trying to access a
+        forbidden resource. Should be handled as HTTP 403 error. """
+    pass
+
+
+class ResourceNotFoundError(RESTAPIGeneratorEndpointError):
+    """ Exception that indicates that a resoure is not found. Should be
+        handled as HTTP 404 error. """
     pass
 # ---------------------------------------------------------------------

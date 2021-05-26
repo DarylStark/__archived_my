@@ -5,9 +5,10 @@
 # ---------------------------------------------------------------------
 # Imports
 import re
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, Response, abort
 from typing import Callable, List, Optional, Set, Union
-from rest_api_generator.exceptions import InvalidGroupError
+from rest_api_generator.exceptions import InvalidGroupError, \
+    UnauthorizedForResourceError, ResourceForbiddenError, ResourceNotFoundError
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 from rest_api_generator.rest_api_group import RESTAPIGroup
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
@@ -132,9 +133,10 @@ class RESTAPIGenerator:
                         except (AttributeError, KeyError):
                             auth = RESTAPIAuthorization(authorized=False)
 
-                        # Check the given value
+                        # Check the given value. If the user is not
+                        # authorized, we raise a 403 error
                         if not auth.authorized:
-                            return '403: Request not authorized'
+                            abort(403)
 
                     # Get the variables given in the URL (if any are
                     # given).
@@ -150,8 +152,20 @@ class RESTAPIGenerator:
                         pretty = True
 
                     # Done! Run the endpoint method
-                    return_value: RESTAPIResponse = endpoint.func(
-                        auth, filtered_url_list[0][1])
+                    try:
+                        return_value: RESTAPIResponse = endpoint.func(
+                            auth,
+                            filtered_url_list[0][1]
+                        )
+                    except UnauthorizedForResourceError:
+                        # User is not authorized, raise a 401-error
+                        abort(401)
+                    except ResourceForbiddenError:
+                        # User is not authorized, raise a 403-error
+                        abort(403)
+                    except ResourceNotFoundError:
+                        # User is not authorized, raise a 404-error
+                        abort(404)
 
                     # Paginate the result (if requested)
                     if return_value.paginate and \
@@ -200,9 +214,9 @@ class RESTAPIGenerator:
                         mimetype='application/json'
                     )
 
-            # No matching URL found for this HTTP method. We return a
-            # error page
-            return '404: Page not found'
+            # No matching URL found for this HTTP method. We abort the
+            # request with a 404 error
+            abort(404)
 
     def register_group(self, group: RESTAPIGroup) -> None:
         """ Method to register a group for the REST API """

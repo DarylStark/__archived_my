@@ -74,4 +74,7 @@ class RESTAPIResponse:
     total_items: int = 0
     limit: int = 0
     last_page: int = 0
+
+    # Other fields
+    runtime: float = 0
 # ---------------------------------------------------------------------
