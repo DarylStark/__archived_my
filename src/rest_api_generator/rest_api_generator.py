@@ -171,7 +171,7 @@ class RESTAPIGenerator:
                             auth = \
                                 self.authorization_function(
                                     request.headers['Authorization'],
-                                    endpoint.auth_permissions.__getattribute__(
+                                    endpoint.auth_scopes.__getattribute__(
                                         request.method)
                                 )
                         except (AttributeError, KeyError):

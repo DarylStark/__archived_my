@@ -84,7 +84,7 @@ class RESTAPIGroup:
             name: str = None,
             description: str = None,
             auth_needed: bool = False,
-            auth_permissions:
+            auth_scopes:
             Optional[RESTAPIEndpointPermissions] = None) -> Callable:
         """ Decorator to register a endpoint for this REST API group
 
@@ -134,7 +134,7 @@ class RESTAPIGroup:
                 name=name,
                 description=description,
                 auth_needed=auth_needed,
-                auth_permissions=auth_permissions
+                auth_scopes=auth_scopes
             )
             self.endpoints.append(endpoint)
 

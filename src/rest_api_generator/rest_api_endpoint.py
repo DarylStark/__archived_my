@@ -57,5 +57,5 @@ class RESTAPIEndpoint:
 
     # Members for authentication
     auth_needed: Optional[bool] = False
-    auth_permissions: Optional[RESTAPIEndpointPermissions] = None
+    auth_scopes: Optional[RESTAPIEndpointPermissions] = None
 # ---------------------------------------------------------------------
