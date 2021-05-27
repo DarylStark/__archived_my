@@ -18,6 +18,7 @@ from rest_api_generator.rest_api_json_encoder import RESTAPIJSONEncoder
 from rest_api_generator.rest_api_response import RESTAPIResponse, ResponseType
 from json import dumps
 from math import ceil
+from logging import getLogger
 # ---------------------------------------------------------------------
 
 
@@ -47,6 +48,10 @@ class RESTAPIGenerator:
             -------
             None
         """
+
+        # Set a logger for this object
+        self.logger = getLogger(f'API_Generator_{bp_name}')
+        self.logger.debug('Created')
 
         # Create a empty set with registered groups. The user can add
         # groups with the 'register_group' command. We make this a set
@@ -93,6 +98,7 @@ class RESTAPIGenerator:
             -------
             None
         """
+        self.logger.debug(f'Adding method: {method}')
         self.accepted_http_methods.append(method)
 
     def deny_method(self, method: str) -> None:
@@ -109,11 +115,12 @@ class RESTAPIGenerator:
         """
 
         try:
+            self.logger.debug(f'Removing method: {method}')
             self.accepted_http_methods.remove(method)
         except ValueError:
             # If the item wasn't in the list, we get an ValueError
             # exception. We don't do anything in that case.
-            pass
+            self.logger.debug(f'Method not removed; not in the list')
 
     def raise_error(self,
                     code: int,
@@ -138,10 +145,17 @@ class RESTAPIGenerator:
         # If the 'abort_on_error' is set to True, we abort the request
         # with the given parameter
         if self.abort_on_error:
+            self.logger.debug(
+                f'Aborting the request because we got a {code} error with\
+                     message: {msg}')
             abort(code)
 
         # Otherwise, we create a RESTAPIResponse that we can return
         if not self.abort_on_error:
+            self.logger.debug(
+                f'Not aborting the request because we got a {code} error with \
+                    message: {msg}. Generating API error response.')
+
             error_response = RESTAPIResponse(ResponseType.ERROR)
             error_response.error_code = code
             error_response.error_message = msg
@@ -159,6 +173,8 @@ class RESTAPIGenerator:
             -------
             None
         """
+
+        self.logger.info('Adding Flask routes')
 
         # We create a callback method for the Blueprint and make sure
         # the Flask routing redirects every request to this method.
@@ -182,6 +198,8 @@ class RESTAPIGenerator:
             """
             # Get the starttime
             time_start = timeit.default_timer()
+
+            self.logger.debug('Searching for endpoints')
 
             # Get a list of all endpoints registered in this REST API
             url_list: List[RESTAPIEndpointURL] = self.get_all_endpoints()
@@ -217,6 +235,8 @@ class RESTAPIGenerator:
                 # object from it
                 endpoint = filtered_url_list[0][0].endpoint
 
+                self.logger.debug(f'Endpoint found: {endpoint.name}')
+
                 # First we check if the HTTP method is valid for this
                 # endpoint
                 if request.method in endpoint.http_methods:
@@ -227,6 +247,8 @@ class RESTAPIGenerator:
                     # Method is allowed, check if permissions are
                     # needed
                     if endpoint.auth_needed and self.authorization_function:
+                        self.logger.debug(f'Authorization is needed')
+
                         # Permissions needed, get if the user is
                         # authorized to run this endpoint
                         try:
@@ -240,6 +262,9 @@ class RESTAPIGenerator:
                         except (AttributeError, KeyError):
                             auth = RESTAPIAuthorization(authorized=False)
 
+                        self.logger.debug(
+                            f'Authorized return: {auth.authorized}')
+
                         # Check the given value. If the user is not
                         # authorized, we raise a 403 error
                         if not auth.authorized:
@@ -251,6 +276,9 @@ class RESTAPIGenerator:
 
                     # Get the variables given in the URL (if any are
                     # given).
+
+                    self.logger.debug(f'Paginating')
+
                     page: int = 1
                     limit: int = self.default_limit
 
@@ -322,6 +350,7 @@ class RESTAPIGenerator:
             else:
                 # No matching URL found for this HTTP method. We abort the
                 # request with a 404 error
+                self.logger.error(f'Endpoint {path} not found!')
                 error = self.raise_error(404, 'Endpoint not found')
                 if error:
                     return_value = error
@@ -331,6 +360,8 @@ class RESTAPIGenerator:
             # Get the end time and calculate the runtime in ms
             time_end = timeit.default_timer()
             return_value.runtime = (time_end - time_start) * 1000
+
+            self.logger.debug('Returning result')
 
             # Return the result
             return Response(
@@ -358,6 +389,7 @@ class RESTAPIGenerator:
         # user made a mistake and we raise an exception
         if isinstance(group, RESTAPIGroup):
             # Add the group to the set
+            self.logger.debug(f'Adding RESTAPIGroup: {group.name}')
             self.groups.add(group)
         else:
             # Wrong type, give error
@@ -385,6 +417,7 @@ class RESTAPIGenerator:
             -------
             None
         """
+        self.logger.debug('Setting authorization method')
         self.authorization_function = func
 
     def get_all_endpoints(self) -> List[RESTAPIEndpointURL]:
@@ -401,12 +434,16 @@ class RESTAPIGenerator:
                 A list with RESTAPIEndpointURLs for this REST API.
         """
 
+        self.logger.debug('Creating a list with all endpoints')
+
         # Create a empty list that we can return later on
         return_list: List[RESTAPIEndpointURL] = list()
 
         # Add endpoints from groups.
         for group in self.groups:
             return_list += group.get_endpoints()
+
+        self.logger.debug('List created')
 
         # Return the list
         return return_list

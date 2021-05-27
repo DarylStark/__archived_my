@@ -3,6 +3,7 @@
 """
 # ---------------------------------------------------------------------
 # Imports
+from logging import getLogger
 import re
 from typing import Callable, List, Optional
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
@@ -43,6 +44,10 @@ class RESTAPIGroup:
             None
         """
 
+        # Set a logger for this object
+        self.logger = getLogger(f'API_Group_{api_url_prefix}')
+        self.logger.debug('Created')
+
         # Set the class variables for the given arguments
         self.url_prefix: str = api_url_prefix
         self.name: Optional[str] = api_url_prefix
@@ -75,6 +80,7 @@ class RESTAPIGroup:
             -------
             None
         """
+        self.logger.debug(f'Adding subgroup: {group.name}')
         self.subgroups.append(group)
 
     def register_endpoint(
@@ -151,6 +157,8 @@ class RESTAPIGroup:
             )
             self.endpoints.append(endpoint)
 
+            self.logger.debug(f'Registered endpoint: {endpoint.name}')
+
             # Return the function so it can still be used
             return func
 
@@ -172,6 +180,8 @@ class RESTAPIGroup:
                 A list with RESTAPIEndpointURLs for this group and it's
                 subgroups
         """
+
+        self.logger.debug('Creating list of endpoint URLs')
 
         # Create a empty list that we can fill to return
         return_list: List[RESTAPIEndpointURL] = list()
@@ -199,6 +209,8 @@ class RESTAPIGroup:
 
             # Add the endpoints to the return list
             return_list += endpoint_list
+
+        self.logger.debug('Created list')
 
         # Return the list
         return return_list
