@@ -108,6 +108,4 @@ def test_api_group_registration() -> None:
 
     # Done! Everything looks fine
     assert True
-
-
 # ---------------------------------------------------------------------
