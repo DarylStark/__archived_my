@@ -28,6 +28,9 @@ class RESTAPIJSONEncoder(JSONEncoder):
             -------
             dict
                 A dictionary the JSON encoder can encode.
+
+            int
+                A integer that the JSON encoder can use.
         """
 
         # Check what kind of object we got

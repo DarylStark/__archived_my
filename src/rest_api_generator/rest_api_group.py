@@ -64,7 +64,7 @@ class RESTAPIGroup:
         self.subgroups: List[RESTAPIGroup] = list()
 
     def add_subgroup(self, group: 'RESTAPIGroup') -> None:
-        """ Method to add a subgroup to this group
+        """ Method to add a subgroup to this group.
 
             Parameters
             ----------
@@ -96,13 +96,23 @@ class RESTAPIGroup:
             name : str (default=None)
                 The name for the API endpoint. Is used in help pages.
 
+            http_methods : Optional[RESTAPIEndpointPermissions]
+                RESTAPIEndpointPermissions object that specifies the
+                needed OAuth permissions for this endpoint.
+
             description : str (default=None)
                 Description for the API endpoint. Is used in help
                 pages.
 
-            http_methods : Optional[RESTAPIEndpointPermissions]
-                RESTAPIEndpointPermissions object that specifies the
-                needed OAuth permissions for this endpoint.
+            auth_needed : bool (default=False)
+                Specifies if authorization is required for this
+                endpoint.
+
+            auth_scpoes : Optional[RESTAPIEndpointPermissions]
+                          (default=None)
+                Specifies the scopes for this endpoint. In the
+                registered auth method, the user can use this
+                information to authorize a request.
 
             Returns
             -------
@@ -113,7 +123,10 @@ class RESTAPIGroup:
         def decorator(func: Callable[[
             Optional[RESTAPIAuthorization],
             Optional[re.Match]
-        ], RESTAPIResponse]):
+        ], RESTAPIResponse]) -> Callable[[
+            Optional[RESTAPIAuthorization],
+            Optional[re.Match]
+        ], RESTAPIResponse]:
             """ The decorator registers the API endpoint
 
                 Parameters

@@ -14,6 +14,3 @@ from rest_api_generator.rest_api_endpoint_permissions \
 from rest_api_generator.rest_api_response import RESTAPIResponse
 from rest_api_generator.rest_api_json_encoder import RESTAPIJSONEncoder
 # ---------------------------------------------------------------------
-if __name__ == '__main__':
-    raise NotImplementedError('This file can not be ran as script')
-# ---------------------------------------------------------------------

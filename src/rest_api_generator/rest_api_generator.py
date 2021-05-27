@@ -29,6 +29,23 @@ class RESTAPIGenerator:
                  bp_import_name: str = __name__,
                  bp_url_prefix: Optional[str] = None) -> None:
         """ The initiator can be used to configure the Flask Blueprint
+
+            Parameters
+            ----------
+            bp_name : str (default = 'api_generator')
+                The name that will be used to create the Blueprint
+
+            bp_import_name : str (default = __name__)
+                The import name that will be used to create the
+                Blueprint
+
+            bp_url_prefix: Optional[str] (default = None)
+                The url prefix for the Blueprint. Will be used by Flask
+                to route all the requests.
+
+            Returns
+            -------
+            None
         """
 
         # Create a empty set with registered groups. The user can add
@@ -39,7 +56,10 @@ class RESTAPIGenerator:
         # Create a Flask Blueprint. This can be used to connect the
         # REST API to a existing Flask app
         self.blueprint: Blueprint = Blueprint(
-            bp_name, bp_import_name, url_prefix=bp_url_prefix)
+            name=bp_name,
+            import_name=bp_import_name,
+            url_prefix=bp_url_prefix
+        )
 
         # Create a list with acceptable HTTP methods. By default, we
         # only accept 'GET' requests, but the user can add methods to
@@ -62,11 +82,32 @@ class RESTAPIGenerator:
         self.add_routes()
 
     def accept_method(self, method: str) -> None:
-        """ Method to add HTTP methods to the accepted list """
+        """ Method to add HTTP methods to the accepted list
+
+            Parameters
+            ----------
+            method : str
+                The method to add ('GET', for example).
+
+            Returns
+            -------
+            None
+        """
         self.accepted_http_methods.append(method)
 
     def deny_method(self, method: str) -> None:
-        """ Method to remove HTTP methods from the accepted list """
+        """ Method to remove HTTP methods from the accepted list.
+
+            Parameters
+            ----------
+            method : str
+                The method to add ('GET', for example).
+
+            Returns
+            -------
+            None
+        """
+
         try:
             self.accepted_http_methods.remove(method)
         except ValueError:
@@ -79,7 +120,20 @@ class RESTAPIGenerator:
                     msg: Optional[str] = None
                     ) -> Optional[RESTAPIResponse]:
         """ Method that either aborts the request, or returns a
-            RESTAPIRespone with a error code. """
+            RESTAPIRespone with a error code.
+
+            Parameters
+            ----------
+            code : int
+                The HTTP error code for this error.
+
+            msg : Optional[str]
+                The message to append
+
+            Returns
+            -------
+            None
+        """
 
         # If the 'abort_on_error' is set to True, we abort the request
         # with the given parameter
@@ -95,7 +149,16 @@ class RESTAPIGenerator:
             return error_response
 
     def add_routes(self) -> None:
-        """ Method to register the routes for the Blueprint """
+        """ Method to register the routes for the Blueprint.
+
+            Parameters
+            ----------
+            None
+
+            Returns
+            -------
+            None
+        """
 
         # We create a callback method for the Blueprint and make sure
         # the Flask routing redirects every request to this method.
@@ -279,7 +342,17 @@ class RESTAPIGenerator:
             )
 
     def register_group(self, group: RESTAPIGroup) -> None:
-        """ Method to register a group for the REST API """
+        """ Method to register a group for the REST API
+
+            Parameters
+            ----------
+            group : RESTAPIGroup
+                The group to register
+
+            Returns
+            -------
+            None
+        """
 
         # Check if the group is of the correct type. If it isn't, the
         # user made a mistake and we raise an exception
@@ -304,7 +377,7 @@ class RESTAPIGenerator:
                    RESTAPIAuthorization]
                 Function that takes in two variables (one for the
                 authorization data and one for the requested
-                permission). Should return a RESTAPIAuthorization
+                scopes). Should return a RESTAPIAuthorization
                 object that defines if the request is authorized or
                 not.
 

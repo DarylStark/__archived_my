@@ -61,6 +61,9 @@ class RESTAPIResponse:
 
         last_page : int
             The maximum page for the resource.
+
+        runtime : float (default=0)
+            The amount of miliseconds the endpoint has run.
     """
 
     # Mandatory members

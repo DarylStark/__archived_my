@@ -38,7 +38,7 @@ class RESTAPIEndpoint:
             Determines if there is authorization needed for this
             endpoint.
 
-        auth_permissions : List[str]
+        auth_scopes : List[str]
             A list of permissions which the user needs at least one of
             to authorize for this endpoint.
     """
