@@ -7,8 +7,8 @@ from logging import getLogger
 import re
 from typing import Callable, List, Optional
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
-from rest_api_generator.rest_api_endpoint_permissions\
-    import RESTAPIEndpointPermissions
+from rest_api_generator.rest_api_endpoint_scopes\
+    import RESTAPIEndpointScopes
 from rest_api_generator.rest_api_endpoint import RESTAPIEndpoint
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 from rest_api_generator.rest_api_response import RESTAPIResponse
@@ -91,7 +91,7 @@ class RESTAPIGroup:
             description: str = None,
             auth_needed: bool = False,
             auth_scopes:
-            Optional[RESTAPIEndpointPermissions] = None) -> Callable:
+            Optional[RESTAPIEndpointScopes] = None) -> Callable:
         """ Decorator to register a endpoint for this REST API group
 
             Parameters

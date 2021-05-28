@@ -7,8 +7,8 @@ import re
 from typing import Callable, List, Optional
 from dataclasses import dataclass, field
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
-from rest_api_generator.rest_api_endpoint_permissions\
-    import RESTAPIEndpointPermissions
+from rest_api_generator.rest_api_endpoint_scopes\
+    import RESTAPIEndpointScopes
 from rest_api_generator.rest_api_response import RESTAPIResponse
 # ---------------------------------------------------------------------
 
@@ -57,5 +57,5 @@ class RESTAPIEndpoint:
 
     # Members for authentication
     auth_needed: Optional[bool] = False
-    auth_scopes: Optional[RESTAPIEndpointPermissions] = None
+    auth_scopes: Optional[RESTAPIEndpointScopes] = None
 # ---------------------------------------------------------------------
