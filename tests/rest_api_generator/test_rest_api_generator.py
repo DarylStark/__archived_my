@@ -6,6 +6,7 @@
 # original path
 import sys
 import os
+import pytest
 from typing import List
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(
@@ -15,32 +16,13 @@ sys.path.append(
 # Imports
 from rest_api_generator import RESTAPIGenerator, RESTAPIGroup, RESTAPIEndpointURL
 # ---------------------------------------------------------------------
+# Fixtures
 
 
-def test_api_group_registration() -> None:
-    """ Unit test that creates a RESTAPIGenerator object, adds groups
-        to it and endpoints, and checks if all the URLs are in there.
-    """
-
-    # Define the needed URLs:
-    needed_urls: List = [
-        'group_a/endpoint_1',
-        'group_a/endpoint_2',
-        'group_b/endpoint_1',
-        'group_b/endpoint_2',
-        'group_c/endpoint_1',
-        'group_c/endpoint_2',
-        'group_d/endpoint_1',
-        'group_d/endpoint_2',
-        'group_a/endpoint_1/',
-        'group_a/endpoint_2/',
-        'group_b/endpoint_1/',
-        'group_b/endpoint_2/',
-        'group_c/endpoint_1/',
-        'group_c/endpoint_2/',
-        'group_d/endpoint_1/',
-        'group_d/endpoint_2/'
-    ]
+@pytest.fixture
+def fixture_rest_api() -> RESTAPIGenerator:
+    """ Fixture to set up a RESTAPIGenerator object with a few groups
+        registered and endpoints connected. """
 
     # Create a RESTAPIGenerator object
     rest_api = RESTAPIGenerator('rest_api_unittest')
@@ -90,21 +72,73 @@ def test_api_group_registration() -> None:
     def group_d_endpoint_2(self):
         pass
 
-    # Retrieve a list of registered endpoints
-    endpoints: List[RESTAPIEndpointURL] = rest_api.get_all_endpoints()
+    # Return the created object
+    return rest_api
 
-    # Check the length of the endpoints list, and verify that it is the
-    # same length as our check list
-    if len(endpoints) != len(needed_urls):
-        assert False
+
+@pytest.fixture
+def fixture_expected_urls() -> List[str]:
+    """ Fixture to create a list of expected URLs """
+
+    return [
+        'group_a/endpoint_1',
+        'group_a/endpoint_2',
+        'group_b/endpoint_1',
+        'group_b/endpoint_2',
+        'group_c/endpoint_1',
+        'group_c/endpoint_2',
+        'group_d/endpoint_1',
+        'group_d/endpoint_2',
+        'group_a/endpoint_1/',
+        'group_a/endpoint_2/',
+        'group_b/endpoint_1/',
+        'group_b/endpoint_2/',
+        'group_c/endpoint_1/',
+        'group_c/endpoint_2/',
+        'group_d/endpoint_1/',
+        'group_d/endpoint_2/'
+    ]
+
+# ---------------------------------------------------------------------
+# Tests
+
+
+def test_api_group_registered_urls(fixture_rest_api, fixture_expected_urls) -> None:
+    """ Unit test for registered URLs
+
+        Check if all expected URLs are in the URL list for a specific
+        RESTAPIGenerator object.
+    """
+
+    # Retrieve a list of registered endpoints
+    endpoints: List[RESTAPIEndpointURL] = fixture_rest_api.get_all_endpoints()
 
     # Get the registered URLs
     registered_urls = [endpoint.url for endpoint in endpoints]
 
     # Check if all endpoints are in there
-    for needed_url in needed_urls:
+    for needed_url in fixture_expected_urls:
         if needed_url not in registered_urls:
             assert False
+
+    # Done! Everything looks fine
+    assert True
+
+
+def test_api_group_registered_urls_length(fixture_rest_api, fixture_expected_urls) -> None:
+    """ Unit test for registered URLs
+
+        Check if the lenght of expected URLs and the length of the URL
+        list in a RESTAPIGenerator object are equal.
+    """
+
+    # Retrieve a list of registered endpoints
+    endpoints: List[RESTAPIEndpointURL] = fixture_rest_api.get_all_endpoints()
+
+    # Check the length of the endpoints list, and verify that it is the
+    # same length as our check list
+    if len(endpoints) != len(fixture_expected_urls):
+        assert False
 
     # Done! Everything looks fine
     assert True

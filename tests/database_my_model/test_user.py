@@ -6,6 +6,7 @@
 # original path
 import sys
 import os
+import pytest
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(
         __file__), os.path.pardir, os.path.pardir)) + '/src'
@@ -14,44 +15,45 @@ sys.path.append(
 # Imports
 from database_my_model import User
 # ---------------------------------------------------------------------
+# Fixtures
 
 
-def test_user_password_verification_correct_password() -> None:
+@pytest.fixture
+def fixture_test_user() -> User:
+    """ Fixture to create a User object """
+
+    return User(fullname='Test User',
+                username='test.user',
+                email='test.user@dstark.nl'
+                )
+# ---------------------------------------------------------------------
+# Tests
+
+
+def test_user_password_verification_correct_password(fixture_test_user: User) -> None:
     """ Unit test for User password verification
 
-        Creates a user objects, sets a password and verifies if the
-        password can be verified
+        Verifies if the checkig of a correct password results in a
+        success.
     """
 
-    # Create the user
-    test_user = User(fullname='Test User',
-                     username='test.user',
-                     email='test.user@dstark.nl'
-                     )
-
     # Set the password
-    test_user.set_password('test123!')
+    fixture_test_user.set_password('test123!')
 
     # Check if the password is correct
-    assert test_user.verify_password('test123!')
+    assert fixture_test_user.verify_password('test123!')
 
 
-def test_user_password_verification_wrong_password() -> None:
+def test_user_password_verification_wrong_password(fixture_test_user: User) -> None:
     """ Unit test for User password verification
 
-        Creates a user objects, sets a password and verifies if the
-        object doesn't respons positive to wrong passwords
+        Verifies if the checkig of a incorrect password results in a
+        failure
     """
 
-    # Create the user
-    test_user = User(fullname='Test User',
-                     username='test.user',
-                     email='test.user@dstark.nl'
-                     )
-
     # Set the password
-    test_user.set_password('test123!')
+    fixture_test_user.set_password('test123!')
 
     # Check if the password is correct
-    assert not test_user.verify_password('!321tset')
+    assert not fixture_test_user.verify_password('!321tset')
 # ---------------------------------------------------------------------
