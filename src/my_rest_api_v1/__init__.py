@@ -10,8 +10,8 @@ from typing import List, Optional
 from flask import Flask
 from rest_api_generator import RESTAPIGenerator, RESTAPIAuthorization
 from rich.logging import RichHandler
-import logging
 from my_rest_api_v1.api import api_group_api
+import logging
 # ---------------------------------------------------------------------
 # Configure logging
 logging.basicConfig(
