@@ -81,6 +81,3 @@ my_rest_api_v1.register_group(group=api_group_api)
 # added to the Flask app. By doing this.
 flask_app.register_blueprint(my_rest_api_v1.blueprint)
 # ---------------------------------------------------------------------
-if __name__ == '__main__':
-    raise NotImplementedError('This file can not be ran as script')
-# ---------------------------------------------------------------------
