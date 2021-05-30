@@ -116,6 +116,29 @@ if __name__ == '__main__':
             except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
                 logger.warning('User not added; already in the database')
 
+        # Create API scopes
+        data = [
+            'api.ping', 'users.create', 'users.retrieve', 'users.update', 'users.delete'
+        ]
+
+        for entry in data:
+            try:
+                with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                        as session:
+
+                    # Create a APIScope objects
+                    scope = APIScope(
+                        module=entry.split('.')[0],
+                        subject=entry.split('.')[1]
+                    )
+
+                    # Add the user to the database
+                    logger.info(f'Creating API scope "{entry}"')
+                    session.add(scope)
+            except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+                logger.warning('Scope not added; already in the database')
+
+        # Create API clients
         try:
             with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
                     as session:
