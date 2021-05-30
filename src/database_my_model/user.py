@@ -12,7 +12,7 @@ from database import Database
 
 
 class User(Database.base_class):
-    """ Test table """
+    """ SQLalchemy user table """
 
     # Mandatory argument for Database objects within SQLAlchemy
     __tablename__ = 'users'
