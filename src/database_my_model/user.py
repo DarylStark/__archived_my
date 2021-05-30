@@ -5,11 +5,20 @@
 # ---------------------------------------------------------------------
 # Imports
 import datetime
+import enum
 from passlib.hash import argon2
-from sqlalchemy import Column, Integer, DateTime, String, UniqueConstraint
+from sqlalchemy import Column, Integer, DateTime, String, UniqueConstraint, Enum
 from sqlalchemy.orm import relationship
 from database import Database
 # ---------------------------------------------------------------------
+
+
+class UserRole(enum.Enum):
+    """ Enum containing the roles a user can have. """
+
+    root = 1
+    admin = 2
+    user = 3
 
 
 class User(Database.base_class):
@@ -31,6 +40,7 @@ class User(Database.base_class):
     fullname = Column(String(128), nullable=False)
     username = Column(String(128), nullable=False)
     email = Column(String(128), nullable=False)
+    role = Column(Enum(UserRole), nullable=False)
     password = Column(String(512), nullable=False)
     password_date = Column(DateTime, nullable=False)
 

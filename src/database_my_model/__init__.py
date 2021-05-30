@@ -8,5 +8,5 @@ from database.database import Database
 
 # Database tables
 from database_my_model.api_client import APIClient
-from database_my_model.user import User
+from database_my_model.user import UserRole, User
 # ---------------------------------------------------------------------

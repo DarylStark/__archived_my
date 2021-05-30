@@ -29,8 +29,8 @@ class APIClient(Database.base_class):
     created = Column(DateTime, nullable=False,
                      default=datetime.datetime.utcnow)
     expires = Column(DateTime)
-    created_by_user = Column(ForeignKey("users.id"),
-                             nullable=False)
+    user = Column(ForeignKey("users.id"),
+                  nullable=False)
     enabled = Column(Boolean, default=True, nullable=False)
     app_name = Column(String(64), nullable=False)
     app_publisher = Column(String(64), nullable=False)

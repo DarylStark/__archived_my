@@ -86,22 +86,35 @@ if __name__ == '__main__':
 
     # Add test data
     if args.create_data:
-        try:
-            with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
-                    as session:
+        # Create users
+        data = [
+            User(fullname='Root user',
+                 username='root',
+                 email='root@dstark.nl',
+                 role=UserRole.root,
+                 password='test'
+                 ),
+            User(fullname='Daryl Stark',
+                 username='daryl.stark',
+                 email='daryl@dstark.nl',
+                 role=UserRole.user,
+                 password='test'
+                 )
+        ]
 
-                # Create a new user-object and set the password
-                new_user = User(fullname='Daryl Stark',
-                                username='daryl.stark',
-                                email='daryl@dstark.nl'
-                                )
-                new_user.set_password('test')
+        for entry in data:
+            try:
+                with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                        as session:
 
-                # Add the user to the database
-                logger.info(f'Creating user "{new_user.fullname}"')
-                session.add(new_user)
-        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
-            logger.warning('User not added; already in the database')
+                    # Set the password
+                    entry.set_password(entry.password)
+
+                    # Add the user to the database
+                    logger.info(f'Creating user "{entry.fullname}"')
+                    session.add(entry)
+            except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+                logger.warning('User not added; already in the database')
 
         try:
             with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
@@ -110,7 +123,7 @@ if __name__ == '__main__':
                 # Create a new APIClient-object
                 new_client = APIClient(
                     expires=None,
-                    created_by_user=1,
+                    user=2,
                     enabled=True,
                     app_name='Thunder Client',
                     app_publisher='Ranga Vadhineni',
