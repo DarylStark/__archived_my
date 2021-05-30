@@ -103,6 +103,26 @@ if __name__ == '__main__':
         except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
             logger.warning('User not added; already in the database')
 
+        try:
+            with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                    as session:
+
+                # Create a new APIClient-object
+                new_client = APIClient(
+                    expires=None,
+                    created_by_user=1,
+                    enabled=True,
+                    app_name='Thunder Client',
+                    app_publisher='Ranga Vadhineni',
+                    token='abcdefgh1234567890'
+                )
+
+                # Add the user to the database
+                logger.info(f'Creating API client "{new_client.app_name}"')
+                session.add(new_client)
+        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+            logger.warning('API client not added; already in the database')
+
     # Done!
     logger.info('Script done')
 # ---------------------------------------------------------------------

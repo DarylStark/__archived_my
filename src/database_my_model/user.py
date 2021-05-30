@@ -7,6 +7,7 @@
 import datetime
 from passlib.hash import argon2
 from sqlalchemy import Column, Integer, DateTime, String, UniqueConstraint
+from sqlalchemy.orm import relationship
 from database import Database
 # ---------------------------------------------------------------------
 
@@ -32,6 +33,9 @@ class User(Database.base_class):
     email = Column(String(128), nullable=False)
     password = Column(String(512), nullable=False)
     password_date = Column(DateTime, nullable=False)
+
+    # Relationships
+    r_created_api_clients = relationship("APIClient")
 
     def set_password(self, password: str) -> None:
         """ Method to set the password for this user

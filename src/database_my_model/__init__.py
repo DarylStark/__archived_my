@@ -7,8 +7,6 @@
 from database.database import Database
 
 # Database tables
+from database_my_model.api_client import APIClient
 from database_my_model.user import User
-# ---------------------------------------------------------------------
-if __name__ == '__main__':
-    raise NotImplementedError('This file can not be used as script')
 # ---------------------------------------------------------------------
