@@ -159,6 +159,46 @@ if __name__ == '__main__':
         except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
             logger.warning('API client not added; already in the database')
 
+        # Create API tokens
+        try:
+            with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                    as session:
+
+                # Create a new APIToken-object
+                new_token = APIToken(
+                    expires=None,
+                    client=1,
+                    user=2,
+                    enabled=True,
+                    token='poiuytrewq'
+                )
+
+                # Add the user to the database
+                logger.info(f'Creating API token "{new_token.token}"')
+                session.add(new_token)
+        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+            logger.warning('API token not added; already in the database')
+
+        # Add scopes to the created API token
+        data = [1, 2, 3, 4]
+        try:
+            for entry in data:
+                with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                        as session:
+
+                    # Create a new APITokenScope-object
+                    new_token_scope = APITokenScope(
+                        token=1,
+                        scope=entry
+                    )
+
+                    # Add the user to the database
+                    logger.info(
+                        f'Creating API token "{new_token_scope.token}/{new_token_scope.scope}"')
+                    session.add(new_token_scope)
+        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+            logger.warning('API tokenscope not added; already in the database')
+
     # Done!
     logger.info('Script done')
 # ---------------------------------------------------------------------
