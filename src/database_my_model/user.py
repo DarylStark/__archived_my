@@ -44,9 +44,6 @@ class User(Database.base_class):
     password = Column(String(512), nullable=False)
     password_date = Column(DateTime, nullable=False)
 
-    # Relationships
-    r_created_api_clients = relationship("APIClient")
-
     def set_password(self, password: str) -> None:
         """ Method to set the password for this user
 

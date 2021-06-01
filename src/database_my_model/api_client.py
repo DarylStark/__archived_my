@@ -29,11 +29,14 @@ class APIClient(Database.base_class):
     created = Column(DateTime, nullable=False,
                      default=datetime.datetime.utcnow)
     expires = Column(DateTime)
-    user = Column(ForeignKey('users.id'),
-                  nullable=False)
+    user_id = Column(ForeignKey('users.id'),
+                     nullable=False)
     enabled = Column(Boolean, default=True, nullable=False)
     app_name = Column(String(64), nullable=False)
     app_publisher = Column(String(64), nullable=False)
     token = Column(String(32), nullable=False)
+
+    # Many-to-one relationships
+    user = relationship('User', backref='api_clients')
 
 # ---------------------------------------------------------------------

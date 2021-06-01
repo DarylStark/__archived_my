@@ -28,4 +28,9 @@ class APIScope(Database.base_class):
     module = Column(String(32), nullable=False)
     subject = Column(String(32), nullable=False)
 
+    @property
+    def full_scope_name(self) -> str:
+        """ Method that creates a 'full API scope' object. """
+        return f'{self.module}.{self.subject}'
+
 # ---------------------------------------------------------------------

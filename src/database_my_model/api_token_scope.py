@@ -20,12 +20,16 @@ class APITokenScope(Database.base_class):
 
     # Set constrains for this table
     __table_args__ = (
-        UniqueConstraint('token', 'scope'),
+        UniqueConstraint('token_id', 'scope_id'),
     )
 
     # Database columns for this table
     id = Column(Integer, primary_key=True)
-    token = Column(ForeignKey('api_tokens.id'), nullable=False)
-    scope = Column(ForeignKey('api_scopes.id'), nullable=False)
+    token_id = Column(ForeignKey('api_tokens.id'), nullable=False)
+    scope_id = Column(ForeignKey('api_scopes.id'), nullable=False)
+
+    # One-to-one relationships
+    token = relationship('APIToken', backref='scopes')
+    scope = relationship('APIScope', backref='scopes')
 
 # ---------------------------------------------------------------------

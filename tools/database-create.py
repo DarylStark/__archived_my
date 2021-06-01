@@ -146,7 +146,7 @@ if __name__ == '__main__':
                 # Create a new APIClient-object
                 new_client = APIClient(
                     expires=None,
-                    user=2,
+                    user_id=2,
                     enabled=True,
                     app_name='Thunder Client',
                     app_publisher='Ranga Vadhineni',
@@ -167,8 +167,8 @@ if __name__ == '__main__':
                 # Create a new APIToken-object
                 new_token = APIToken(
                     expires=None,
-                    client=1,
-                    user=2,
+                    client_id=1,
+                    user_id=2,
                     enabled=True,
                     token='poiuytrewq'
                 )
@@ -188,8 +188,8 @@ if __name__ == '__main__':
 
                     # Create a new APITokenScope-object
                     new_token_scope = APITokenScope(
-                        token=1,
-                        scope=entry
+                        token_id=1,
+                        scope_id=entry
                     )
 
                     # Add the user to the database
