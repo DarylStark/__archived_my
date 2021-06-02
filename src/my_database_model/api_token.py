@@ -36,7 +36,9 @@ class APIToken(Database.base_class):
     token = Column(String(32), nullable=False)
 
     # Many-to-one relationships
-    client = relationship('APIClient', backref='api_tokens')
-    user = relationship('User', backref='api_tokens')
+    client = relationship('APIClient', lazy='joined')
+    user = relationship('User', lazy='joined')
+    token_scopes = relationship(
+        'APITokenScope', lazy='joined', back_populates='token')
 
 # ---------------------------------------------------------------------

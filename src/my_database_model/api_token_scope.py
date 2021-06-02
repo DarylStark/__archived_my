@@ -29,7 +29,7 @@ class APITokenScope(Database.base_class):
     scope_id = Column(ForeignKey('api_scopes.id'), nullable=False)
 
     # One-to-one relationships
-    token = relationship('APIToken', backref='scopes')
-    scope = relationship('APIScope', backref='scopes')
+    token = relationship('APIToken', lazy='joined')
+    scope = relationship('APIScope', lazy='joined')
 
 # ---------------------------------------------------------------------

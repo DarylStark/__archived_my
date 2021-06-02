@@ -36,7 +36,4 @@ class APIClient(Database.base_class):
     app_publisher = Column(String(64), nullable=False)
     token = Column(String(32), nullable=False)
 
-    # Many-to-one relationships
-    user = relationship('User', backref='api_clients')
-
 # ---------------------------------------------------------------------

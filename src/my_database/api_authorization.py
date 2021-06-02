@@ -7,6 +7,7 @@
 from typing import Optional
 from database import DatabaseSession
 from my_database_model import APIToken
+from my_database_model.api_token_scope import APITokenScope
 # ---------------------------------------------------------------------
 # Methods
 
@@ -30,13 +31,16 @@ def get_token_information(token: str) -> Optional[APIToken]:
             If no token is found.
     """
 
+    # Set an empty token_object
+    token_object: Optional[APIToken] = None
+
     # Get the token
     with DatabaseSession(commit_on_end=False, expire_on_commit=False) as session:
         # token_object: APIToken = session.query(APIToken).filter(
         #     APIToken.token == token).first()
-        token_object = session.query(APIToken).first()
-
-        print('test')
+        token_object = session.query(APIToken).filter(
+            APIToken.token == token
+        ).first()
 
     # Return the token
     return token_object

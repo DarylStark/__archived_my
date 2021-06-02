@@ -12,7 +12,7 @@ from rest_api_generator import RESTAPIGenerator, RESTAPIAuthorization
 from rich.logging import RichHandler
 from my_rest_api_v1.api import api_group_api
 import logging
-from my_database.api_authentication import get_token_information
+from my_database.api_authorization import get_token_information
 # ---------------------------------------------------------------------
 # Configure logging
 logging.basicConfig(
@@ -64,31 +64,28 @@ def auth(auth: str, scopes: Optional[List[str]]) -> RESTAPIAuthorization:
         RESTAPIAuthorization:
             A object containing the authorization information.
     """
-    token_object = get_token_information('poiuytrewq')
 
     # Create a authorization object
     auth_object: RESTAPIAuthorization = RESTAPIAuthorization()
 
-    # Temporary API tokens
-    tokens = {
-        'token_a': {
-            'scopes': ['api.ping'],
-            'data': {'id': 2, 'username': 'daryl.stark'}
-        }
-    }
+    # Get the token object
+    token_object = get_token_information('poiuytrewq')
 
-    # Get the API token
-    token = auth.split()[1]
+    # If we didn't get a object, the token is wrong
+    if token_object is None:
+        auth_object.authorized = False
+        return auth_object
 
-    # Check scopes
-    try:
-        token_object = tokens[token]
-        for scope in scopes:
-            if scope in token_object['scopes']:
-                auth_object.authorized = True
-                auth_object.data = token_object['data']
-    except KeyError:
-        pass
+    # Get the assosicated scopes
+    token_scopes = [
+        token_scope.scope.full_scope_name for token_scope in token_object.token_scopes]
+
+    # Check if any of the given scopes is in the 'token scopes'
+    for scope in scopes:
+        if scope in token_scopes:
+            auth_object.authorized = True
+            auth_object.data = token_object
+            break
 
     # Return authorization object
     return auth_object
