@@ -19,7 +19,7 @@ import sqlalchemy
 from rich.logging import RichHandler
 from database import Database, DatabaseSession
 from database.exceptions import DatabaseConnectionError
-from database_my_model import *
+from my_database_model import *
 # ---------------------------------------------------------------------
 if __name__ == '__main__':
     # Parse the arguments for the script

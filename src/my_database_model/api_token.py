@@ -9,7 +9,7 @@ from sqlalchemy import Column, Integer, DateTime, String, UniqueConstraint, \
     ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from database import Database
-from database_my_model.api_token_scope import APITokenScope
+from my_database_model.api_token_scope import APITokenScope
 # ---------------------------------------------------------------------
 
 

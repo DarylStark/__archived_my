@@ -6,7 +6,7 @@
 # Imports
 from typing import Optional
 from my_database import db
-from database_my_model import APIToken
+from my_database_model import APIToken
 # ---------------------------------------------------------------------
 # Methods
 
