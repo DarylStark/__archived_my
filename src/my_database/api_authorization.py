@@ -36,8 +36,6 @@ def get_token_information(token: str) -> Optional[APIToken]:
 
     # Get the token
     with DatabaseSession(commit_on_end=False, expire_on_commit=False) as session:
-        # token_object: APIToken = session.query(APIToken).filter(
-        #     APIToken.token == token).first()
         token_object = session.query(APIToken).filter(
             APIToken.token == token
         ).first()
