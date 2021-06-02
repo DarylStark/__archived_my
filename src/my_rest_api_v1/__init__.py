@@ -12,6 +12,7 @@ from rest_api_generator import RESTAPIGenerator, RESTAPIAuthorization
 from rich.logging import RichHandler
 from my_rest_api_v1.api import api_group_api
 import logging
+from my_database.api_authentication import get_token_information
 # ---------------------------------------------------------------------
 # Configure logging
 logging.basicConfig(
@@ -46,6 +47,25 @@ my_rest_api_v1.accept_method('DELETE')
 # Create a method for authorization
 @my_rest_api_v1.register_authorization_method
 def auth(auth: str, scopes: Optional[List[str]]) -> RESTAPIAuthorization:
+    """
+        Method that does the authentication for the REST API.
+
+        Parameters
+        ----------
+        auth : str
+            The authentication header from the Flask Request
+
+        scopes : Optional[List[str]]
+            The scopes that are defined in the endpoint that are
+            required for this endpoint.
+
+        Returns
+        -------
+        RESTAPIAuthorization:
+            A object containing the authorization information.
+    """
+    get_token_information('test')
+
     # Create a authorization object
     auth_object: RESTAPIAuthorization = RESTAPIAuthorization()
 
