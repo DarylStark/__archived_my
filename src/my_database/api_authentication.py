@@ -5,14 +5,39 @@
 # ---------------------------------------------------------------------
 # Imports
 from typing import Optional
-from my_database import db
+from database import DatabaseSession
 from my_database_model import APIToken
 # ---------------------------------------------------------------------
 # Methods
 
 
 def get_token_information(token: str) -> Optional[APIToken]:
-    # # session.query(APIToken).filter(APIToken.token == 'poiuytrewq').first()
-    print(db)
-    pass
+    """ Method that retrieves token information by a specific token.
+        Can be used by the REST API authentication method to verify if
+        a request is authorized.
+
+        Parameters
+        ----------
+        token : str
+            The token to verify
+
+        Returns
+        -------
+        APIToken
+            The API token object from the database.
+
+        None
+            If no token is found.
+    """
+
+    # Get the token
+    with DatabaseSession(commit_on_end=False, expire_on_commit=False) as session:
+        # token_object: APIToken = session.query(APIToken).filter(
+        #     APIToken.token == token).first()
+        token_object = session.query(APIToken).first()
+
+        print('test')
+
+    # Return the token
+    return token_object
 # ---------------------------------------------------------------------

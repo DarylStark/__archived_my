@@ -64,7 +64,7 @@ def auth(auth: str, scopes: Optional[List[str]]) -> RESTAPIAuthorization:
         RESTAPIAuthorization:
             A object containing the authorization information.
     """
-    get_token_information('test')
+    token_object = get_token_information('poiuytrewq')
 
     # Create a authorization object
     auth_object: RESTAPIAuthorization = RESTAPIAuthorization()
