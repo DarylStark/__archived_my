@@ -26,7 +26,8 @@ class DatabaseSession:
             ----------
             commit_on_end : bool, default=False
                 Tells the object to commit when the context manager is
-                done
+                done.
+
             expire_on_commit : bool, default=True
                 Tells the object to either expire or not expire created
                 objects after the context manager is done.
@@ -103,11 +104,13 @@ class DatabaseSession:
             Parameters
             ----------
             exception_type : Optional[Type[BaseException]]
-                The exception that happend during execution
+                The exception that happend during execution.
+
             exception_value : Optional[BaseException]
-                The value of the exception
+                The value of the exception.
+
             traceback : Optional[TracebackType]
-                The traceback for the exception
+                The traceback for the exception.
 
             Returns
             -------

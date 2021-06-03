@@ -58,26 +58,33 @@ class Database():
             Parameters
             ----------
             conncection : str
-                The connection string that can be used by SQLalchemy
+                The connection string that can be used by SQLalchemy.
+
             echo : bool
                 Can be used for debugging; writes the queries for
-                SQLAlchemy to the stdout buffer
+                SQLAlchemy to the stdout buffer.
+
             pool_pre_ping : bool
                 By default True. Determines if SQLAlchemy should
                 do a pre-check before using a connection that is
                 already in the pool. By doing this, we can prevent
-                it from using dead connections
+                it from using dead connections.
+
             pool_recycle : int
                 After how many seconds SQLAlchemy considers a
                 MySQL connection to be stale and therefore removed
-                from the database
+                from the database.
+
             pool_size : int
-                The size the pool can get
+                The size the pool can get.
+
             pool_overflow : int
                 How many connections SQLAlchemy can go over the
-                pool_size
+                pool_size.
+
             create_tables : bool
-                Specifies if the method should create tables
+                Specifies if the method should create tables.
+
 
             Returns
             -------
