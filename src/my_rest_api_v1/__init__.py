@@ -6,9 +6,10 @@
 """
 # ---------------------------------------------------------------------
 # Imports
-from typing import List, Optional
+from typing import List, Optional, Union
 from flask import Flask
-from rest_api_generator import RESTAPIGenerator, RESTAPIAuthorization
+from rest_api_generator import RESTAPIGenerator, RESTAPIAuthorization, \
+    BasicAuthorization, BearerAuthorzation
 from rich.logging import RichHandler
 from my_rest_api_v1.api import api_group_api
 import logging
@@ -46,14 +47,17 @@ my_rest_api_v1.accept_method('DELETE')
 
 # Create a method for authorization
 @my_rest_api_v1.register_authorization_method
-def auth(auth: str, scopes: Optional[List[str]]) -> RESTAPIAuthorization:
+def auth(auth: Optional[Union[BasicAuthorization, BearerAuthorzation]],
+         scopes: Optional[List[str]]) -> RESTAPIAuthorization:
     """
         Method that does the authentication for the REST API.
 
         Parameters
         ----------
-        auth : str
-            The authentication header from the Flask Request
+        auth : Optional[Union[BasicAuthorization, BearerAuthorzation]]
+            The authentication header from the Flask Request. Can be
+            None, a BasicAuthorization object or a BearerAuthorization
+            object, depending on the given authorization.
 
         scopes : Optional[List[str]]
             The scopes that are defined in the endpoint that are
@@ -68,8 +72,13 @@ def auth(auth: str, scopes: Optional[List[str]]) -> RESTAPIAuthorization:
     # Create a authorization object
     auth_object: RESTAPIAuthorization = RESTAPIAuthorization()
 
+    # Check the type of authorization we received. We only accept the
+    # 'Bearer' kind, since that is being used in OAuth world.
+    if type(auth) is not BearerAuthorzation:
+        return auth_object
+
     # Get the token object
-    token_object = get_token_information('poiuytrewq')
+    token_object = get_token_information(auth.token)
 
     # If we didn't get a object, the token is wrong
     if token_object is None:
@@ -78,7 +87,9 @@ def auth(auth: str, scopes: Optional[List[str]]) -> RESTAPIAuthorization:
 
     # Get the assosicated scopes
     token_scopes = [
-        token_scope.scope.full_scope_name for token_scope in token_object.token_scopes]
+        token_scope.scope.full_scope_name
+        for token_scope in token_object.token_scopes
+    ]
 
     # Check if any of the given scopes is in the 'token scopes'
     for scope in scopes:
