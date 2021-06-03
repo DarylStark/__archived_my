@@ -4,7 +4,8 @@
 """
 # ---------------------------------------------------------------------
 # Imports
-from rest_api_generator.rest_api_generator import RESTAPIGenerator
+from rest_api_generator.rest_api_generator import RESTAPIGenerator, \
+    BasicAuthorization, BearerAuthorzation
 from rest_api_generator.rest_api_endpoint import RESTAPIEndpoint
 from rest_api_generator.rest_api_group import RESTAPIGroup
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
