@@ -15,31 +15,7 @@ from flask import Flask
 from rest_api_generator import RESTAPIGenerator, RESTAPIGroup, RESTAPIResponse
 from rest_api_generator import RESTAPIAuthorization, ResponseType
 
-# Create a Flask object
-flask_app = Flask(__name__)
-
-# Create a RESTAPIGenerator object
-my_rest_api_v1 = RESTAPIGenerator(
-    bp_name='my_rest_api_v1',
-    bp_import_name=__name__,
-    bp_url_prefix='/api/v1/')
-
-# Turn on authorization
-my_rest_api_v1.use_authorization = True
-
-# Make sure errors get reported as JSON error resposne instead of
-# normal Flask error pages
-my_rest_api_v1.abort_on_error = False
-
-# Enable the correct methods
-my_rest_api_v1.accept_method('POST')
-my_rest_api_v1.accept_method('PATCH')
-my_rest_api_v1.accept_method('DELETE')
-
-
-# Create a method for authorization
-@my_rest_api_v1.register_authorization_method
-def auth(auth: str, permissions: Optional[List[str]]) -> RESTAPIAuthorization:
+def authorization(auth: str, permissions: Optional[List[str]]) -> RESTAPIAuthorization:
     """ Authorization method for the REST API """
 
     # For the example, we always return a 'True' value. In a production
@@ -58,6 +34,28 @@ def auth(auth: str, permissions: Optional[List[str]]) -> RESTAPIAuthorization:
 
     # Return the created object
     return auth
+
+# Create a Flask object
+flask_app = Flask(__name__)
+
+# Create a RESTAPIGenerator object
+my_rest_api_v1 = RESTAPIGenerator(
+    bp_name='my_rest_api_v1',
+    bp_import_name=__name__,
+    bp_url_prefix='/api/v1/')
+
+# Turn on authorization
+my_rest_api_v1.use_authorization = True
+my_rest_api_v1.authorization_function = authorization
+
+# Make sure errors get reported as JSON error resposne instead of
+# normal Flask error pages
+my_rest_api_v1.abort_on_error = False
+
+# Enable the correct methods
+my_rest_api_v1.accept_method('POST')
+my_rest_api_v1.accept_method('PATCH')
+my_rest_api_v1.accept_method('DELETE')
 
 # Create a RESTAPIGroup for users
 api_group_users = RESTAPIGroup(
