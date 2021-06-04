@@ -19,7 +19,7 @@ import sqlalchemy
 from rich.logging import RichHandler
 from database import Database, DatabaseSession
 from database.exceptions import DatabaseConnectionError
-from database_my_model import *
+from my_database_model import *
 # ---------------------------------------------------------------------
 if __name__ == '__main__':
     # Parse the arguments for the script
@@ -86,22 +86,118 @@ if __name__ == '__main__':
 
     # Add test data
     if args.create_data:
+        # Create users
+        data = [
+            User(fullname='Root user',
+                 username='root',
+                 email='root@dstark.nl',
+                 role=UserRole.root,
+                 password='test'
+                 ),
+            User(fullname='Daryl Stark',
+                 username='daryl.stark',
+                 email='daryl@dstark.nl',
+                 role=UserRole.user,
+                 password='test'
+                 )
+        ]
+
+        for entry in data:
+            try:
+                with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                        as session:
+
+                    # Set the password
+                    entry.set_password(entry.password)
+
+                    # Add the user to the database
+                    logger.info(f'Creating user "{entry.fullname}"')
+                    session.add(entry)
+            except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+                logger.warning('User not added; already in the database')
+
+        # Create API scopes
+        data = [
+            'api.ping', 'users.create', 'users.retrieve', 'users.update', 'users.delete'
+        ]
+
+        for entry in data:
+            try:
+                with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                        as session:
+
+                    # Create a APIScope objects
+                    scope = APIScope(
+                        module=entry.split('.')[0],
+                        subject=entry.split('.')[1]
+                    )
+
+                    # Add the user to the database
+                    logger.info(f'Creating API scope "{entry}"')
+                    session.add(scope)
+            except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+                logger.warning('Scope not added; already in the database')
+
+        # Create API clients
         try:
             with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
                     as session:
 
-                # Create a new user-object and set the password
-                new_user = User(fullname='Daryl Stark',
-                                username='daryl.stark',
-                                email='daryl@dstark.nl'
-                                )
-                new_user.set_password('test')
+                # Create a new APIClient-object
+                new_client = APIClient(
+                    expires=None,
+                    user_id=2,
+                    enabled=True,
+                    app_name='Thunder Client',
+                    app_publisher='Ranga Vadhineni',
+                    token='abcdefgh1234567890'
+                )
 
                 # Add the user to the database
-                logger.info(f'Creating user "{new_user.fullname}"')
-                session.add(new_user)
+                logger.info(f'Creating API client "{new_client.app_name}"')
+                session.add(new_client)
         except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
-            logger.warning('User not added; already in the database')
+            logger.warning('API client not added; already in the database')
+
+        # Create API tokens
+        try:
+            with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                    as session:
+
+                # Create a new APIToken-object
+                new_token = APIToken(
+                    expires=None,
+                    client_id=1,
+                    user_id=2,
+                    enabled=True,
+                    token='poiuytrewq'
+                )
+
+                # Add the user to the database
+                logger.info(f'Creating API token "{new_token.token}"')
+                session.add(new_token)
+        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+            logger.warning('API token not added; already in the database')
+
+        # Add scopes to the created API token
+        data = [1, 2, 3, 4]
+        try:
+            for entry in data:
+                with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                        as session:
+
+                    # Create a new APITokenScope-object
+                    new_token_scope = APITokenScope(
+                        token_id=1,
+                        scope_id=entry
+                    )
+
+                    # Add the user to the database
+                    logger.info(
+                        f'Creating API token "{new_token_scope.token}/{new_token_scope.scope}"')
+                    session.add(new_token_scope)
+        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+            logger.warning('API tokenscope not added; already in the database')
 
     # Done!
     logger.info('Script done')

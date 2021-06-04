@@ -4,6 +4,7 @@
 """
 # ---------------------------------------------------------------------
 # Imports
+from dataclasses import dataclass
 import re
 import timeit
 import time
@@ -19,7 +20,43 @@ from rest_api_generator.rest_api_response import RESTAPIResponse, ResponseType
 from json import dumps
 from math import ceil
 from logging import getLogger
+from collections import namedtuple
 # ---------------------------------------------------------------------
+
+
+@dataclass
+class BasicAuthorization:
+    """
+        DataClass for BasicAuthorization. Created for the authorization
+        function. Objects of this class contain a username and a
+        password.
+
+        Members
+        -------
+        username : str
+            The username that is provided.
+
+        password : str
+            The password that is provided.
+    """
+
+    username: str
+    password: str
+
+
+@dataclass
+class BearerAuthorzation:
+    """
+        DataClass for BearerAuthorization. Created for the
+        authorization function. Objects of this class contain the token
+        that was given.
+
+        Members
+        -------
+        token : str
+            The token that was given by the request.
+    """
+    token: str
 
 
 class RESTAPIGenerator:
@@ -75,8 +112,15 @@ class RESTAPIGenerator:
 
         # Set default values for the authorization options
         self.use_authorization: bool = False
-        self.authorization_function: Optional[Callable[[
-            str, Optional[List[str]]], RESTAPIAuthorization]]
+        self.authorization_function: Optional[
+            Callable[
+                [
+                    Optional[Union[BasicAuthorization, BearerAuthorzation]],
+                    Optional[List[str]]
+                ],
+                RESTAPIAuthorization
+            ]
+        ]
 
         # Set defaults for API results
         self.default_limit: int = 25
@@ -178,10 +222,10 @@ class RESTAPIGenerator:
 
         # We create a callback method for the Blueprint and make sure
         # the Flask routing redirects every request to this method.
-        @self.blueprint.route('/', defaults={'path': ''},
-                              methods=self.accepted_http_methods)
-        @self.blueprint.route('/<path:path>',
-                              methods=self.accepted_http_methods)
+        @ self.blueprint.route('/', defaults={'path': ''},
+                               methods=self.accepted_http_methods)
+        @ self.blueprint.route('/<path:path>',
+                               methods=self.accepted_http_methods)
         def execute_url(path: str) -> Optional[Union[str, Response]]:
             """ Method that gets run as soon as a REST API Endpoint
                 gets requested.
@@ -252,10 +296,33 @@ class RESTAPIGenerator:
                         # Permissions needed, get if the user is
                         # authorized to run this endpoint
                         try:
+                            # Check the kind of authorization we
+                            # received and create a good object for it.
+                            authorization_header: str = \
+                                request.headers['Authorization']
+                            authorization_object: Optional[
+                                Union[
+                                    BasicAuthorization,
+                                    BearerAuthorzation
+                                ]
+                            ] = None
+
+                            if authorization_header.startswith('Basic '):
+                                # Basic authorization
+                                authorization_object = BasicAuthorization(
+                                    username=request.authorization['username'],
+                                    password=request.authorization['password']
+                                )
+                            elif authorization_header.startswith('Bearer '):
+                                # Bearer authorization (a token)
+                                authorization_object = BearerAuthorzation(
+                                    token=authorization_header[7:]
+                                )
+
                             # Check if the user is authorized
                             auth = \
                                 self.authorization_function(
-                                    request.headers['Authorization'],
+                                    authorization_object,
                                     endpoint.auth_scopes.__getattribute__(
                                         request.method)
                                 )
@@ -395,30 +462,6 @@ class RESTAPIGenerator:
             # Wrong type, give error
             raise InvalidGroupError(
                 f'Group is of type "{type(group)}", expected "{RESTAPIGroup}"')
-
-    def register_authorization_method(
-        self,
-        func: Callable[[str, Optional[List[str]]], RESTAPIAuthorization]
-    ) -> None:
-        """ Method to set a authorization method for the REST API.
-            Should be used as a decorator
-
-            Parameter
-            ---------
-            func : Callable[[str, Optional[List[str]]],
-                   RESTAPIAuthorization]
-                Function that takes in two variables (one for the
-                authorization data and one for the requested
-                scopes). Should return a RESTAPIAuthorization
-                object that defines if the request is authorized or
-                not.
-
-            Returns
-            -------
-            None
-        """
-        self.logger.debug('Setting authorization method')
-        self.authorization_function = func
 
     def get_all_endpoints(self) -> List[RESTAPIEndpointURL]:
         """ Method that returns all RESTAPIEndpoints for this REST API

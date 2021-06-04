@@ -2,6 +2,7 @@
     // Python configuration
     "python.pythonPath": "env/bin/python",
     "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true,
     // Python linting
     "python.linting.enabled": true,
     "python.analysis.extraPaths": [
@@ -20,7 +21,6 @@
         "E402"
     ],
     // Python unit testing
-    "python.testing.cwd": "${workspaceFolder}/src",
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "${workspaceFolder}/tests/"

@@ -1,6 +1,6 @@
 """
-    This module includes the RESTAPIEndpointPermissions class which is
-    a object that contains the permissions for a specific
+    This module includes the RESTAPIEndpointScopes class which is
+    a object that contains the auth scopes for a specific
     RESTAPIEndpoint
 """
 # ---------------------------------------------------------------------
@@ -11,8 +11,8 @@ from typing import List, Optional
 
 
 @dataclass
-class RESTAPIEndpointPermissions:
-    """ Class used to create objects that contain the permissions for a
+class RESTAPIEndpointScopes:
+    """ Class used to create objects that contain the auth scopes for a
         specific RESTAPIEndpoint
 
         Members

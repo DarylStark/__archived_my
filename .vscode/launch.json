@@ -22,7 +22,7 @@
             "module": "flask",
             "cwd": "${workspaceFolder}/src",
             "env": {
-                "FLASK_APP": "my_rest_api_v1",
+                "FLASK_APP": "my_rest_api_v1:flask_app",
                 "FLASK_ENV": "development"
             },
             "args": [

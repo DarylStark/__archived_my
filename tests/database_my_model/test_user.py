@@ -13,7 +13,7 @@ sys.path.append(
 )
 # ---------------------------------------------------------------------
 # Imports
-from database_my_model import User
+from my_database_model import User
 # ---------------------------------------------------------------------
 # Fixtures
 
