@@ -463,36 +463,6 @@ class RESTAPIGenerator:
             raise InvalidGroupError(
                 f'Group is of type "{type(group)}", expected "{RESTAPIGroup}"')
 
-    def register_authorization_method(
-        self,
-        func: Callable[
-            [
-                Optional[Union[BasicAuthorization, BearerAuthorzation]],
-                Optional[List[str]]
-            ],
-            RESTAPIAuthorization
-        ]
-    ) -> None:
-        """ Method to set a authorization method for the REST API.
-            Should be used as a decorator
-
-            Parameter
-            ---------
-            func : Callable[[str, Optional[List[str]]],
-                   RESTAPIAuthorization]
-                Function that takes in two variables (one for the
-                authorization data and one for the requested
-                scopes). Should return a RESTAPIAuthorization
-                object that defines if the request is authorized or
-                not.
-
-            Returns
-            -------
-            None
-        """
-        self.logger.debug('Setting authorization method')
-        self.authorization_function = func
-
     def get_all_endpoints(self) -> List[RESTAPIEndpointURL]:
         """ Method that returns all RESTAPIEndpoints for this REST API
             in a list with RESTAPIEndpointURL objects.
