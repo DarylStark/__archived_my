@@ -17,21 +17,27 @@ from my_rest_api_v1.authorization import authorization
 # Configure logging
 logging.basicConfig(
     level=logging.DEBUG,
-    format='%(message)s',
+    format='%(name)s: %(message)s',
     datefmt="[%X]",
     handlers=[RichHandler()]
 )
 
+# Create a logger for the My REST API package
+logger = logging.getLogger('MyRESTAPI')
+
 # Create a Flask object
+logger.debug('Creating Flask object')
 flask_app = Flask(__name__)
 
 # Create a RESTAPIGenerator object
+logger.debug('Creating RESTAPIGenerator object')
 my_rest_api_v1 = RESTAPIGenerator(
     bp_name='my_rest_api_v1',
     bp_import_name=__name__,
     bp_url_prefix='/api/v1/')
 
 # Turn on authorization and set the authorization method
+logger.debug('Configuring authorization for RESTAPIGenerator')
 my_rest_api_v1.use_authorization = True
 my_rest_api_v1.authorization_function = authorization
 
@@ -40,14 +46,17 @@ my_rest_api_v1.authorization_function = authorization
 my_rest_api_v1.abort_on_error = False
 
 # Enable the correct methods
-my_rest_api_v1.accept_method('POST')
-my_rest_api_v1.accept_method('PATCH')
-my_rest_api_v1.accept_method('DELETE')
+methods = ('GET', 'PATCH', 'POST', 'DELETE')
+logger.debug(f'Setting accpted HTTP methods: {", ".join(methods)}')
+for method in methods:
+    my_rest_api_v1.accept_method(method)
 
 # Register the created groups
+logger.debug('Registering groups')
 my_rest_api_v1.register_group(group=api_group_api)
 
 # The RESTAPIGenerator object works with a Blueprint object that can be
 # added to the Flask app. By doing this.
+logger.debug('Adding REST API blueprint to the Flask app')
 flask_app.register_blueprint(my_rest_api_v1.blueprint)
 # ---------------------------------------------------------------------

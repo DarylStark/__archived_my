@@ -4,10 +4,12 @@
 """
 # ---------------------------------------------------------------------
 # Imports
+import logging
 from typing import List, Optional, Union
 from my_database.api_authorization import get_token_information
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
-from rest_api_generator.rest_api_generator import BasicAuthorization, BearerAuthorzation
+from rest_api_generator.rest_api_generator import BasicAuthorization, \
+    BearerAuthorzation
 # ---------------------------------------------------------------------
 
 
@@ -34,12 +36,18 @@ def authorization(
             A object containing the authorization information.
     """
 
+    # Create a logger
+    logger = logging.getLogger('api_authorization')
+
     # Create a authorization object
     auth_object: RESTAPIAuthorization = RESTAPIAuthorization()
+
+    logger.debug(f'Authorizing request started. Scopes: {",".join(scopes)}')
 
     # Check the type of authorization we received. We only accept the
     # 'Bearer' kind, since that is being used in OAuth world.
     if type(auth) is not BearerAuthorzation:
+        logger.error(f'Auth is of type {type(auth)}, not BearerAuthorization')
         return auth_object
 
     # Get the token object
@@ -47,10 +55,11 @@ def authorization(
 
     # If we didn't get a object, the token is wrong
     if token_object is None:
+        logger.error('Got no token object; authorization failed')
         auth_object.authorized = False
         return auth_object
 
-    # Get the assosicated scopes
+    # Get the associated scopes
     token_scopes = [
         token_scope.scope.full_scope_name
         for token_scope in token_object.token_scopes
@@ -59,11 +68,14 @@ def authorization(
     # Check if any of the given scopes is in the 'token scopes'
     for scope in scopes:
         if scope in token_scopes:
+            logger.debug(f'Found scope {scope} in token_scopes! Authorized!')
             auth_object.authorized = True
             auth_object.data = token_object
             break
 
     # Return authorization object
+    if not auth_object.authorized:
+        logger.error('Not authorized')
     return auth_object
 
 # ---------------------------------------------------------------------
