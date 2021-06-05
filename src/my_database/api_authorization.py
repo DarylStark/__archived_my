@@ -7,7 +7,7 @@
 from typing import Optional
 from database import DatabaseSession
 from my_database_model import APIToken
-from my_database_model.api_token_scope import APITokenScope
+from my_database_model import APITokenScope
 # ---------------------------------------------------------------------
 # Methods
 
