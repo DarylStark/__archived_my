@@ -20,7 +20,7 @@ def get_token_information(token: str) -> Optional[APIToken]:
         Parameters
         ----------
         token : str
-            The token to verify
+            The token to verify.
 
         Returns
         -------
