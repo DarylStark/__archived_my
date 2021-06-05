@@ -1,6 +1,6 @@
 """
     Module that contains the methods to get API authentication details
-    from the database
+    from the database.
 """
 # ---------------------------------------------------------------------
 # Imports
