@@ -4,14 +4,19 @@
 """
 # ---------------------------------------------------------------------
 # Imports
-from typing import List, Optional
+from typing import List, Optional, Type
 from database import DatabaseSession
 from my_database_model import User, UserRole
+from my_database import logger
+from my_database.exceptions import FilterNotValidError
 # ---------------------------------------------------------------------
 # Methods
 
 
-def get_users(req_user: User) -> Optional[List[User]]:
+def get_users(
+    req_user: User,
+    flt_id: Optional[int] = None
+) -> Optional[List[User]]:
     """ Method that retrieves all, or a subset of, the users in the
         database.
 
@@ -20,6 +25,9 @@ def get_users(req_user: User) -> Optional[List[User]]:
         req_user : User
             The user who is requesting this. Should be used to verify
             what results the user gets.
+
+        flt_id : Optional[int]
+            Filter on a specific user ID.
 
         Returns
         -------
@@ -49,6 +57,17 @@ def get_users(req_user: User) -> Optional[List[User]]:
         elif role == UserRole.user:
             # Normal user: only sees it's own profile
             data_list = data_list.filter(User.id == req_user.id)
+
+        # Now, we can apply the correct filters
+        try:
+            if flt_id:
+                flt_id = int(flt_id)
+                data_list = data_list.filter(User.id == flt_id)
+        except (ValueError, TypeError):
+            logger.error(
+                f'User id should be of type {int}, not {type(flt_id)}.')
+            raise FilterNotValidError(
+                f'User id should be of type {int}, not {type(flt_id)}.')
 
     # Return the token
     return data_list.all()
