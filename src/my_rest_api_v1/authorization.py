@@ -42,7 +42,9 @@ def authorization(
     # Create a authorization object
     auth_object: RESTAPIAuthorization = RESTAPIAuthorization()
 
-    logger.debug(f'Authorizing request started. Scopes: {",".join(scopes)}')
+    if type(scopes) is list:
+        logger.debug(
+            f'Authorizing request started. Scopes: {",".join(scopes)}')
 
     # Check the type of authorization we received. We only accept the
     # 'Bearer' kind, since that is being used in OAuth world.
