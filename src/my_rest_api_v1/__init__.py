@@ -11,6 +11,7 @@ from flask import Flask
 from rest_api_generator import RESTAPIGenerator
 from rich.logging import RichHandler
 from my_rest_api_v1.api import api_group_api
+from my_rest_api_v1.users import api_group_users
 import logging
 from my_rest_api_v1.authorization import authorization
 # ---------------------------------------------------------------------
@@ -46,6 +47,7 @@ my_rest_api_v1.accept_method('DELETE')
 
 # Register the created groups
 my_rest_api_v1.register_group(group=api_group_api)
+my_rest_api_v1.register_group(group=api_group_users)
 
 # The RESTAPIGenerator object works with a Blueprint object that can be
 # added to the Flask app. By doing this.
