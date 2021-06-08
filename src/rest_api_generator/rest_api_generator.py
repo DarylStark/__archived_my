@@ -372,14 +372,14 @@ class RESTAPIGenerator:
                             return None
                     except ResourceForbiddenError as exception:
                         # User is not authorized, raise a 403-error
-                        error = self.raise_error(401, str(exception))
+                        error = self.raise_error(403, str(exception))
                         if error:
                             return_value = error
                         else:
                             return None
                     except ResourceNotFoundError as exception:
                         # User is not authorized, raise a 404-error
-                        error = self.raise_error(401, str(exception))
+                        error = self.raise_error(404, str(exception))
                         if error:
                             return_value = error
                         else:
@@ -430,12 +430,19 @@ class RESTAPIGenerator:
 
             self.logger.debug('Returning result')
 
+            # Check the 'error code'. If we have one, we have to set
+            # the Flask response accordingly.
+            response_code: int = 200
+            if return_value.error_code:
+                response_code = return_value.error_code
+
             # Return the result
             return Response(
                 response=dumps(
                     return_value, cls=RESTAPIJSONEncoder,
                     **json_options
                 ),
+                status=response_code,
                 mimetype='application/json'
             )
 

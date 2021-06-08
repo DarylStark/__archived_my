@@ -44,6 +44,9 @@ class User(Database.base_class):
     password = Column(String(512), nullable=False)
     password_date = Column(DateTime, nullable=False)
 
+    # Fields that need to be hidden from the API
+    api_hide_fields = ['password']
+
     def set_password(self, password: str) -> None:
         """ Method to set the password for this user
 

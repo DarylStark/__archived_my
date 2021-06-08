@@ -1,13 +1,13 @@
 """
     Module that contains the methods to get API authentication details
-    from the database
+    from the database.
 """
 # ---------------------------------------------------------------------
 # Imports
 from typing import Optional
 from database import DatabaseSession
 from my_database_model import APIToken
-from my_database_model.api_token_scope import APITokenScope
+from my_database_model import APITokenScope
 # ---------------------------------------------------------------------
 # Methods
 
@@ -20,7 +20,7 @@ def get_token_information(token: str) -> Optional[APIToken]:
         Parameters
         ----------
         token : str
-            The token to verify
+            The token to verify.
 
         Returns
         -------

@@ -4,8 +4,11 @@
 """
 # ---------------------------------------------------------------------
 # Imports
+from datetime import datetime
+from enum import Enum
 from json import JSONEncoder
 from typing import Any, Dict, Union
+from database.database import Database
 from rest_api_generator.rest_api_response import RESTAPIResponse, ResponseType
 # ---------------------------------------------------------------------
 
@@ -13,7 +16,7 @@ from rest_api_generator.rest_api_response import RESTAPIResponse, ResponseType
 class RESTAPIJSONEncoder(JSONEncoder):
     """ Class that can be used to serialize RESTAPIResponse objects """
 
-    def default(self, object: Any) -> Union[Dict, int]:
+    def default(self, object: Any) -> Union[Dict, int, str]:
         """ The default method of the encoder gets the objects that the
             JSON encoder cannot encode. In this method, we check what
             type of object it is and create a dict of it so the JSON
@@ -31,6 +34,9 @@ class RESTAPIJSONEncoder(JSONEncoder):
 
             int
                 A integer that the JSON encoder can use.
+
+            str
+                A string that the JSON encoder can use.
         """
 
         # Check what kind of object we got
@@ -39,6 +45,13 @@ class RESTAPIJSONEncoder(JSONEncoder):
             return self.encode_rest_api_response(object=object)
         elif isinstance(object, ResponseType):
             # ResponseTypes can be converted to a integer
+            return object.value
+        elif isinstance(object, Database.base_class):
+            # Return the dict for the SQLalchemy object
+            return self.encode_sqlalchemy_object(object=object)
+        elif isinstance(object, datetime):
+            return object.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(object, Enum):
             return object.value
         else:
             # If we get a object that we can't encode, we raise a
@@ -109,4 +122,52 @@ class RESTAPIJSONEncoder(JSONEncoder):
 
         # Return the object
         return return_dict
+
+    def encode_sqlalchemy_object(self, object: Database.base_class):
+        """ Method to encode a SQLalchemy object.
+
+            Parameters
+            ----------
+            object : Database.base_class
+                A object created from a subclass of
+                Database.base_class.
+
+            Returns
+            -------
+            dict
+                A dictionary the JSON encoder can encode.
+        """
+
+        # Get the fields that we should hide
+        try:
+            fields_to_hide = object.api_hide_fields
+        except AttributeError:
+            fields_to_hide = list()
+
+        # Get the columns
+        columns = [column.name for column in type(object).__table__.columns]
+
+        # Then we create a dict with the only the column items
+        column_dict = {
+            key: value
+            for key, value in object.__dict__.items()
+            if key in columns and key not in fields_to_hide
+        }
+
+        # Add fields that are in the 'api_extra_fields' list
+        try:
+            api_extra_fields = object.api_extra_fields
+        except AttributeError:
+            api_extra_fields = list()
+
+        # Loop through the extra fields and add them to the outgoing dict
+        for extra_field in api_extra_fields:
+            try:
+                column_dict[extra_field] = object.__getattribute__(extra_field)
+            except AttributeError:
+                column_dict[extra_field] = None
+
+        # And we return that dict
+        return column_dict
+
 # ---------------------------------------------------------------------

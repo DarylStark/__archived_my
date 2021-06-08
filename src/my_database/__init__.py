@@ -5,8 +5,12 @@
 # ---------------------------------------------------------------------
 from os import environ
 from database import Database
+from logging import getLogger
 # ---------------------------------------------------------------------
 # TODO: Make this easier to configure
+
+# Create a Logger
+logger = getLogger('my_database')
 
 # Get the database credentials
 username = environ["DB_USERNAME"]
