@@ -4,6 +4,7 @@
 """
 # ---------------------------------------------------------------------
 # Imports
+from sqlalchemy.orm.session import Session
 from database import Database
 from typing import Optional, Type
 from types import TracebackType
@@ -16,7 +17,7 @@ class DatabaseSession:
 
     def __init__(self,
                  commit_on_end: bool = False,
-                 expire_on_commit: bool = True):
+                 expire_on_commit: bool = True) -> None:
         """ The initiator creates an empty session to use with this
             object. When 'expire_on_commit' is set, all objects that
             were added during this session are expired after the
@@ -37,10 +38,11 @@ class DatabaseSession:
             None
         """
 
-        self.session = Database.session(expire_on_commit=expire_on_commit)
+        self.session: Session = Database.session(
+            expire_on_commit=expire_on_commit)
         self.commit_on_end = commit_on_end
 
-    def close(self):
+    def close(self) -> None:
         """ Closes the session.
 
             Parameters
@@ -53,7 +55,7 @@ class DatabaseSession:
         """
         self.session.close()
 
-    def commit(self):
+    def commit(self) -> None:
         """ Commits the session.
 
             Parameters
@@ -66,7 +68,7 @@ class DatabaseSession:
         """
         self.session.commit()
 
-    def rollback(self):
+    def rollback(self) -> None:
         """ Rolls back the session.
 
             Parameters
@@ -79,7 +81,7 @@ class DatabaseSession:
         """
         self.session.rollback()
 
-    def __enter__(self):
+    def __enter__(self) -> Session:
         """ Context manager for the session. Makes sure you can use the
             session as Context Manager and prevents errors.
 

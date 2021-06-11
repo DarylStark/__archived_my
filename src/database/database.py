@@ -22,7 +22,7 @@ class Database():
     session = sessionmaker()
 
     # Methods to make sure this class is used as it is suppoes to be
-    def __new__(cls):
+    def __new__(cls) -> None:
         """ When someone tries to create a instance of the Database
             class, we give an TypeError. This is done because this
             class should be a static class.
@@ -113,7 +113,7 @@ class Database():
             raise DatabaseConnectionError('Couldn\'t connect to database')
 
     @classmethod
-    def get_pool_statistics(cls):
+    def get_pool_statistics(cls) -> dict:
         """ Method that returns pool statistics, like the pool size,
             the amount of checked-in connections, the overflow and the
             checked out connections.
