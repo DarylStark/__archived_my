@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 # ---------------------------------------------------------------------
 
 
-class Database():
+class Database:
     """ Main class for the Database object. Will be an static class
         that cannot be initiated. """
 
