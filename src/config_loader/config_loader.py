@@ -60,7 +60,7 @@ class ConfigLoader:
         self.yaml_file = yaml_file
         self.config = Optional[Dict]
 
-    def load_settings(self) -> bool:
+    def load_settings(self, environment: Optional[str]) -> bool:
         """ Method to load the settings into the application. """
 
         try:
@@ -92,7 +92,12 @@ class ConfigLoader:
             # matches the 'selected-environment'  will be used to
             # override the 'default' settings.
 
-            selected_environment = self.data['default']['selected-environment']
+            if not environment:
+                selected_environment = \
+                    self.data['default']['selected-environment']
+            else:
+                selected_environment = environment
+
             self.logger.debug(f'Selected environment: {selected_environment}')
             self.config = self.data['default']['config']
 
