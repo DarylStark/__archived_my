@@ -5,6 +5,7 @@
 # ---------------------------------------------------------------------
 # Imports
 from os import environ
+import os
 from typing import Dict, Optional
 import yaml
 import collections
@@ -18,22 +19,45 @@ class ConfigLoader:
     """ The ConfigLoader class enables the user to load configuration
         from a file. """
 
-    def __init__(self, yaml_file: Optional[str] = None) -> None:
-        """ The initializer sets the default values. """
-        self.logger = getLogger('ConfigLoader')
-        self.logger.debug('ConfigLoader created')
+    # Class variable that contains a dict with all created ConfigLoader
+    # objects
+    created_loaders = dict()
+
+    @classmethod
+    def get_config_loader(cls, yaml_file: Optional[str] = None) -> 'ConfigLoader':
+        """ Method that can and should be used to retrieve a
+            ConfigLoader object. """
 
         # The user can set the config file in a few ways; he can
         # specify it using the argument of this constructor or via the
         # environment variable 'CONFIG_FILE'. If neither is set, the
         # package will assume 'config.yaml'.
         if yaml_file:
-            self.yaml_file = yaml_file
+            yaml_file = yaml_file
         else:
-            self.yaml_file = 'config.yaml'
+            yaml_file = 'config.yaml'
             if 'CONFIG_FILE' in environ.keys():
-                self.yaml_file = environ['CONFIG_FILE']
+                yaml_file = environ['CONFIG_FILE']
 
+        # Make sure we have the full filename
+        full_filename = os.path.abspath(yaml_file)
+
+        # Search if there is already a ConfigLoader object for this
+        # file.
+        if full_filename not in cls.created_loaders.keys():
+            # Object doesn't exist yet, create one
+            cls.created_loaders[full_filename] = ConfigLoader(
+                yaml_file=full_filename
+            )
+
+        # Return the object
+        return cls.created_loaders[full_filename]
+
+    def __init__(self, yaml_file: str) -> None:
+        """ The initializer sets the default values. """
+        self.logger = getLogger('ConfigLoader')
+        self.logger.debug(f'ConfigLoader created for file: {yaml_file}')
+        self.yaml_file = yaml_file
         self.config = Optional[Dict]
 
     def load_settings(self) -> bool:
