@@ -12,6 +12,8 @@ import collections
 from logging import getLogger
 from yaml.scanner import ScannerError
 import re
+
+import config_loader
 # ---------------------------------------------------------------------
 
 
@@ -21,7 +23,10 @@ class ConfigLoader:
 
     # Class variable that contains a dict with all created ConfigLoader
     # objects
-    created_loaders = dict()
+    created_loaders: Dict[str, 'ConfigLoader'] = dict()
+
+    # Class variable that contains the selected environment
+    environment = None
 
     @classmethod
     def get_config_loader(cls, yaml_file: Optional[str] = None) -> 'ConfigLoader':
@@ -52,6 +57,15 @@ class ConfigLoader:
 
         # Return the object
         return cls.created_loaders[full_filename]
+
+    @classmethod
+    def set_environment(cls, environment: str) -> None:
+        """ Method to set the environment. """
+        cls.environment = environment
+
+        # Reload all ConfigLoaders
+        for _, config_loader in cls.created_loaders.items():
+            config_loader.load_settings(environment=cls.environment)
 
     def __init__(self, yaml_file: str) -> None:
         """ The initializer sets the default values. """
