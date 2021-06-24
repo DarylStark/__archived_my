@@ -72,7 +72,7 @@ class ConfigLoader:
         self.logger = getLogger('ConfigLoader')
         self.logger.debug(f'ConfigLoader created for file: {yaml_file}')
         self.yaml_file = yaml_file
-        self.config = Optional[Dict]
+        self.config: Optional[Dict] = dict()
 
     def load_settings(self, environment: Optional[str]) -> bool:
         """ Method to load the settings into the application. """
