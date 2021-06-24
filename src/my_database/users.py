@@ -5,6 +5,8 @@
 # ---------------------------------------------------------------------
 # Imports
 from typing import List, Optional, Type
+
+from sqlalchemy.orm.query import Query
 from database import DatabaseSession
 from my_database_model import User, UserRole
 from my_database import logger
@@ -39,7 +41,7 @@ def get_users(
     """
 
     # Empty data list
-    data_list = None
+    data_list: Optional[Query] = None
 
     # Get the token
     with DatabaseSession(commit_on_end=False, expire_on_commit=False) \
@@ -70,5 +72,7 @@ def get_users(
                 f'User id should be of type {int}, not {type(flt_id)}.')
 
     # Return the token
-    return data_list.all()
+    if data_list is not None:
+        return data_list.all()
+    return None
 # ---------------------------------------------------------------------
