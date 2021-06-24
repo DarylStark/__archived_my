@@ -18,10 +18,4 @@ class FilterNotValidError(MyDatabaseError):
 class ConfigNotLoadedError(MyDatabaseError):
     """ Exception when the configuration couldn't be loaded. """
     pass
-
-
-class EnvironmentNotSetError(MyDatabaseError):
-    """ Exception when the environment is not set via environment
-        variabled. """
-    pass
 # ---------------------------------------------------------------------

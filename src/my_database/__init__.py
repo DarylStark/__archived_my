@@ -3,26 +3,15 @@
     'My' application.
 """
 # ---------------------------------------------------------------------
-from os import environ
 from database import Database
 from logging import getLogger
 from config_loader import ConfigLoader
-from my_database.exceptions import ConfigNotLoadedError, \
-    EnvironmentNotSetError
+from my_database.exceptions import ConfigNotLoadedError
 # ---------------------------------------------------------------------
-# Get the environment we are one
-if 'MY_ENVIRONMENT' in environ.keys():
-    environment = environ['MY_ENVIRONMENT']
-else:
-    raise EnvironmentNotSetError(
-        'Environment not set: please set the environment with the ' +
-        'MY_ENVIRONMENT env')
-
 # Load the settings
-ConfigLoader.init(environment='production')
-if not ConfigLoader.load_settings(None):
+if not ConfigLoader.load_settings():
     raise ConfigNotLoadedError(
-        f'Config could not be loaded from file "{ConfigLoader.yaml_file}"')
+        f'Configuration was not yet loaded.')
 
 # Create a Logger
 logger = getLogger('my_database')

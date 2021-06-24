@@ -57,8 +57,7 @@ class ConfigLoader:
     @classmethod
     def set_environment(cls, environment: str) -> None:
         """
-            Method to set the environment. Can only be set if it isn't
-            set already.
+            Method to set the environment.
 
             Parameters
             ----------
@@ -71,41 +70,10 @@ class ConfigLoader:
         """
 
         # Set the environment
-        if cls.environment is None:
-            cls.environment = environment
-            return
-
-        # The environment was already set, throw an exception
-        raise EnvironmentAlreadySetError(
-            f'Environment was already set to {cls.environment}')
+        cls.environment = environment
 
     @classmethod
-    def init(cls,
-             yaml_file: Optional[str] = None,
-             environment: Optional[str] = None) -> None:
-        """
-            Method to initialize the ConfigLoader.
-
-            Parameters
-            ----------
-            yaml_file : Optional[str]
-                The YAML file to use.
-
-            environment : Optional[str]
-                The environment to use.
-
-            Returns
-            -------
-            None
-        """
-        if yaml_file:
-            cls.set_file(yaml_file=yaml_file)
-
-        if environment:
-            cls.set_environment(environment=environment)
-
-    @classmethod
-    def load_settings(cls, yaml_file: Optional[str]) -> bool:
+    def load_settings(cls, yaml_file: Optional[str] = None) -> bool:
         """
             Method to load the settings into the application.
 
@@ -131,6 +99,13 @@ class ConfigLoader:
                     cls.yaml_file = environ['CONFIG_FILE']
                 else:
                     cls.yaml_file = 'config.yaml'
+
+            # Then, we search for the environment
+            if cls.environment is None:
+                if 'ENVIRONMENT' in environ.keys():
+                    cls.environment = environ['ENVIRONMENT']
+                else:
+                    cls.environment = 'production'
 
             try:
                 # Try to load the file

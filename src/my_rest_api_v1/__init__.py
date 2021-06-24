@@ -6,18 +6,28 @@
 """
 # ---------------------------------------------------------------------
 # Imports
+from os import environ
 from typing import List, Optional, Union
 from flask import Flask
+import my_database
+from my_rest_api_v1.exceptions import ConfigNotLoadedError, \
+    EnvironmentNotSetError
 from rest_api_generator import RESTAPIGenerator
 from rich.logging import RichHandler
 from my_rest_api_v1.api import api_group_api
 from my_rest_api_v1.users import api_group_users
 import logging
 from my_rest_api_v1.authorization import authorization
+from config_loader import ConfigLoader
 # ---------------------------------------------------------------------
+# Load the settings
+if not ConfigLoader.load_settings():
+    raise ConfigNotLoadedError(
+        f'Configuration was not yet loaded.')
+
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=ConfigLoader.config['logging']['level'],
     format='%(name)s: %(message)s',
     datefmt="[%X]",
     handlers=[RichHandler()]
