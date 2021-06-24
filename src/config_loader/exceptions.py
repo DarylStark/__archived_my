@@ -19,4 +19,15 @@ class EnvironmentNotSetError(ConfigLoaderError):
     """ Exception that occurs when the user tries to retrieve the
         config before configuring the environment. """
     pass
+
+
+class ConfigFileNotFoundError(ConfigLoaderError):
+    """ Exception that occurs when the configfile couldn't be found.
+    """
+    pass
+
+
+class ConfigFileNotValidError(ConfigLoaderError):
+    """ Exception that occurs when the configfile is invald. """
+    pass
 # ---------------------------------------------------------------------

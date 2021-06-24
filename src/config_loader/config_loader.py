@@ -2,27 +2,26 @@
     Module that contains the static 'ConfigLoader' class. This is a
     class with only class-methods.
 """
+import collections
+import os
+import re
+from logging import getLogger
 # ---------------------------------------------------------------------
 # Imports
 from os import environ
-import os
 from typing import Dict, Optional
 import yaml
-import collections
-from logging import getLogger
 from yaml.scanner import ScannerError
-import re
-from config_loader.exceptions import EnvironmentAlreadySetError, \
-    EnvironmentNotSetError
+from config_loader.exceptions import (ConfigFileNotFoundError,
+                                      ConfigFileNotValidError,
+                                      EnvironmentAlreadySetError,
+                                      EnvironmentNotSetError)
 # ---------------------------------------------------------------------
 
 
 class ConfigLoader:
     """ The ConfigLoader class enables the user to load configuration
         from a file. """
-
-    # Class object for logging
-    logger = getLogger('ConfigLoader')
 
     # Class variable that contains the selected environment
     environment: Optional[str] = None
@@ -87,7 +86,7 @@ class ConfigLoader:
             Returns
             -------
             bool
-                True if the load succeeds, False if it doesn't 
+                True if the load succeeds, False if it doesn't.
         """
 
         if not cls.is_loaded:
@@ -109,18 +108,9 @@ class ConfigLoader:
 
             try:
                 # Try to load the file
-                cls.logger.debug(f'Loading file: {cls.yaml_file}')
-
                 with open(cls.yaml_file) as file_stream:
-                    cls.logger.debug(
-                        'Opened file, retrieving contents')
                     data = file_stream.read()
-
-                cls.logger.debug('Opened file. Loading it.')
                 cls.data = yaml.safe_load(data)
-
-                # File loaded succesfully
-                cls.logger.debug('File is valid')
 
                 # We can now merge the configurations. In the configuration
                 # file should be a 'default' key. This key should contain
@@ -139,12 +129,9 @@ class ConfigLoader:
                 if cls.environment is None:
                     raise EnvironmentNotSetError('Environment is not set')
 
-                cls.logger.debug(
-                    f'Selected environment: {selected_environment}')
                 cls.config = cls.data['default']['config']
 
                 # Merge the selected environment (if this is defined)
-                cls.logger.debug('Merging configuration')
                 if selected_environment in cls.data.keys():
                     cls.merge_environment(
                         config=cls.config,
@@ -156,15 +143,12 @@ class ConfigLoader:
                 cls.set_environment_variables(cls.config)
             except FileNotFoundError:
                 # File does not exists
-                cls.logger.error(f'File {cls.yaml_file} does not exist!')
-                cls.is_loaded = False
-                return False
-            except (ScannerError, KeyError) as e:
+                raise ConfigFileNotFoundError(
+                    f'File {cls.yaml_file} does not exist!')
+            except (ScannerError, KeyError) as err:
                 # File could not be decoded
-                cls.logger.error(
-                    f'Error while loading configfile "{cls.yaml_file}": {e}')
-                cls.is_loaded = False
-                return False
+                raise ConfigFileNotValidError(
+                    f'Error while loading configfile "{cls.yaml_file}": {err}')
 
             # Everything went fine
             cls.is_loaded = True
@@ -176,7 +160,7 @@ class ConfigLoader:
     def merge_environment(cls, config: dict, environment: dict) -> None:
         """
             Method to merge the config of the selected environment
-            into the configuration. 
+            into the configuration.
 
             Parameters
             ----------
