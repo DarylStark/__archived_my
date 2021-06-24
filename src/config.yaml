@@ -1,0 +1,28 @@
+---
+default:
+  environments:
+    - "production"
+    - "development"
+  config:
+    logging:
+      level: 40
+    database:
+      type: "mysql"
+      server: "${env:DB_SERVER}"
+      username: "${env:DB_USERNAME}"
+      password: "${env:DB_PASSWORD}"
+      database: "${env:DB_DATABASE}"
+    sql_alchemy:
+      echo: False
+      pool_pre_ping: true
+      pool_recycle: 10
+      pool_size: 5
+      pool_overflow: 10
+      create_tables: false
+
+development:
+  sql_alchemy:
+    pool_echo: true
+    create_table: true
+  logging:
+    level: 10

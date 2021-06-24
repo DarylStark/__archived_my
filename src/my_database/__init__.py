@@ -6,17 +6,33 @@
 from os import environ
 from database import Database
 from logging import getLogger
+from config_loader import ConfigLoader
+from my_database.exceptions import ConfigNotLoadedError, \
+    EnvironmentNotSetError
 # ---------------------------------------------------------------------
-# TODO: Make this easier to configure
+# Get the environment we are one
+if 'MY_ENVIRONMENT' in environ.keys():
+    environment = environ['MY_ENVIRONMENT']
+else:
+    raise EnvironmentNotSetError(
+        'Environment not set: please set the environment with the ' +
+        'MY_ENVIRONMENT env')
+
+# Load the settings
+ConfigLoader.init(environment='production')
+if not ConfigLoader.load_settings(None):
+    raise ConfigNotLoadedError(
+        f'Config could not be loaded from file "{ConfigLoader.yaml_file}"')
 
 # Create a Logger
 logger = getLogger('my_database')
 
 # Get the database credentials
-username = environ["DB_USERNAME"]
-password = environ["DB_PASSWORD"]
-server = environ["DB_SERVER"]
-database = environ["DB_DATABASE"]
+# TODO: retrieve this from the configuration
+username = ConfigLoader.config['database']['username']
+password = ConfigLoader.config['database']['password']
+server = ConfigLoader.config['database']['server']
+database = ConfigLoader.config['database']['database']
 
 # Connect to the database and create the needed tables
 connection_string = \
@@ -24,6 +40,6 @@ connection_string = \
 
 Database.connect(
     connection=connection_string,
-    create_tables=True
+    create_tables=False
 )
 # ---------------------------------------------------------------------
