@@ -2,17 +2,12 @@
     Module that contains the methods to get user details from the
     database.
 """
-# ---------------------------------------------------------------------
-# Imports
 from typing import List, Optional, Type
-
-from sqlalchemy.orm.query import Query
 from database import DatabaseSession
 from my_database_model import User, UserRole
+from sqlalchemy.orm.query import Query
 from my_database import logger
 from my_database.exceptions import FilterNotValidError
-# ---------------------------------------------------------------------
-# Methods
 
 
 def get_users(
@@ -75,4 +70,3 @@ def get_users(
     if data_list is not None:
         return data_list.all()
     return None
-# ---------------------------------------------------------------------

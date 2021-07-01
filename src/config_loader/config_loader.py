@@ -6,17 +6,16 @@ import collections
 import os
 import re
 from logging import getLogger
-# ---------------------------------------------------------------------
-# Imports
 from os import environ
 from typing import Dict, Optional
+
 import yaml
 from yaml.scanner import ScannerError
+
 from config_loader.exceptions import (ConfigFileNotFoundError,
                                       ConfigFileNotValidError,
                                       EnvironmentAlreadySetError,
                                       EnvironmentNotSetError)
-# ---------------------------------------------------------------------
 
 
 class ConfigLoader:
@@ -218,4 +217,3 @@ class ConfigLoader:
                     parse,
                     value
                 )
-# ---------------------------------------------------------------------

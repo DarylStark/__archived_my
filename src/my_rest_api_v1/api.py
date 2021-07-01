@@ -2,22 +2,16 @@
     Module that has the RESTAPIGroup for the 'api' group of the API.
     This group can be used to get specific API information.
 """
-# ---------------------------------------------------------------------
-# Imports
 import re
 from typing import Optional
-from rest_api_generator import Group, Response, ResponseType
-from rest_api_generator import Authorization
+from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
-# ---------------------------------------------------------------------
-# API group
+
 api_group_api = Group(
     api_url_prefix='api',
     name='api',
     description='Contains endpoints for generic API requests'
 )
-# ---------------------------------------------------------------------
-# Endpoints
 
 
 @api_group_api.register_endpoint(
@@ -61,4 +55,3 @@ def ping(auth: Optional[Authorization],
 
     # Return the create RESTAPIResponse object
     return return_response
-# ---------------------------------------------------------------------

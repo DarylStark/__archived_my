@@ -2,14 +2,10 @@
     This module includes the APIClient class which will be used by
     SQLalchemy ORM.
 """
-# ---------------------------------------------------------------------
-# Imports
 import datetime
-from sqlalchemy import Column, Integer, DateTime, String, UniqueConstraint, \
-    ForeignKey, Boolean
-from sqlalchemy.orm import relationship
 from database import Database
-# ---------------------------------------------------------------------
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
+                        UniqueConstraint)
 
 
 class APIClient(Database.base_class):
@@ -35,5 +31,3 @@ class APIClient(Database.base_class):
     app_name = Column(String(64), nullable=False)
     app_publisher = Column(String(64), nullable=False)
     token = Column(String(32), nullable=False)
-
-# ---------------------------------------------------------------------

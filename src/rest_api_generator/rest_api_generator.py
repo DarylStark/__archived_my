@@ -2,27 +2,26 @@
     This module includes the RESTAPIGenerator class that can be used to
     generate the REST API blueprint.
 """
-# ---------------------------------------------------------------------
-# Imports
-from dataclasses import dataclass
 import re
 import timeit
-import time
-from flask import Blueprint, request, Response as FlaskResponse, abort
+from dataclasses import dataclass
+from json import dumps
+from logging import getLogger
+from math import ceil
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
-from rest_api_generator.exceptions import InvalidGroupError, \
-    UnauthorizedForResourceError, ResourceForbiddenError, ResourceNotFoundError
+from flask import Blueprint
+from flask import Response as FlaskResponse
+from flask import abort, request
+from rest_api_generator.authorization import Authorization
 from rest_api_generator.endpoint import Endpoint
 from rest_api_generator.endpoint_url import EndpointURL
+from rest_api_generator.exceptions import (InvalidGroupError,
+                                           ResourceForbiddenError,
+                                           ResourceNotFoundError,
+                                           UnauthorizedForResourceError)
 from rest_api_generator.group import Group
-from rest_api_generator.authorization import Authorization
 from rest_api_generator.json_encoder import RESTAPIJSONEncoder
 from rest_api_generator.response import Response, ResponseType
-from json import dumps
-from math import ceil
-from logging import getLogger
-from collections import namedtuple
-# ---------------------------------------------------------------------
 
 
 @dataclass
@@ -519,4 +518,3 @@ class RESTAPIGenerator:
 
         # Return the list
         return return_list
-# ---------------------------------------------------------------------

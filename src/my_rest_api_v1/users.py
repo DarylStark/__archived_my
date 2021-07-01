@@ -2,25 +2,19 @@
     Module that has the RESTAPIGroup for the 'users' group of the API.
     This group can be used to get user information.
 """
-# ---------------------------------------------------------------------
-# Imports
 import re
 from typing import Optional
 from my_database.exceptions import MyDatabaseError
-from rest_api_generator import Group, Response, ResponseType
-from rest_api_generator import Authorization
-from rest_api_generator.exceptions import ResourceNotFoundError
-from rest_api_generator.endpoint_scopes import EndpointScopes
 from my_database.users import get_users
-# ---------------------------------------------------------------------
-# API group
+from rest_api_generator import Authorization, Group, Response, ResponseType
+from rest_api_generator.endpoint_scopes import EndpointScopes
+from rest_api_generator.exceptions import ResourceNotFoundError
+
 api_group_users = Group(
     api_url_prefix='users',
     name='users',
     description='Contains endpoints for users'
 )
-# ---------------------------------------------------------------------
-# Endpoints
 
 
 @api_group_users.register_endpoint(
@@ -64,4 +58,3 @@ def users(auth: Optional[Authorization],
 
     # Return the create RESTAPIResponse object
     return return_response
-# ---------------------------------------------------------------------

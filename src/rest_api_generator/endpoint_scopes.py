@@ -2,11 +2,8 @@
     This module includes the EndpointScopes class which is a object
     that contains the auth scopes for a specific Endpoint
 """
-# ---------------------------------------------------------------------
-# Imports
 from dataclasses import dataclass
 from typing import List, Optional
-# ---------------------------------------------------------------------
 
 
 @dataclass
@@ -37,4 +34,3 @@ class EndpointScopes:
     PUT: Optional[List[str]] = None
     PATCH: Optional[List[str]] = None
     DELETE: Optional[List[str]] = None
-# ---------------------------------------------------------------------

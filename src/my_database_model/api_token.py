@@ -2,15 +2,11 @@
     This module includes the APIToken class which will be used by
     SQLalchemy ORM.
 """
-# ---------------------------------------------------------------------
-# Imports
 import datetime
-from sqlalchemy import Column, Integer, DateTime, String, UniqueConstraint, \
-    ForeignKey, Boolean
-from sqlalchemy.orm import relationship
 from database import Database
-from my_database_model.api_token_scope import APITokenScope
-# ---------------------------------------------------------------------
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
+                        UniqueConstraint)
+from sqlalchemy.orm import relationship
 
 
 class APIToken(Database.base_class):
@@ -40,5 +36,3 @@ class APIToken(Database.base_class):
     user = relationship('User', lazy='joined')
     token_scopes = relationship(
         'APITokenScope', lazy='joined', back_populates='token')
-
-# ---------------------------------------------------------------------

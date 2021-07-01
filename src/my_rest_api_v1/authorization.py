@@ -2,15 +2,12 @@
     Module that has the authorization function. This function will be
     used by the REST API to authorize API requests.
 """
-# ---------------------------------------------------------------------
-# Imports
 import logging
 from typing import List, Optional, Union
 from my_database.api_authorization import get_token_information
 from rest_api_generator.authorization import Authorization
-from rest_api_generator.rest_api_generator import BasicAuthorization, \
-    BearerAuthorzation
-# ---------------------------------------------------------------------
+from rest_api_generator.rest_api_generator import (BasicAuthorization,
+                                                   BearerAuthorzation)
 
 
 def authorization(
@@ -79,5 +76,3 @@ def authorization(
     if not auth_object.authorized:
         logger.error('Not authorized')
     return auth_object
-
-# ---------------------------------------------------------------------

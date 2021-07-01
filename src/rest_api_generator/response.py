@@ -1,11 +1,9 @@
 """
     This module includes the Response which represents a API response.
 """
-# ---------------------------------------------------------------------
-from typing import Any, Optional
 from dataclasses import dataclass
 from enum import Enum
-# ---------------------------------------------------------------------
+from typing import Any, Optional
 
 
 class ResponseType(Enum):
@@ -83,4 +81,3 @@ class Response:
 
     # Other fields
     runtime: float = 0
-# ---------------------------------------------------------------------

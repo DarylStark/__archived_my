@@ -1,18 +1,14 @@
 """
     This module includes the Group which represents a API group.
 """
-# ---------------------------------------------------------------------
-# Imports
-from logging import getLogger
 import re
+from logging import getLogger
 from typing import Callable, List, Optional
 from rest_api_generator.authorization import Authorization
-from rest_api_generator.endpoint_scopes\
-    import EndpointScopes
 from rest_api_generator.endpoint import Endpoint
+from rest_api_generator.endpoint_scopes import EndpointScopes
 from rest_api_generator.endpoint_url import EndpointURL
 from rest_api_generator.response import Response
-# ---------------------------------------------------------------------
 
 
 class Group:
@@ -214,4 +210,3 @@ class Group:
 
         # Return the list
         return return_list
-# ---------------------------------------------------------------------

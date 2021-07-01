@@ -1,7 +1,6 @@
 """
     Exceptions for the 'config_loader' package.
 """
-# ---------------------------------------------------------------------
 
 
 class ConfigLoaderError(Exception):
@@ -30,4 +29,3 @@ class ConfigFileNotFoundError(ConfigLoaderError):
 class ConfigFileNotValidError(ConfigLoaderError):
     """ Exception that occurs when the configfile is invald. """
     pass
-# ---------------------------------------------------------------------

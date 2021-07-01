@@ -2,14 +2,12 @@
     Module that contains the static 'Database' class. This class can
     and should be used to communicate with the database.
 """
-# ---------------------------------------------------------------------
-# Imports
-from database.exceptions import DatabaseConnectionError
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-# ---------------------------------------------------------------------
+
+from database.exceptions import DatabaseConnectionError
 
 
 class Database:
@@ -134,4 +132,3 @@ class Database:
             'overflow': cls._engine.pool.overflow(),
             'checked_out': cls._engine.pool.checkedout()
         }
-# ---------------------------------------------------------------------

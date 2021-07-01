@@ -1,7 +1,6 @@
 """
     Exceptions for the 'my_database' package.
 """
-# ---------------------------------------------------------------------
 
 
 class MyDatabaseError(Exception):
@@ -18,4 +17,3 @@ class FilterNotValidError(MyDatabaseError):
 class ConfigNotLoadedError(MyDatabaseError):
     """ Exception when the configuration couldn't be loaded. """
     pass
-# ---------------------------------------------------------------------

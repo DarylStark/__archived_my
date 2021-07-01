@@ -2,12 +2,11 @@
     The `my_database` package does all the database handling for the
     'My' application.
 """
-# ---------------------------------------------------------------------
-from database import Database
 from logging import getLogger
 from config_loader import ConfigLoader
+from database import Database
 from my_database.exceptions import ConfigNotLoadedError
-# ---------------------------------------------------------------------
+
 # Load the settings
 if not ConfigLoader.load_settings():
     raise ConfigNotLoadedError(
@@ -31,4 +30,3 @@ Database.connect(
     connection=connection_string,
     create_tables=False
 )
-# ---------------------------------------------------------------------

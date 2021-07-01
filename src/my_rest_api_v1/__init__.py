@@ -4,22 +4,16 @@
     will contain the application code that starts the REST API and run
     the REST API.
 """
-# ---------------------------------------------------------------------
-# Imports
-from os import environ
-from typing import List, Optional, Union
+import logging
+from config_loader import ConfigLoader
 from flask import Flask
-import my_database
-from my_rest_api_v1.exceptions import ConfigNotLoadedError, \
-    EnvironmentNotSetError
 from rest_api_generator import RESTAPIGenerator
 from rich.logging import RichHandler
 from my_rest_api_v1.api import api_group_api
-from my_rest_api_v1.users import api_group_users
-import logging
 from my_rest_api_v1.authorization import authorization
-from config_loader import ConfigLoader
-# ---------------------------------------------------------------------
+from my_rest_api_v1.exceptions import ConfigNotLoadedError
+from my_rest_api_v1.users import api_group_users
+
 # Load the settings
 if not ConfigLoader.load_settings():
     raise ConfigNotLoadedError(
@@ -71,4 +65,3 @@ my_rest_api_v1.register_group(group=api_group_users)
 # added to the Flask app. By doing this.
 logger.debug('Adding REST API blueprint to the Flask app')
 flask_app.register_blueprint(my_rest_api_v1.blueprint)
-# ---------------------------------------------------------------------

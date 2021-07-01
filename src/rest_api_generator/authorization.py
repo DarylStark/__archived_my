@@ -2,11 +2,8 @@
     This module includes the Authorization class, which can be used to
     identify if a user is authorized to do something.
 """
-# ---------------------------------------------------------------------
-# Imports
 from dataclasses import dataclass
-from typing import Any, List, Optional
-# ---------------------------------------------------------------------
+from typing import Any
 
 
 @dataclass
@@ -25,4 +22,3 @@ class Authorization:
 
     authorized: bool = False
     data: Any = None
-# ---------------------------------------------------------------------

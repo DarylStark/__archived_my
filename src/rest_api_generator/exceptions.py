@@ -1,7 +1,6 @@
 """
     Exceptions for the 'rest_api_generator' package.
 """
-# ---------------------------------------------------------------------
 
 
 class RESTAPIGeneratorError(Exception):
@@ -43,4 +42,3 @@ class ResourceNotFoundError(RESTAPIGeneratorEndpointError):
     """ Exception that indicates that a resoure is not found. Should be
         handled as HTTP 404 error. """
     pass
-# ---------------------------------------------------------------------

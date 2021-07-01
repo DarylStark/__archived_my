@@ -1,7 +1,6 @@
 """
     Exceptions for the 'my_rest_api_v1' package.
 """
-# ---------------------------------------------------------------------
 
 
 class MyRestAPIv1Error(Exception):
@@ -18,4 +17,3 @@ class EnvironmentNotSetError(MyRestAPIv1Error):
 class ConfigNotLoadedError(MyRestAPIv1Error):
     """ Exception when the configuration couldn't be loaded. """
     pass
-# ---------------------------------------------------------------------

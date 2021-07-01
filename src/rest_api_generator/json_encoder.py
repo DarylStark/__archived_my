@@ -2,15 +2,12 @@
     Module that keeps the RESTAPIJSONEncoder class, which seriales
     a RESTAPIResponse to a JSON serializable object.
 """
-# ---------------------------------------------------------------------
-# Imports
 from datetime import datetime
 from enum import Enum
 from json import JSONEncoder
 from typing import Any, Dict, Union
 from database.database import Database
 from rest_api_generator.response import Response, ResponseType
-# ---------------------------------------------------------------------
 
 
 class RESTAPIJSONEncoder(JSONEncoder):
@@ -169,5 +166,3 @@ class RESTAPIJSONEncoder(JSONEncoder):
 
         # And we return that dict
         return column_dict
-
-# ---------------------------------------------------------------------

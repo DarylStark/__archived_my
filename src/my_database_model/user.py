@@ -2,15 +2,12 @@
     This module includes the User class which will be used by
     SQLalchemy ORM.
 """
-# ---------------------------------------------------------------------
-# Imports
 import datetime
 import enum
-from passlib.hash import argon2
-from sqlalchemy import Column, Integer, DateTime, String, UniqueConstraint, Enum
-from sqlalchemy.orm import relationship
 from database import Database
-# ---------------------------------------------------------------------
+from passlib.hash import argon2
+from sqlalchemy import (Column, DateTime, Enum, Integer, String,
+                        UniqueConstraint)
 
 
 class UserRole(enum.Enum):
@@ -78,5 +75,3 @@ class User(Database.base_class):
                 is not correct
         """
         return argon2.verify(password, self.password)
-
-# ---------------------------------------------------------------------

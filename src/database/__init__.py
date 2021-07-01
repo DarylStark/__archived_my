@@ -20,8 +20,5 @@
     After that, you can use the created class like a normal
     SQLalchemy ORM object.
 """
-# ---------------------------------------------------------------------
-# Imports
 from database.database import Database
 from database.database_session import DatabaseSession
-# ---------------------------------------------------------------------

@@ -7,9 +7,6 @@
 from typing import Optional
 from database import DatabaseSession
 from my_database_model import APIToken
-from my_database_model import APITokenScope
-# ---------------------------------------------------------------------
-# Methods
 
 
 def get_token_information(token: str) -> Optional[APIToken]:
@@ -42,4 +39,3 @@ def get_token_information(token: str) -> Optional[APIToken]:
 
     # Return the token
     return token_object
-# ---------------------------------------------------------------------

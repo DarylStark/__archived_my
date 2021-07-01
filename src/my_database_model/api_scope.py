@@ -2,14 +2,9 @@
     This module includes the APIScope class which will be used by
     SQLalchemy ORM.
 """
-# ---------------------------------------------------------------------
-# Imports
-import datetime
-from sqlalchemy import Column, Integer, DateTime, String, UniqueConstraint, \
-    ForeignKey, Boolean
-from sqlalchemy.orm import relationship
 from database import Database
-# ---------------------------------------------------------------------
+from sqlalchemy import Column, Integer, String, UniqueConstraint
+from sqlalchemy.orm import relationship
 
 
 class APIScope(Database.base_class):
@@ -36,5 +31,3 @@ class APIScope(Database.base_class):
     def full_scope_name(self) -> str:
         """ Method that creates a 'full API scope' object. """
         return f'{self.module}.{self.subject}'
-
-# ---------------------------------------------------------------------

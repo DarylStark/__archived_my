@@ -1,7 +1,6 @@
 """
     Exceptions for the 'database' package.
 """
-# ---------------------------------------------------------------------
 
 
 class DatabaseError(Exception):
@@ -19,4 +18,3 @@ class DatabaseConnectionError(DatabaseCriticalError):
     """ Error that happends when the database credentials are not
         correct """
     pass
-# ---------------------------------------------------------------------

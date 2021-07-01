@@ -2,13 +2,12 @@
     Module that contains the DatabaseSession class. Can be used as
     context manager to communicate with the database in a safe manner.
 """
-# ---------------------------------------------------------------------
-# Imports
-from sqlalchemy.orm.session import Session
-from database import Database
-from typing import Optional, Type
 from types import TracebackType
-# ---------------------------------------------------------------------
+from typing import Optional, Type
+
+from sqlalchemy.orm.session import Session
+
+from database import Database
 
 
 class DatabaseSession:
@@ -132,4 +131,3 @@ class DatabaseSession:
         # Otherwise, False is returned and the exception is passed
         # through
         return exception_type is None
-# ---------------------------------------------------------------------
