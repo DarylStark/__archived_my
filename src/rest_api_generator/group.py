@@ -64,6 +64,10 @@ class Group:
         # Create a empty list of subgroups
         self.subgroups: List[Group] = list()
 
+    def __repr__(self):
+        """ Represents objects of this class. """
+        return f'<Group for "{self.name}" at {self.id}>'
+
     def add_subgroup(self, group: 'Group') -> None:
         """ Method to add a subgroup to this group.
 

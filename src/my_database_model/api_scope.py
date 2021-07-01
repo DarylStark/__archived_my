@@ -27,6 +27,10 @@ class APIScope(Database.base_class):
     token_scopes = relationship(
         'APITokenScope', lazy='joined', back_populates='scope')
 
+    def __repr__(self):
+        """ Represents objects of this class. """
+        return f'<APIScope for "{self.module}.{self.subject}" at {self.id}>'
+
     @property
     def full_scope_name(self) -> str:
         """ Method that creates a 'full API scope' object. """
