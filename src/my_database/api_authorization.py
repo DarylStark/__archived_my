@@ -2,8 +2,6 @@
     Module that contains the methods to get API authentication details
     from the database.
 """
-# ---------------------------------------------------------------------
-# Imports
 from typing import Optional
 from database import DatabaseSession
 from my_database_model import APIToken
