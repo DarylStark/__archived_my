@@ -10,7 +10,7 @@ from my_database.exceptions import MyDatabaseError
 from rest_api_generator import RESTAPIGroup, RESTAPIResponse, ResponseType
 from rest_api_generator import RESTAPIAuthorization
 from rest_api_generator.exceptions import ResourceNotFoundError
-from rest_api_generator.rest_api_endpoint_scopes import RESTAPIEndpointScopes
+from rest_api_generator.endpoint_scopes import RESTAPIEndpointScopes
 from my_database.users import get_users
 # ---------------------------------------------------------------------
 # API group

@@ -8,7 +8,7 @@ import re
 from typing import Optional
 from rest_api_generator import RESTAPIGroup, RESTAPIResponse, ResponseType
 from rest_api_generator import RESTAPIAuthorization
-from rest_api_generator.rest_api_endpoint_scopes import RESTAPIEndpointScopes
+from rest_api_generator.endpoint_scopes import RESTAPIEndpointScopes
 # ---------------------------------------------------------------------
 # API group
 api_group_api = RESTAPIGroup(

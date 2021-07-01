@@ -6,10 +6,10 @@
 import re
 from typing import Callable, List, Optional
 from dataclasses import dataclass, field
-from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
-from rest_api_generator.rest_api_endpoint_scopes\
+from rest_api_generator.authorization import RESTAPIAuthorization
+from rest_api_generator.endpoint_scopes\
     import RESTAPIEndpointScopes
-from rest_api_generator.rest_api_response import RESTAPIResponse
+from rest_api_generator.response import RESTAPIResponse
 # ---------------------------------------------------------------------
 
 

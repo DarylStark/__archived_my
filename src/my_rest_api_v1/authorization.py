@@ -7,7 +7,7 @@
 import logging
 from typing import List, Optional, Union
 from my_database.api_authorization import get_token_information
-from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
+from rest_api_generator.authorization import RESTAPIAuthorization
 from rest_api_generator.rest_api_generator import BasicAuthorization, \
     BearerAuthorzation
 # ---------------------------------------------------------------------

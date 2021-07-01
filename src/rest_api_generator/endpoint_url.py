@@ -4,7 +4,7 @@
 """
 # ---------------------------------------------------------------------
 # Imports
-from rest_api_generator.rest_api_endpoint import RESTAPIEndpoint
+from rest_api_generator.endpoint import RESTAPIEndpoint
 from dataclasses import dataclass
 # ---------------------------------------------------------------------
 

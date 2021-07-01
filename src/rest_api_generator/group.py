@@ -6,12 +6,12 @@
 from logging import getLogger
 import re
 from typing import Callable, List, Optional
-from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
-from rest_api_generator.rest_api_endpoint_scopes\
+from rest_api_generator.authorization import RESTAPIAuthorization
+from rest_api_generator.endpoint_scopes\
     import RESTAPIEndpointScopes
-from rest_api_generator.rest_api_endpoint import RESTAPIEndpoint
-from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
-from rest_api_generator.rest_api_response import RESTAPIResponse
+from rest_api_generator.endpoint import RESTAPIEndpoint
+from rest_api_generator.endpoint_url import RESTAPIEndpointURL
+from rest_api_generator.response import RESTAPIResponse
 # ---------------------------------------------------------------------
 
 

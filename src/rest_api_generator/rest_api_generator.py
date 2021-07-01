@@ -12,12 +12,12 @@ from flask import Blueprint, request, Response, abort
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 from rest_api_generator.exceptions import InvalidGroupError, \
     UnauthorizedForResourceError, ResourceForbiddenError, ResourceNotFoundError
-from rest_api_generator.rest_api_endpoint import RESTAPIEndpoint
-from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
-from rest_api_generator.rest_api_group import RESTAPIGroup
-from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
-from rest_api_generator.rest_api_json_encoder import RESTAPIJSONEncoder
-from rest_api_generator.rest_api_response import RESTAPIResponse, ResponseType
+from rest_api_generator.endpoint import RESTAPIEndpoint
+from rest_api_generator.endpoint_url import RESTAPIEndpointURL
+from rest_api_generator.group import RESTAPIGroup
+from rest_api_generator.authorization import RESTAPIAuthorization
+from rest_api_generator.json_encoder import RESTAPIJSONEncoder
+from rest_api_generator.response import RESTAPIResponse, ResponseType
 from json import dumps
 from math import ceil
 from logging import getLogger

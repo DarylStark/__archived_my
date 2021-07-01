@@ -9,7 +9,7 @@ from enum import Enum
 from json import JSONEncoder
 from typing import Any, Dict, Union
 from database.database import Database
-from rest_api_generator.rest_api_response import RESTAPIResponse, ResponseType
+from rest_api_generator.response import RESTAPIResponse, ResponseType
 # ---------------------------------------------------------------------
 
 
