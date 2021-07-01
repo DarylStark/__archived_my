@@ -1,20 +1,19 @@
 """
-    This module includes the RESTAPIEndpoint which represents a API
-    endpoint.
+    This module includes the Endpoint which represents a API endpoint.
 """
 # ---------------------------------------------------------------------
 import re
 from typing import Callable, List, Optional
 from dataclasses import dataclass, field
-from rest_api_generator.authorization import RESTAPIAuthorization
+from rest_api_generator.authorization import Authorization
 from rest_api_generator.endpoint_scopes\
-    import RESTAPIEndpointScopes
-from rest_api_generator.response import RESTAPIResponse
+    import EndpointScopes
+from rest_api_generator.response import Response
 # ---------------------------------------------------------------------
 
 
 @dataclass
-class RESTAPIEndpoint:
+class Endpoint:
     """ Class that represent a API endpoint
 
         Members
@@ -22,7 +21,7 @@ class RESTAPIEndpoint:
         url_suffix : str
             The URL suffix for the endpoint.
 
-        func : Callable[[], RESTAPIResponse]
+        func : Callable[[], Response]
             The function to run for this endpoint.
 
         http_methods : List[str](default=None)
@@ -46,9 +45,9 @@ class RESTAPIEndpoint:
     # Mandatory members
     url_suffix: List[str]
     func: Callable[[
-        Optional[RESTAPIAuthorization],
+        Optional[Authorization],
         Optional[re.Match]
-    ], RESTAPIResponse]
+    ], Response]
     http_methods: List[str] = field(default_factory=list)
 
     # Members for help pages
@@ -57,5 +56,5 @@ class RESTAPIEndpoint:
 
     # Members for authentication
     auth_needed: Optional[bool] = False
-    auth_scopes: Optional[RESTAPIEndpointScopes] = None
+    auth_scopes: Optional[EndpointScopes] = None
 # ---------------------------------------------------------------------

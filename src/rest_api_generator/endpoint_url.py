@@ -1,16 +1,16 @@
 """
-    This module includes the RESTAPIEndpointURL which is a object that
-    contains the URL for and endpoint and RESTAPIEndpoint object.
+    This module includes the EndpointURL which is a object that
+    contains the URL for and endpoint and Endpoint object.
 """
 # ---------------------------------------------------------------------
 # Imports
-from rest_api_generator.endpoint import RESTAPIEndpoint
+from rest_api_generator.endpoint import Endpoint
 from dataclasses import dataclass
 # ---------------------------------------------------------------------
 
 
 @dataclass
-class RESTAPIEndpointURL:
+class EndpointURL:
     """ Class used to create objects that contain a URL as string and
         a RESTAPIEndpoint object.
 
@@ -24,5 +24,5 @@ class RESTAPIEndpointURL:
     """
 
     url: str
-    endpoint: RESTAPIEndpoint
+    endpoint: Endpoint
 # ---------------------------------------------------------------------

@@ -6,12 +6,12 @@
 # Imports
 import re
 from typing import Optional
-from rest_api_generator import RESTAPIGroup, RESTAPIResponse, ResponseType
-from rest_api_generator import RESTAPIAuthorization
-from rest_api_generator.endpoint_scopes import RESTAPIEndpointScopes
+from rest_api_generator import Group, Response, ResponseType
+from rest_api_generator import Authorization
+from rest_api_generator.endpoint_scopes import EndpointScopes
 # ---------------------------------------------------------------------
 # API group
-api_group_api = RESTAPIGroup(
+api_group_api = Group(
     api_url_prefix='api',
     name='api',
     description='Contains endpoints for generic API requests'
@@ -26,10 +26,10 @@ api_group_api = RESTAPIGroup(
     name='ping',
     description='Endpoint to check if the service is available',
     auth_needed=True,
-    auth_scopes=RESTAPIEndpointScopes(GET=['api.ping'])
+    auth_scopes=EndpointScopes(GET=['api.ping'])
 )
-def ping(auth: Optional[RESTAPIAuthorization],
-         url_match: re.Match) -> RESTAPIResponse:
+def ping(auth: Optional[Authorization],
+         url_match: re.Match) -> Response:
     """
         REST API Endpoing '/api/ping'. Returns a 'pong' object which
         indicates that the REST API is running.
@@ -52,7 +52,7 @@ def ping(auth: Optional[RESTAPIAuthorization],
     """
 
     # Create a RESTAPIResponse object
-    return_response = RESTAPIResponse(ResponseType.SINGLE_RESOURCE)
+    return_response = Response(ResponseType.SINGLE_RESOURCE)
 
     # Set the data
     return_response.data = {

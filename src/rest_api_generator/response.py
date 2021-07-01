@@ -1,6 +1,5 @@
 """
-    This module includes the RESTAPIResponse which represents a API
-    response.
+    This module includes the Response which represents a API response.
 """
 # ---------------------------------------------------------------------
 from typing import Any, Optional
@@ -31,7 +30,7 @@ class ResponseType(Enum):
 
 
 @dataclass
-class RESTAPIResponse:
+class Response:
     """ Class that represent a API response
 
         Members

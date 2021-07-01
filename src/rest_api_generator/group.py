@@ -1,21 +1,21 @@
 """
-    This module includes the RESTAPIGroup which represents a API group.
+    This module includes the Group which represents a API group.
 """
 # ---------------------------------------------------------------------
 # Imports
 from logging import getLogger
 import re
 from typing import Callable, List, Optional
-from rest_api_generator.authorization import RESTAPIAuthorization
+from rest_api_generator.authorization import Authorization
 from rest_api_generator.endpoint_scopes\
-    import RESTAPIEndpointScopes
-from rest_api_generator.endpoint import RESTAPIEndpoint
-from rest_api_generator.endpoint_url import RESTAPIEndpointURL
-from rest_api_generator.response import RESTAPIResponse
+    import EndpointScopes
+from rest_api_generator.endpoint import Endpoint
+from rest_api_generator.endpoint_url import EndpointURL
+from rest_api_generator.response import Response
 # ---------------------------------------------------------------------
 
 
-class RESTAPIGroup:
+class Group:
     """ Class that represent a API group """
 
     def __init__(self,
@@ -63,12 +63,12 @@ class RESTAPIGroup:
             self.name = name
 
         # Create a empty list of endpoint
-        self.endpoints: List[RESTAPIEndpoint] = list()
+        self.endpoints: List[Endpoint] = list()
 
         # Create a empty list of subgroups
-        self.subgroups: List[RESTAPIGroup] = list()
+        self.subgroups: List[Group] = list()
 
-    def add_subgroup(self, group: 'RESTAPIGroup') -> None:
+    def add_subgroup(self, group: 'Group') -> None:
         """ Method to add a subgroup to this group.
 
             Parameters
@@ -91,7 +91,7 @@ class RESTAPIGroup:
             description: str = None,
             auth_needed: bool = False,
             auth_scopes:
-            Optional[RESTAPIEndpointScopes] = None) -> Callable:
+            Optional[EndpointScopes] = None) -> Callable:
         """ Decorator to register a endpoint for this REST API group
 
             Parameters
@@ -127,12 +127,12 @@ class RESTAPIGroup:
         """
 
         def decorator(func: Callable[[
-            Optional[RESTAPIAuthorization],
+            Optional[Authorization],
             Optional[re.Match]
-        ], RESTAPIResponse]) -> Callable[[
-            Optional[RESTAPIAuthorization],
+        ], Response]) -> Callable[[
+            Optional[Authorization],
             Optional[re.Match]
-        ], RESTAPIResponse]:
+        ], Response]:
             """ The decorator registers the API endpoint
 
                 Parameters
@@ -146,7 +146,7 @@ class RESTAPIGroup:
                     The function that is given
             """
             # Add the endpoint to the list
-            endpoint: RESTAPIEndpoint = RESTAPIEndpoint(
+            endpoint: Endpoint = Endpoint(
                 url_suffix=url_suffix,
                 func=func,
                 http_methods=http_methods,
@@ -165,7 +165,7 @@ class RESTAPIGroup:
         # Return the decorator
         return decorator
 
-    def get_endpoints(self) -> List[RESTAPIEndpointURL]:
+    def get_endpoints(self) -> List[EndpointURL]:
         """ Method that returns a list with RESTAPIEndpointURL objects.
             These objects contain the URL and RESTAPIEndpoint objects
             for all registered endpoints in this group and subgroup.
@@ -184,14 +184,14 @@ class RESTAPIGroup:
         self.logger.debug('Creating list of endpoint URLs')
 
         # Create a empty list that we can fill to return
-        return_list: List[RESTAPIEndpointURL] = list()
+        return_list: List[EndpointURL] = list()
 
         # Add local endpoints
         for endpoint in self.endpoints:
             # Loop through all suffixes for this endpoint
             for suffixes in endpoint.url_suffix:
                 # Create a object
-                endpoint_url = RESTAPIEndpointURL(
+                endpoint_url = EndpointURL(
                     url=f'{self.url_prefix}{suffixes}',
                     endpoint=endpoint
                 )
@@ -203,7 +203,7 @@ class RESTAPIGroup:
         # this group to it so we get a full URL
         for group in self.subgroups:
             # Get the endpoints and prepend the local prefix
-            endpoint_list: List[RESTAPIEndpointURL] = group.get_endpoints()
+            endpoint_list: List[EndpointURL] = group.get_endpoints()
             for endpoint in endpoint_list:
                 endpoint.url = f'{self.url_prefix}{endpoint.url}'
 

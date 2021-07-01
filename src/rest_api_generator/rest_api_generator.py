@@ -8,16 +8,16 @@ from dataclasses import dataclass
 import re
 import timeit
 import time
-from flask import Blueprint, request, Response, abort
+from flask import Blueprint, request, Response as FlaskResponse, abort
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 from rest_api_generator.exceptions import InvalidGroupError, \
     UnauthorizedForResourceError, ResourceForbiddenError, ResourceNotFoundError
-from rest_api_generator.endpoint import RESTAPIEndpoint
-from rest_api_generator.endpoint_url import RESTAPIEndpointURL
-from rest_api_generator.group import RESTAPIGroup
-from rest_api_generator.authorization import RESTAPIAuthorization
+from rest_api_generator.endpoint import Endpoint
+from rest_api_generator.endpoint_url import EndpointURL
+from rest_api_generator.group import Group
+from rest_api_generator.authorization import Authorization
 from rest_api_generator.json_encoder import RESTAPIJSONEncoder
-from rest_api_generator.response import RESTAPIResponse, ResponseType
+from rest_api_generator.response import Response, ResponseType
 from json import dumps
 from math import ceil
 from logging import getLogger
@@ -94,7 +94,7 @@ class RESTAPIGenerator:
         # Create a empty set with registered groups. The user can add
         # groups with the 'register_group' command. We make this a set
         # to make sure no groups are added more then once.
-        self.groups: Set[RESTAPIGroup] = set()
+        self.groups: Set[Group] = set()
 
         # Create a dictionary that will contain the cache for the URLs.
         self.url_cache: Dict[str, Tuple] = dict()
@@ -122,7 +122,7 @@ class RESTAPIGenerator:
                     Optional[Union[BasicAuthorization, BearerAuthorzation]],
                     Optional[List[str]]
                 ],
-                RESTAPIAuthorization
+                Authorization
             ]
         ]
 
@@ -173,7 +173,7 @@ class RESTAPIGenerator:
     def raise_error(self,
                     code: int,
                     msg: Optional[str] = None
-                    ) -> Optional[RESTAPIResponse]:
+                    ) -> Optional[Response]:
         """ Method that either aborts the request, or returns a
             RESTAPIRespone with a error code.
 
@@ -204,7 +204,7 @@ class RESTAPIGenerator:
                 f'Not aborting the request because we got a {code} error with \
                     message: {msg}. Generating API error response.')
 
-            error_response = RESTAPIResponse(ResponseType.ERROR)
+            error_response = Response(ResponseType.ERROR)
             error_response.error_code = code
             error_response.error_message = msg
             error_response.success = False
@@ -248,7 +248,7 @@ class RESTAPIGenerator:
             time_start = timeit.default_timer()
 
             self.logger.debug('Searching for endpoints')
-            selected_endpoint: Optional[RESTAPIEndpoint] = None
+            selected_endpoint: Optional[Endpoint] = None
             endpoint_regex: Optional[re.Match] = None
 
             # Search the local URL cache for this URL. By doing so, we
@@ -261,7 +261,7 @@ class RESTAPIGenerator:
                 self.logger.debug('Endpoint was NOT in cache')
 
                 # Get a list of all endpoints registered in this REST API
-                url_list: List[RESTAPIEndpointURL] = self.get_all_endpoints()
+                url_list: List[EndpointURL] = self.get_all_endpoints()
 
                 # Filter the list to only include the URL that we need
                 filtered_url_list: List[Tuple] = [
@@ -296,7 +296,7 @@ class RESTAPIGenerator:
                 }
 
             # Set empty return value
-            return_value: Optional[RESTAPIResponse] = None
+            return_value: Optional[Response] = None
 
             # Loop through the endpoints and find one that matches the
             # requested url
@@ -307,8 +307,8 @@ class RESTAPIGenerator:
                 # endpoint
                 if request.method in selected_endpoint.http_methods:
                     # Set empty auth variable
-                    auth: Optional[RESTAPIAuthorization] = None
-                    error_return: Optional[RESTAPIResponse] = None
+                    auth: Optional[Authorization] = None
+                    error_return: Optional[Response] = None
 
                     # Method is allowed, check if permissions are
                     # needed
@@ -349,7 +349,7 @@ class RESTAPIGenerator:
                                         request.method)
                                 )
                         except (AttributeError, KeyError):
-                            auth = RESTAPIAuthorization(authorized=False)
+                            auth = Authorization(authorized=False)
 
                         self.logger.debug(
                             f'Authorized return: {auth.authorized}')
@@ -459,7 +459,7 @@ class RESTAPIGenerator:
                 response_code = return_value.error_code
 
             # Return the result
-            return Response(
+            return FlaskResponse(
                 response=dumps(
                     return_value, cls=RESTAPIJSONEncoder,
                     **json_options
@@ -468,7 +468,7 @@ class RESTAPIGenerator:
                 mimetype='application/json'
             )
 
-    def register_group(self, group: RESTAPIGroup) -> None:
+    def register_group(self, group: Group) -> None:
         """ Method to register a group for the REST API
 
             Parameters
@@ -483,16 +483,16 @@ class RESTAPIGenerator:
 
         # Check if the group is of the correct type. If it isn't, the
         # user made a mistake and we raise an exception
-        if isinstance(group, RESTAPIGroup):
+        if isinstance(group, Group):
             # Add the group to the set
             self.logger.debug(f'Adding RESTAPIGroup: {group.name}')
             self.groups.add(group)
         else:
             # Wrong type, give error
             raise InvalidGroupError(
-                f'Group is of type "{type(group)}", expected "{RESTAPIGroup}"')
+                f'Group is of type "{type(group)}", expected "{Group}"')
 
-    def get_all_endpoints(self) -> List[RESTAPIEndpointURL]:
+    def get_all_endpoints(self) -> List[EndpointURL]:
         """ Method that returns all RESTAPIEndpoints for this REST API
             in a list with RESTAPIEndpointURL objects.
 
@@ -509,7 +509,7 @@ class RESTAPIGenerator:
         self.logger.debug('Creating a list with all endpoints')
 
         # Create a empty list that we can return later on
-        return_list: List[RESTAPIEndpointURL] = list()
+        return_list: List[EndpointURL] = list()
 
         # Add endpoints from groups.
         for group in self.groups:

@@ -9,7 +9,7 @@ from enum import Enum
 from json import JSONEncoder
 from typing import Any, Dict, Union
 from database.database import Database
-from rest_api_generator.response import RESTAPIResponse, ResponseType
+from rest_api_generator.response import Response, ResponseType
 # ---------------------------------------------------------------------
 
 
@@ -40,7 +40,7 @@ class RESTAPIJSONEncoder(JSONEncoder):
         """
 
         # Check what kind of object we got
-        if isinstance(object, RESTAPIResponse):
+        if isinstance(object, Response):
             # REST API Responses can be converted to a dict
             return self.encode_rest_api_response(object=object)
         elif isinstance(object, ResponseType):
@@ -59,7 +59,7 @@ class RESTAPIJSONEncoder(JSONEncoder):
             raise TypeError(
                 f'Unserializable object "{object}" of type "{type(object)}"')
 
-    def encode_rest_api_response(self, object: RESTAPIResponse) -> Dict:
+    def encode_rest_api_response(self, object: Response) -> Dict:
         """ Method to encode a RESTAPIResponse object.
 
             Parameters

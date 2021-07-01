@@ -7,7 +7,7 @@
 import logging
 from typing import List, Optional, Union
 from my_database.api_authorization import get_token_information
-from rest_api_generator.authorization import RESTAPIAuthorization
+from rest_api_generator.authorization import Authorization
 from rest_api_generator.rest_api_generator import BasicAuthorization, \
     BearerAuthorzation
 # ---------------------------------------------------------------------
@@ -15,7 +15,7 @@ from rest_api_generator.rest_api_generator import BasicAuthorization, \
 
 def authorization(
         auth: Optional[Union[BasicAuthorization, BearerAuthorzation]],
-        scopes: Optional[List[str]]) -> RESTAPIAuthorization:
+        scopes: Optional[List[str]]) -> Authorization:
     """
         Method that does the authentication for the REST API.
 
@@ -40,7 +40,7 @@ def authorization(
     logger = logging.getLogger('api_authorization')
 
     # Create a authorization object
-    auth_object: RESTAPIAuthorization = RESTAPIAuthorization()
+    auth_object: Authorization = Authorization()
 
     if type(scopes) is list:
         logger.debug(

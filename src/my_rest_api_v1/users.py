@@ -7,14 +7,14 @@
 import re
 from typing import Optional
 from my_database.exceptions import MyDatabaseError
-from rest_api_generator import RESTAPIGroup, RESTAPIResponse, ResponseType
-from rest_api_generator import RESTAPIAuthorization
+from rest_api_generator import Group, Response, ResponseType
+from rest_api_generator import Authorization
 from rest_api_generator.exceptions import ResourceNotFoundError
-from rest_api_generator.endpoint_scopes import RESTAPIEndpointScopes
+from rest_api_generator.endpoint_scopes import EndpointScopes
 from my_database.users import get_users
 # ---------------------------------------------------------------------
 # API group
-api_group_users = RESTAPIGroup(
+api_group_users = Group(
     api_url_prefix='users',
     name='users',
     description='Contains endpoints for users'
@@ -29,10 +29,10 @@ api_group_users = RESTAPIGroup(
     name='users',
     description='Endpoint to retrieve all or a subset of the users',
     auth_needed=True,
-    auth_scopes=RESTAPIEndpointScopes(GET=['users.retrieve'])
+    auth_scopes=EndpointScopes(GET=['users.retrieve'])
 )
-def users(auth: Optional[RESTAPIAuthorization],
-          url_match: re.Match) -> RESTAPIResponse:
+def users(auth: Optional[Authorization],
+          url_match: re.Match) -> Response:
     """
         REST API Endpoing '/users/users'. Returns a list with users.
 
@@ -54,7 +54,7 @@ def users(auth: Optional[RESTAPIAuthorization],
     """
 
     # Create a RESTAPIResponse object
-    return_response = RESTAPIResponse(ResponseType.RESOURCE_SET)
+    return_response = Response(ResponseType.RESOURCE_SET)
 
     # Set the data
     try:

@@ -14,7 +14,7 @@ sys.path.append(
 )
 # ---------------------------------------------------------------------
 # Imports
-from rest_api_generator import RESTAPIGenerator, RESTAPIGroup, RESTAPIEndpointURL
+from rest_api_generator import RESTAPIGenerator, Group, EndpointURL
 # ---------------------------------------------------------------------
 # Fixtures
 
@@ -28,10 +28,10 @@ def fixture_rest_api() -> RESTAPIGenerator:
     rest_api = RESTAPIGenerator('rest_api_unittest')
 
     # Create groups
-    group_a = RESTAPIGroup('group_a')
-    group_b = RESTAPIGroup('group_b')
-    group_c = RESTAPIGroup('group_c')
-    group_d = RESTAPIGroup('group_d')
+    group_a = Group('group_a')
+    group_b = Group('group_b')
+    group_c = Group('group_c')
+    group_d = Group('group_d')
 
     # Add groups to the API object
     rest_api.register_group(group_a)
@@ -111,7 +111,7 @@ def test_api_group_registered_urls(fixture_rest_api, fixture_expected_urls) -> N
     """
 
     # Retrieve a list of registered endpoints
-    endpoints: List[RESTAPIEndpointURL] = fixture_rest_api.get_all_endpoints()
+    endpoints: List[EndpointURL] = fixture_rest_api.get_all_endpoints()
 
     # Get the registered URLs
     registered_urls = [endpoint.url for endpoint in endpoints]
@@ -133,7 +133,7 @@ def test_api_group_registered_urls_length(fixture_rest_api, fixture_expected_url
     """
 
     # Retrieve a list of registered endpoints
-    endpoints: List[RESTAPIEndpointURL] = fixture_rest_api.get_all_endpoints()
+    endpoints: List[EndpointURL] = fixture_rest_api.get_all_endpoints()
 
     # Check the length of the endpoints list, and verify that it is the
     # same length as our check list

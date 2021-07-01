@@ -1,7 +1,6 @@
 """
-    This module includes the RESTAPIEndpointScopes class which is
-    a object that contains the auth scopes for a specific
-    RESTAPIEndpoint
+    This module includes the EndpointScopes class which is a object
+    that contains the auth scopes for a specific Endpoint
 """
 # ---------------------------------------------------------------------
 # Imports
@@ -11,7 +10,7 @@ from typing import List, Optional
 
 
 @dataclass
-class RESTAPIEndpointScopes:
+class EndpointScopes:
     """ Class used to create objects that contain the auth scopes for a
         specific RESTAPIEndpoint
 

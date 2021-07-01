@@ -1,6 +1,6 @@
 """
-    This module includes the RESTAPIAuthorization class, which can be
-    used to identify if a user is authorized to do something.
+    This module includes the Authorization class, which can be used to
+    identify if a user is authorized to do something.
 """
 # ---------------------------------------------------------------------
 # Imports
@@ -10,7 +10,7 @@ from typing import Any, List, Optional
 
 
 @dataclass
-class RESTAPIAuthorization:
+class Authorization:
     """ Class that can be used to identify a authorization.
 
         Members
