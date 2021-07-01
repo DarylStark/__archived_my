@@ -9,9 +9,10 @@ import re
 import timeit
 import time
 from flask import Blueprint, request, Response, abort
-from typing import Callable, List, Optional, Set, Union
+from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 from rest_api_generator.exceptions import InvalidGroupError, \
     UnauthorizedForResourceError, ResourceForbiddenError, ResourceNotFoundError
+from rest_api_generator.rest_api_endpoint import RESTAPIEndpoint
 from rest_api_generator.rest_api_endpoint_url import RESTAPIEndpointURL
 from rest_api_generator.rest_api_group import RESTAPIGroup
 from rest_api_generator.rest_api_authorization import RESTAPIAuthorization
@@ -94,6 +95,9 @@ class RESTAPIGenerator:
         # groups with the 'register_group' command. We make this a set
         # to make sure no groups are added more then once.
         self.groups: Set[RESTAPIGroup] = set()
+
+        # Create a dictionary that will contain the cache for the URLs.
+        self.url_cache: Dict[str, Tuple] = dict()
 
         # Create a Flask Blueprint. This can be used to connect the
         # REST API to a existing Flask app
@@ -244,16 +248,38 @@ class RESTAPIGenerator:
             time_start = timeit.default_timer()
 
             self.logger.debug('Searching for endpoints')
+            selected_endpoint: Optional[RESTAPIEndpoint] = None
+            endpoint_regex: Optional[re.Match] = None
 
-            # Get a list of all endpoints registered in this REST API
-            url_list: List[RESTAPIEndpointURL] = self.get_all_endpoints()
+            # Search the local URL cache for this URL. By doing so, we
+            # might get the URL without matching the regexes. This
+            # results in a bit more speed.
+            if path in self.url_cache.keys():
+                self.logger.debug('Endpoint was in cache')
+                selected_endpoint, endpoint_regex = self.url_cache[path]
+            else:
+                self.logger.debug('Endpoint was NOT in cache')
 
-            # Filter the list to only include the URL that we need
-            filtered_url_list = [
-                (endpoint, re.fullmatch(endpoint.url, path))
-                for endpoint in url_list
-                if re.fullmatch(endpoint.url, path)
-            ]
+                # Get a list of all endpoints registered in this REST API
+                url_list: List[RESTAPIEndpointURL] = self.get_all_endpoints()
+
+                # Filter the list to only include the URL that we need
+                filtered_url_list: List[Tuple] = [
+                    (endpoint, re.fullmatch(endpoint.url, path))
+                    for endpoint in url_list
+                    if re.fullmatch(endpoint.url, path)
+                ]
+
+                # Check if we got a value
+                if len(filtered_url_list) == 1:
+                    selected_endpoint = filtered_url_list[0][0].endpoint
+                    endpoint_regex = filtered_url_list[0][1]
+
+                    # Add it to the cache
+                    self.url_cache[path] = (
+                        selected_endpoint,
+                        endpoint_regex
+                    )
 
             # Set JSON options
             json_options = dict()
@@ -272,25 +298,21 @@ class RESTAPIGenerator:
             # Set empty return value
             return_value: Optional[RESTAPIResponse] = None
 
-            # Loop through the endpoints and fine one that matches the
+            # Loop through the endpoints and find one that matches the
             # requested url
-            if len(filtered_url_list) == 1:
-                # Found the requested endpoint. Retrieve the endpoint
-                # object from it
-                endpoint = filtered_url_list[0][0].endpoint
-
-                self.logger.debug(f'Endpoint found: {endpoint.name}')
+            if selected_endpoint:
+                self.logger.debug(f'Endpoint found: {selected_endpoint.name}')
 
                 # First we check if the HTTP method is valid for this
                 # endpoint
-                if request.method in endpoint.http_methods:
+                if request.method in selected_endpoint.http_methods:
                     # Set empty auth variable
                     auth: Optional[RESTAPIAuthorization] = None
                     error_return: Optional[RESTAPIResponse] = None
 
                     # Method is allowed, check if permissions are
                     # needed
-                    if endpoint.auth_needed and self.authorization_function:
+                    if selected_endpoint.auth_needed and self.authorization_function:
                         self.logger.debug(f'Authorization is needed')
 
                         # Permissions needed, get if the user is
@@ -323,7 +345,7 @@ class RESTAPIGenerator:
                             auth = \
                                 self.authorization_function(
                                     authorization_object,
-                                    endpoint.auth_scopes.__getattribute__(
+                                    selected_endpoint.auth_scopes.__getattribute__(
                                         request.method)
                                 )
                         except (AttributeError, KeyError):
@@ -359,9 +381,9 @@ class RESTAPIGenerator:
                         if error_return:
                             return_value = error_return
                         else:
-                            return_value = endpoint.func(
+                            return_value = selected_endpoint.func(
                                 auth,
-                                filtered_url_list[0][1]
+                                endpoint_regex
                             )
                     except UnauthorizedForResourceError as exception:
                         # User is not authorized, raise a 401-error
