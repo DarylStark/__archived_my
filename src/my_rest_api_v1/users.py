@@ -31,8 +31,8 @@ api_group_users = RESTAPIGroup(
     auth_needed=True,
     auth_scopes=RESTAPIEndpointScopes(GET=['users.retrieve'])
 )
-def ping(auth: Optional[RESTAPIAuthorization],
-         url_match: re.Match) -> RESTAPIResponse:
+def users(auth: Optional[RESTAPIAuthorization],
+          url_match: re.Match) -> RESTAPIResponse:
     """
         REST API Endpoing '/users/users'. Returns a list with users.
 
