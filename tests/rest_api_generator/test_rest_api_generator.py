@@ -1,7 +1,6 @@
 """
     This module defines unit tests for the RESTAPIGenerator
 """
-# ---------------------------------------------------------------------
 # Add include path. We need to do this because we are not in the
 # original path
 import sys
@@ -12,13 +11,10 @@ sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(
         __file__), os.path.pardir, os.path.pardir)) + '/src'
 )
-# ---------------------------------------------------------------------
-# Imports
 from rest_api_generator import RESTAPIGenerator, Group, EndpointURL
-# ---------------------------------------------------------------------
+
+
 # Fixtures
-
-
 @pytest.fixture
 def fixture_rest_api() -> RESTAPIGenerator:
     """ Fixture to set up a RESTAPIGenerator object with a few groups
@@ -99,10 +95,8 @@ def fixture_expected_urls() -> List[str]:
         'group_d/endpoint_2/'
     ]
 
-# ---------------------------------------------------------------------
+
 # Tests
-
-
 def test_api_group_registered_urls(fixture_rest_api, fixture_expected_urls) -> None:
     """ Unit test for registered URLs
 
@@ -142,4 +136,3 @@ def test_api_group_registered_urls_length(fixture_rest_api, fixture_expected_url
 
     # Done! Everything looks fine
     assert True
-# ---------------------------------------------------------------------

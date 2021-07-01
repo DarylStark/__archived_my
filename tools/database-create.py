@@ -1,7 +1,6 @@
 """
     Script to create the missing tables from the database
 """
-# ---------------------------------------------------------------------
 # Add include path. We need to do this because we are not in the
 # original path
 import sys
@@ -10,8 +9,6 @@ sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(
         __file__), os.path.pardir)) + '/src'
 )
-# ---------------------------------------------------------------------
-# Imports
 import argparse
 import logging
 import pymysql
@@ -20,7 +17,8 @@ from rich.logging import RichHandler
 from database import Database, DatabaseSession
 from database.exceptions import DatabaseConnectionError
 from my_database_model import *
-# ---------------------------------------------------------------------
+
+
 if __name__ == '__main__':
     # Parse the arguments for the script
     parser = argparse.ArgumentParser(description='Create the database')
@@ -201,4 +199,3 @@ if __name__ == '__main__':
 
     # Done!
     logger.info('Script done')
-# ---------------------------------------------------------------------

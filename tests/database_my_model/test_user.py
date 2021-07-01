@@ -1,7 +1,6 @@
 """
     This module defines unit tests for the database model
 """
-# ---------------------------------------------------------------------
 # Add include path. We need to do this because we are not in the
 # original path
 import sys
@@ -11,13 +10,10 @@ sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(
         __file__), os.path.pardir, os.path.pardir)) + '/src'
 )
-# ---------------------------------------------------------------------
-# Imports
 from my_database_model import User
-# ---------------------------------------------------------------------
+
+
 # Fixtures
-
-
 @pytest.fixture
 def fixture_test_user() -> User:
     """ Fixture to create a User object """
@@ -26,8 +22,6 @@ def fixture_test_user() -> User:
                 username='test.user',
                 email='test.user@dstark.nl'
                 )
-# ---------------------------------------------------------------------
-# Tests
 
 
 def test_user_password_verification_correct_password(fixture_test_user: User) -> None:
@@ -56,4 +50,3 @@ def test_user_password_verification_wrong_password(fixture_test_user: User) -> N
 
     # Check if the password is correct
     assert not fixture_test_user.verify_password('!321tset')
-# ---------------------------------------------------------------------
