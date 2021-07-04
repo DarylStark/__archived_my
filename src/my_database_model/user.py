@@ -44,7 +44,7 @@ class User(Database.base_class):
     # Fields that need to be hidden from the API
     api_hide_fields = ['password']
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """ Represents objects of this class. """
         return f'<User for "{self.username}" at {self.id}>'
 

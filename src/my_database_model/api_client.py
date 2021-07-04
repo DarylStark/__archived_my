@@ -32,6 +32,6 @@ class APIClient(Database.base_class):
     app_publisher = Column(String(64), nullable=False)
     token = Column(String(32), nullable=False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """ Represents objects of this class. """
         return f'<APIClient for "{self.app_name}" at {self.id}>'

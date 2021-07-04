@@ -27,7 +27,7 @@ class APITokenScope(Database.base_class):
     token = relationship('APIToken', lazy='joined')
     scope = relationship('APIScope', lazy='joined')
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """ Represents objects of this class. """
         return (f'<APITokenScope for "{self.token_id}.{self.scope_id}"' +
                 'at {self.id}>')
