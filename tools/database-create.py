@@ -116,7 +116,9 @@ if __name__ == '__main__':
 
         # Create API scopes
         data = [
-            'api.ping', 'users.create', 'users.retrieve', 'users.update', 'users.delete'
+            'api.ping', 'users.create', 'users.retrieve', 'users.update',
+            'users.delete', 'tags.create', 'tags.retrieve', 'tags.update',
+            'tags.delete'
         ]
 
         for entry in data:
@@ -178,7 +180,7 @@ if __name__ == '__main__':
             logger.warning('API token not added; already in the database')
 
         # Add scopes to the created API token
-        data = [1, 2, 3, 4]
+        data = [1, 2, 3, 4, 7]
         try:
             for entry in data:
                 with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
