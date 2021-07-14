@@ -18,7 +18,7 @@ api_group_tags = Group(
 
 
 @api_group_tags.register_endpoint(
-    url_suffix=['tags', 'tags/'],
+    url_suffix=['tags', 'tags/', 'tags/([0-9]+)'],
     http_methods=['GET'],
     name='tags',
     description='Endpoint to retrieve all or a subset of the tags',
@@ -50,7 +50,16 @@ def tags(auth: Optional[Authorization],
 
     # Set the data
     try:
-        return_response.data = get_tags(auth.data.user)
+        # Check if we received a ID
+        tag_id = None
+        if len(url_match.groups()) > 0:
+            tag_id = int(url_match.groups(0)[0])
+
+        # Get the tags
+        return_response.data = get_tags(
+            auth.data.user,
+            flt_id=tag_id
+        )
     except MyDatabaseError:
         raise ResourceNotFoundError
 
