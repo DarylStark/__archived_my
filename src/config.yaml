@@ -23,6 +23,6 @@ default:
 development:
   sql_alchemy:
     pool_echo: true
-    create_table: true
+    create_tables: true
   logging:
     level: 10

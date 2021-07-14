@@ -6,6 +6,7 @@ from logging import getLogger
 from config_loader import ConfigLoader
 from database import Database
 from my_database.exceptions import ConfigNotLoadedError
+from my_database_model import *
 
 # Load the settings
 if not ConfigLoader.load_settings():
@@ -21,6 +22,7 @@ username = ConfigLoader.config['database']['username']
 password = ConfigLoader.config['database']['password']
 server = ConfigLoader.config['database']['server']
 database = ConfigLoader.config['database']['database']
+create_tables = ConfigLoader.config['sql_alchemy']['create_tables']
 
 # Connect to the database and create the needed tables
 connection_string = \
@@ -28,5 +30,5 @@ connection_string = \
 
 Database.connect(
     connection=connection_string,
-    create_tables=False
+    create_tables=create_tables
 )
