@@ -31,9 +31,7 @@ def ping(auth: Optional[Authorization],
         Parameters
         ----------
         auth : RESTAPIAuthorization
-            A object that contains authorization information. Because
-            this endpoint doesn't expect authorization, this has to be
-            empty at all times.
+            A object that contains authorization information.
 
         url_match : re.Match
             Endpoint that contains the regex match object that was used
