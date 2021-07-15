@@ -28,7 +28,7 @@ api_group_tags = Group(
 def tags(auth: Optional[Authorization],
          url_match: re.Match) -> Response:
     """
-        REST API Endpoing '/tags/tags'. Returns a list with users.
+        REST API Endpoing '/tags/tags'. Returns a list with tags.
 
         Parameters
         ----------
@@ -54,12 +54,16 @@ def tags(auth: Optional[Authorization],
         tag_id = None
         if len(url_match.groups()) > 0:
             tag_id = int(url_match.groups(0)[0])
+            return_response.type = ResponseType.SINGLE_RESOURCE
 
         # Get the tags
         return_response.data = get_tags(
             auth.data.user,
             flt_id=tag_id
         )
+
+        if len(return_response.data) == 0 and tag_id is not None:
+            raise ResourceNotFoundError('Not a valid tag ID')
     except MyDatabaseError:
         raise ResourceNotFoundError
 
