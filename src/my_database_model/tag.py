@@ -15,15 +15,13 @@ class Tag(Database.base_class):
 
     # Set constrains for this table
     __table_args__ = (
-        UniqueConstraint('user_id', 'parent_id', 'title'),
+        UniqueConstraint('user_id', 'title'),
     )
 
     # Database columns for this table
     id = Column(Integer, primary_key=True)
     user_id = Column(ForeignKey("users.id"),
                      nullable=False)
-    parent_id = Column(ForeignKey("tags.id"),
-                       nullable=True)
     title = Column(String(32), nullable=False)
 
     def __repr__(self) -> str:
