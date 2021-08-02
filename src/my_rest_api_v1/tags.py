@@ -4,11 +4,16 @@
 """
 import re
 from typing import Optional
-from my_database.exceptions import MyDatabaseError
+from flask import request
+from my_database.exceptions import MyDatabaseError, IntegrityError
+from my_database.generic import add_object
 from my_database.tags import get_tags
+from my_database_model import user
+from my_database_model.tag import Tag
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
-from rest_api_generator.exceptions import ResourceNotFoundError
+from rest_api_generator.exceptions import (ResourceForbiddenError, ResourceIntegrityError,
+                                           ResourceNotFoundError)
 
 api_group_tags = Group(
     api_url_prefix='tags',
@@ -64,6 +69,70 @@ def tags(auth: Optional[Authorization],
 
         if len(return_response.data) == 0 and tag_id is not None:
             raise ResourceNotFoundError('Not a valid tag ID')
+    except MyDatabaseError:
+        raise ResourceNotFoundError
+
+    # Return the create RESTAPIResponse object
+    return return_response
+
+
+@api_group_tags.register_endpoint(
+    url_suffix=['tag'],
+    http_methods=['POST'],
+    name='tag',
+    description='Endpoint to create a tag',
+    auth_needed=True,
+    auth_scopes=EndpointScopes(POST=['tags.create'])
+)
+def tag(auth: Optional[Authorization],
+        url_match: re.Match) -> Response:
+    """
+        REST API Endpoing '/tags/tag'. Creates a tag.
+
+        Parameters
+        ----------
+        auth : RESTAPIAuthorization
+            A object that contains authorization information.
+
+        url_match : re.Match
+            Endpoint that contains the regex match object that was used
+            to match the URL.
+
+        Returns
+        -------
+        RESTAPIResponse
+            The API response
+    """
+
+    # Create a RESTAPIResponse object
+    return_response = Response(ResponseType.SINGLE_RESOURCE)
+
+    # Set the data
+    try:
+        # Get the data
+        post_data = request.json
+
+        # Check if we have all fields
+        needed_fields = ['title']
+        for field in needed_fields:
+            if field not in post_data.keys():
+                raise ResourceNotFoundError(
+                    f'Field "{field}" missing in request')
+
+        # Create a tag
+        new_object = Tag(
+            user_id=auth.data.user_id,
+            title=post_data['title']
+        )
+
+        # Add the object
+        try:
+            add_object(new_object)
+        except IntegrityError:
+            raise ResourceIntegrityError('Tag already exists')
+        else:
+            return_response.data = new_object
+
     except MyDatabaseError:
         raise ResourceNotFoundError
 
