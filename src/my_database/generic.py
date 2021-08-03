@@ -7,7 +7,7 @@ import sqlalchemy.exc
 from my_database.exceptions import IntegrityError
 
 
-def add_object(obj: Database.base_class) -> bool:
+def create_object(obj: Database.base_class) -> bool:
     """ Method to add objects to the database.
 
         Parameters

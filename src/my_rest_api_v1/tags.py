@@ -6,7 +6,7 @@ import re
 from typing import Optional
 from flask import request
 from my_database.exceptions import MyDatabaseError, IntegrityError
-from my_database.generic import add_object, delete_object, update_object
+from my_database.generic import create_object, update_object, delete_object
 from my_database.tags import get_tags
 from my_database_model import user
 from my_database_model.tag import Tag
@@ -73,7 +73,7 @@ def tags_create(auth: Optional[Authorization],
 
         # Add the object
         try:
-            add_object(new_object)
+            create_object(new_object)
         except IntegrityError:
             raise ResourceIntegrityError('Tag already exists')
         else:
