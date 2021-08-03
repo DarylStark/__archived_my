@@ -37,6 +37,7 @@ def get_tags(
 
     # Empty data list
     data_list: Optional[Query] = None
+    rv: Optional[List[tag]] = None
 
     # Get the token
     with DatabaseSession(commit_on_end=False, expire_on_commit=False) \
@@ -55,7 +56,9 @@ def get_tags(
             raise FilterNotValidError(
                 f'Tag id should be of type {int}, not {type(flt_id)}.')
 
+        # Get the data
+        if data_list is not None:
+            rv = data_list.all()
+
     # Return the token
-    if data_list is not None:
-        return data_list.all()
-    return None
+    return rv
