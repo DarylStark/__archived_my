@@ -17,6 +17,7 @@ from rest_api_generator.endpoint import Endpoint
 from rest_api_generator.endpoint_url import EndpointURL
 from rest_api_generator.exceptions import (InvalidGroupError,
                                            ResourceForbiddenError,
+                                           ResourceIntegrityError,
                                            ResourceNotFoundError,
                                            UnauthorizedForResourceError)
 from rest_api_generator.group import Group
@@ -384,6 +385,13 @@ class RESTAPIGenerator:
                                 auth,
                                 endpoint_regex
                             )
+                    except ResourceIntegrityError as exception:
+                        # Integrity error occured
+                        error = self.raise_error(400, str(exception))
+                        if error:
+                            return_value = error
+                        else:
+                            return None
                     except UnauthorizedForResourceError as exception:
                         # User is not authorized, raise a 401-error
                         error = self.raise_error(401, str(exception))

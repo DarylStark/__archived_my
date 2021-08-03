@@ -13,6 +13,7 @@ from my_rest_api_v1.api import api_group_api
 from my_rest_api_v1.authorization import authorization
 from my_rest_api_v1.exceptions import ConfigNotLoadedError
 from my_rest_api_v1.users import api_group_users
+from my_rest_api_v1.tags import api_group_tags
 
 # Load the settings
 if not ConfigLoader.load_settings():
@@ -60,6 +61,7 @@ for method in methods:
 logger.debug('Registering groups')
 my_rest_api_v1.register_group(group=api_group_api)
 my_rest_api_v1.register_group(group=api_group_users)
+my_rest_api_v1.register_group(group=api_group_tags)
 
 # The RESTAPIGenerator object works with a Blueprint object that can be
 # added to the Flask app. By doing this.

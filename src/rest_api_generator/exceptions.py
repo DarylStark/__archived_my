@@ -42,3 +42,9 @@ class ResourceNotFoundError(RESTAPIGeneratorEndpointError):
     """ Exception that indicates that a resoure is not found. Should be
         handled as HTTP 404 error. """
     pass
+
+
+class ResourceIntegrityError(RESTAPIGeneratorEndpointError):
+    """ Exception that indicates that a integrity error occurred.
+        Should be handled as HTTP 400 error """
+    pass
