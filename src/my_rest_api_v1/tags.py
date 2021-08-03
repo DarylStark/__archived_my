@@ -171,6 +171,9 @@ def tags_update_delete(auth: Optional[Authorization],
             The API response
     """
 
+    # Create a RESTAPIResponse object
+    return_response = Response(ResponseType.SINGLE_RESOURCE)
+
     # Get the tag
     tag_id = int(url_match.groups(0)[0])
 
@@ -189,9 +192,6 @@ def tags_update_delete(auth: Optional[Authorization],
 
     # Update tag
     if request.method == 'PATCH':
-        # Create a RESTAPIResponse object
-        return_response = Response(ResponseType.SINGLE_RESOURCE)
-
         # Set the data
         try:
             # Get the data
@@ -219,9 +219,6 @@ def tags_update_delete(auth: Optional[Authorization],
 
     # Delete tag
     if request.method == 'DELETE':
-        # Create a RESTAPIResponse object
-        return_response = Response(ResponseType.SINGLE_RESOURCE)
-
         try:
             # Delete the object
             try:
