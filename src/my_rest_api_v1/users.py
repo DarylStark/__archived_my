@@ -33,8 +33,8 @@ api_group_users = Group(
     auth_needed=True,
     auth_scopes=EndpointScopes(POST=['users.create'])
 )
-def tags_create(auth: Optional[Authorization],
-                url_match: re.Match) -> Response:
+def users_create(auth: Optional[Authorization],
+                 url_match: re.Match) -> Response:
     """
         REST API Endpoint '/users/user'. Creates a tag.
 
