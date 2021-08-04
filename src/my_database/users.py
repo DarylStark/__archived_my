@@ -37,6 +37,7 @@ def get_users(
 
     # Empty data list
     data_list: Optional[Query] = None
+    rv: Optional[List[tag]] = None
 
     # Get the token
     with DatabaseSession(commit_on_end=False, expire_on_commit=False) \
@@ -66,7 +67,9 @@ def get_users(
             raise FilterNotValidError(
                 f'User id should be of type {int}, not {type(flt_id)}.')
 
-    # Return the token
-    if data_list is not None:
-        return data_list.all()
-    return None
+        # Get the data
+        if data_list is not None:
+            rv = data_list.all()
+
+    # Return the data
+    return rv

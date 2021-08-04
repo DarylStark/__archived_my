@@ -60,5 +60,5 @@ def get_tags(
         if data_list is not None:
             rv = data_list.all()
 
-    # Return the token
+    # Return the data
     return rv
