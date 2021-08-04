@@ -18,7 +18,7 @@ api_group_users = Group(
 
 
 @api_group_users.register_endpoint(
-    url_suffix=['users', 'users/'],
+    url_suffix=['users', 'users/', 'users/([0-9]+)'],
     http_methods=['GET'],
     name='users',
     description='Endpoint to retrieve all or a subset of the users',
@@ -50,7 +50,25 @@ def users_retrieve(auth: Optional[Authorization],
 
     # Set the data
     try:
-        return_response.data = get_users(auth.data.user)
+        # Check if we received a ID
+        user_id = None
+        if len(url_match.groups()) > 0:
+            user_id = int(url_match.groups(0)[0])
+            return_response.type = ResponseType.SINGLE_RESOURCE
+
+        # Get the users
+        return_response.data = get_users(
+            auth.data.user,
+            flt_id=user_id
+        )
+
+        if len(return_response.data) == 0 and user_id is not None:
+            raise ResourceNotFoundError('Not a valid user ID')
+
+        # If the user requested only one resource, we only put that
+        # resource in the return
+        if user_id is not None:
+            return_response.data = return_response.data[0]
     except MyDatabaseError:
         raise ResourceNotFoundError
 
