@@ -2,19 +2,116 @@
     Module that has the RESTAPIGroup for the 'users' group of the API.
     This group can be used to get user information.
 """
+from random import random
 import re
 from typing import Optional
-from my_database.exceptions import MyDatabaseError
+from flask import request
+from my_database.exceptions import IntegrityError, MyDatabaseError
+from my_database.generic import create_object
 from my_database.users import get_users
+from my_database_model import User
+from my_database_model.user import UserRole
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
-from rest_api_generator.exceptions import ResourceNotFoundError
+from rest_api_generator.exceptions import (ResourceForbiddenError, ResourceIntegrityError,
+                                           ResourceNotFoundError)
+import string
+import random
 
 api_group_users = Group(
     api_url_prefix='users',
     name='users',
     description='Contains endpoints for users'
 )
+
+
+@api_group_users.register_endpoint(
+    url_suffix=['user'],
+    http_methods=['POST'],
+    name='user',
+    description='Endpoint to create a user',
+    auth_needed=True,
+    auth_scopes=EndpointScopes(POST=['users.create'])
+)
+def tags_create(auth: Optional[Authorization],
+                url_match: re.Match) -> Response:
+    """
+        REST API Endpoint '/users/user'. Creates a tag.
+
+        Parameters
+        ----------
+        auth : RESTAPIAuthorization
+            A object that contains authorization information.
+
+        url_match : re.Match
+            Endpoint that contains the regex match object that was used
+            to match the URL.
+
+        Returns
+        -------
+        RESTAPIResponse
+            The API response
+    """
+
+    # Create a RESTAPIResponse object
+    return_response = Response(ResponseType.SINGLE_RESOURCE)
+
+    # Set the data
+    try:
+        # Get the data
+        post_data = request.json
+
+        # Check if we have all fields
+        needed_fields = [
+            'fullname', 'username', 'email',
+            'role'
+        ]
+        for field in needed_fields:
+            if field not in post_data.keys():
+                raise ResourceNotFoundError(
+                    f'Field "{field}" missing in request')
+
+        # Normal users cannot create users, admin users can only create
+        # normal users. Root can create whatever he wants.
+        if (auth.data.user.role == UserRole.user):
+            raise ResourceForbiddenError('A user cannot create users')
+        elif (auth.data.user.role == UserRole.admin and
+              post_data['role'] != 'user'):
+            raise ResourceForbiddenError(
+                'A admin can only create normal users')
+
+        # Create a user
+        new_object = User(
+            fullname=post_data['fullname'],
+            username=post_data['username'],
+            email=post_data['email'],
+            role=post_data['role'],
+        )
+
+        # Generate a random password for this user
+        characters = string.ascii_letters
+        characters += string.digits
+        characters += string.punctuation
+        length = random.randint(24, 33)
+        random_password = [random.choice(characters) for i in range(0, length)]
+        random_password = ''.join(random_password)
+
+        # Set the password for the user
+        new_object.set_password(random_password)
+
+        # Add the object
+        try:
+            create_object(new_object)
+        except IntegrityError:
+            raise ResourceIntegrityError('User already exists')
+        else:
+            return_response.data = new_object
+
+    except MyDatabaseError:
+        raise ResourceNotFoundError
+
+    # Return the create RESTAPIResponse object
+    return return_response
 
 
 @api_group_users.register_endpoint(
