@@ -25,8 +25,8 @@ api_group_users = Group(
     auth_needed=True,
     auth_scopes=EndpointScopes(GET=['users.retrieve'])
 )
-def users(auth: Optional[Authorization],
-          url_match: re.Match) -> Response:
+def users_retrieve(auth: Optional[Authorization],
+                   url_match: re.Match) -> Response:
     """
         REST API Endpoing '/users/users'. Returns a list with users.
 
