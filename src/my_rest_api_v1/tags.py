@@ -12,7 +12,8 @@ from my_database_model import user
 from my_database_model.tag import Tag
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
-from rest_api_generator.exceptions import (ResourceForbiddenError, ResourceIntegrityError,
+from rest_api_generator.exceptions import (ResourceForbiddenError,
+                                           ResourceIntegrityError,
                                            ResourceNotFoundError)
 
 api_group_tags = Group(

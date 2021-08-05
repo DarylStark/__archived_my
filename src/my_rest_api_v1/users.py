@@ -13,7 +13,8 @@ from my_database_model import User
 from my_database_model.user import UserRole
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
-from rest_api_generator.exceptions import (ResourceForbiddenError, ResourceIntegrityError,
+from rest_api_generator.exceptions import (ResourceForbiddenError,
+                                           ResourceIntegrityError,
                                            ResourceNotFoundError)
 import string
 import random
