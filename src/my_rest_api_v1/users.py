@@ -2,12 +2,11 @@
     Module that has the RESTAPIGroup for the 'users' group of the API.
     This group can be used to get user information.
 """
-from random import random
 import re
 from typing import Optional
 from flask import request
-from my_database.exceptions import IntegrityError, MyDatabaseError, PermissionDeniedError
-from my_database.generic import create_object
+from my_database.exceptions import (IntegrityError, MyDatabaseError,
+                                    PermissionDeniedError)
 from my_database.users import create_user, get_users
 from my_database_model import User
 from my_database_model.user import UserRole
@@ -16,8 +15,6 @@ from rest_api_generator.endpoint_scopes import EndpointScopes
 from rest_api_generator.exceptions import (ResourceForbiddenError,
                                            ResourceIntegrityError,
                                            ResourceNotFoundError, ServerError)
-import string
-import random
 
 api_group_users = Group(
     api_url_prefix='users',
