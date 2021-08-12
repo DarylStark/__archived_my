@@ -22,3 +22,9 @@ class ConfigNotLoadedError(MyDatabaseError):
 class IntegrityError(MyDatabaseError):
     """ Exception when a integrity error occurs. """
     pass
+
+
+class PermissionDeniedError(MyDatabaseError):
+    """ Exception that happens when the user tries to do something that
+        the requesting user is not allowed to do. """
+    pass

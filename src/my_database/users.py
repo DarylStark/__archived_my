@@ -1,13 +1,88 @@
 """
-    Module that contains the methods to get user details from the
-    database.
+    Module that contains the methods to get and set user details from
+    the database.
 """
+import random
+import string
 from typing import List, Optional, Type
 from database import DatabaseSession
 from my_database_model import User, UserRole
 from sqlalchemy.orm.query import Query
 from my_database import logger
-from my_database.exceptions import FilterNotValidError
+from my_database.exceptions import (FilterNotValidError,
+                                    IntegrityError, PermissionDeniedError)
+from my_database.generic import create_object
+
+
+def create_user(req_user: User, **kwargs: dict) -> User:
+    """" Method to create a user 
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        **kwargs : dict
+            A dict containing the fields for the user.
+
+        Returns
+        -------
+        User
+            The created user object.
+
+    """
+
+    # Check if we have al the needed fields
+    needed_fields = [
+        'fullname', 'username', 'email',
+        'role'
+    ]
+
+    for field in needed_fields:
+        if field not in kwargs.keys():
+            raise TypeError(
+                f'Missing required argument "{field}"')
+
+    # TODO: Check if no other fields are given
+
+    # Normal users cannot create users, admin users can only create
+    # normal users. Root can create whatever he wants.
+    if (req_user.role == UserRole.user):
+        raise PermissionDeniedError(
+            'A user with role "user" cannot create users')
+    elif (req_user.role == UserRole.admin and
+            kwargs['role'] != UserRole.user):
+        raise PermissionDeniedError(
+            'A user with role "admin" can only create normal users')
+
+    # Create a user
+    new_object = User(
+        fullname=kwargs['fullname'],
+        username=kwargs['username'],
+        email=kwargs['email'],
+        role=kwargs['role'],
+    )
+
+    # Generate a random password for this user
+    characters = string.ascii_letters
+    characters += string.digits
+    characters += string.punctuation
+    length = random.randint(24, 33)
+    random_password = [random.choice(characters) for i in range(0, length)]
+    random_password = ''.join(random_password)
+
+    # Set the password for the user
+    new_object.set_password(random_password)
+
+    # Add the object
+    try:
+        create_object(new_object)
+    except IntegrityError:
+        # Add a custom text to the exception
+        raise IntegrityError('User already exists')
+    else:
+        return new_object
 
 
 def get_users(
