@@ -6,16 +6,16 @@ from random import random
 import re
 from typing import Optional
 from flask import request
-from my_database.exceptions import IntegrityError, MyDatabaseError
+from my_database.exceptions import IntegrityError, MyDatabaseError, PermissionDeniedError
 from my_database.generic import create_object
-from my_database.users import get_users
+from my_database.users import create_user, get_users
 from my_database_model import User
 from my_database_model.user import UserRole
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
 from rest_api_generator.exceptions import (ResourceForbiddenError,
                                            ResourceIntegrityError,
-                                           ResourceNotFoundError)
+                                           ResourceNotFoundError, ServerError)
 import string
 import random
 
@@ -57,59 +57,55 @@ def users_create(auth: Optional[Authorization],
     # Create a RESTAPIResponse object
     return_response = Response(ResponseType.SINGLE_RESOURCE)
 
-    # Set the data
+    # Get the data
+    post_data = request.json
+
+    # Check if we have all fields
+    needed_fields = [
+        'fullname', 'username', 'email',
+        'role'
+    ]
+    for field in needed_fields:
+        if field not in post_data.keys():
+            raise ResourceNotFoundError(
+                f'Field "{field}" missing in request')
+
+    # Transform the role
+    roles = {
+        'user': UserRole.user,
+        'admin': UserRole.admin,
+        'root': UserRole.root
+    }
+    role: UserRole = UserRole.user
+    if post_data['role'] in roles.keys():
+        role = roles[post_data['role']]
+    else:
+        raise ResourceNotFoundError(
+            f'Role "{post_data["role"]}" is not a valid role')
+
+    # Create the user
     try:
-        # Get the data
-        post_data = request.json
-
-        # Check if we have all fields
-        needed_fields = [
-            'fullname', 'username', 'email',
-            'role'
-        ]
-        for field in needed_fields:
-            if field not in post_data.keys():
-                raise ResourceNotFoundError(
-                    f'Field "{field}" missing in request')
-
-        # Normal users cannot create users, admin users can only create
-        # normal users. Root can create whatever he wants.
-        if (auth.data.user.role == UserRole.user):
-            raise ResourceForbiddenError('A user cannot create users')
-        elif (auth.data.user.role == UserRole.admin and
-              post_data['role'] != 'user'):
-            raise ResourceForbiddenError(
-                'A admin can only create normal users')
-
-        # Create a user
-        new_object = User(
+        new_object = create_user(
+            req_user=auth.data.user,
             fullname=post_data['fullname'],
             username=post_data['username'],
             email=post_data['email'],
-            role=post_data['role'],
+            role=role
         )
-
-        # Generate a random password for this user
-        characters = string.ascii_letters
-        characters += string.digits
-        characters += string.punctuation
-        length = random.randint(24, 33)
-        random_password = [random.choice(characters) for i in range(0, length)]
-        random_password = ''.join(random_password)
-
-        # Set the password for the user
-        new_object.set_password(random_password)
-
-        # Add the object
-        try:
-            create_object(new_object)
-        except IntegrityError:
-            raise ResourceIntegrityError('User already exists')
-        else:
-            return_response.data = new_object
-
-    except MyDatabaseError:
-        raise ResourceNotFoundError
+    except PermissionDeniedError as err:
+        # Permission denied errors happen when a user tries to add
+        # a type of user he is not allowed to create.
+        raise ResourceForbiddenError(err)
+    except IntegrityError as err:
+        # Integrity errors happen mostly when the user already
+        # exists.
+        raise ResourceIntegrityError(err)
+    except Exception as err:
+        # Every other error should result in a ServerError.
+        raise ServerError(err)
+    else:
+        # If nothing went wrong, return the newly created object.
+        return_response.data = new_object
 
     # Return the create RESTAPIResponse object
     return return_response

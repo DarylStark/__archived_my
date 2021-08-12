@@ -18,7 +18,7 @@ from rest_api_generator.endpoint_url import EndpointURL
 from rest_api_generator.exceptions import (InvalidGroupError,
                                            ResourceForbiddenError,
                                            ResourceIntegrityError,
-                                           ResourceNotFoundError,
+                                           ResourceNotFoundError, ServerError,
                                            UnauthorizedForResourceError)
 from rest_api_generator.group import Group
 from rest_api_generator.json_encoder import RESTAPIJSONEncoder
@@ -409,6 +409,13 @@ class RESTAPIGenerator:
                     except ResourceNotFoundError as exception:
                         # User is not authorized, raise a 404-error
                         error = self.raise_error(404, str(exception))
+                        if error:
+                            return_value = error
+                        else:
+                            return None
+                    except ServerError as exception:
+                        # A server error occured; raise a 500-error
+                        error = self.raise_error(500, str(exception))
                         if error:
                             return_value = error
                         else:
