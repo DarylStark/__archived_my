@@ -7,7 +7,7 @@ from typing import Optional
 from flask import request
 from my_database.exceptions import (IntegrityError, MyDatabaseError,
                                     PermissionDeniedError)
-from my_database.users import create_user, get_users
+from my_database.users import create_user, get_users, update_user
 from my_database_model import User
 from my_database_model.user import UserRole
 from rest_api_generator import Authorization, Group, Response, ResponseType
@@ -66,6 +66,8 @@ def users_create(auth: Optional[Authorization],
         if field not in post_data.keys():
             raise ResourceNotFoundError(
                 f'Field "{field}" missing in request')
+
+    # TODO: Check if no other fields are given
 
     # Transform the role
     roles = {
@@ -162,6 +164,98 @@ def users_retrieve(auth: Optional[Authorization],
             return_response.data = return_response.data[0]
     except MyDatabaseError:
         raise ResourceNotFoundError
+
+    # Return the create RESTAPIResponse object
+    return return_response
+
+
+@api_group_users.register_endpoint(
+    url_suffix=['user/([0-9]+)'],
+    http_methods=['PATCH', 'DELETE'],
+    name='user',
+    description='Endpoint to edit or delete a user',
+    auth_needed=True,
+    auth_scopes=EndpointScopes(
+        PATCH=['users.update'],
+        DELETE=['users.delete']
+    )
+)
+def users_update_delete(auth: Optional[Authorization],
+                        url_match: re.Match) -> Response:
+    """
+        REST API Endpoint '/users/user/([0-9]+)'. Edits or deletes a user.
+
+        Parameters
+        ----------
+        auth : RESTAPIAuthorization
+            A object that contains authorization information.
+
+        url_match : re.Match
+            Endpoint that contains the regex match object that was used
+            to match the URL.
+
+        Returns
+        -------
+        RESTAPIResponse
+            The API response
+    """
+
+    # Create a RESTAPIResponse object
+    return_response = Response(ResponseType.SINGLE_RESOURCE)
+
+    # Get the user ID
+    resource_id = int(url_match.groups(0)[0])
+
+    # Update tag
+    if request.method == 'PATCH':
+        # Get the data
+        post_data = request.json
+
+        # Check if we received the correct fields
+        optional_fields = [
+            'fullname', 'username', 'email',
+            'role'
+        ]
+        for field in post_data:
+            if field not in optional_fields:
+                raise ResourceNotFoundError(
+                    f'Field "{field}" is not a valid field for this request')
+
+        # Transform the role
+        if 'role' in post_data.keys():
+            roles = {
+                'user': UserRole.user,
+                'admin': UserRole.admin,
+                'root': UserRole.root
+            }
+            if post_data['role'] in roles.keys():
+                post_data['role'] = roles[post_data['role']]
+            else:
+                raise ResourceNotFoundError(
+                    f'Role "{post_data["role"]}" is not a valid role')
+
+        # Update the user
+        try:
+            changed_resource = update_user(
+                auth.data.user, resource_id, **post_data)
+        except PermissionDeniedError as err:
+            # Permission denied errors happen when a user tries to add
+            # a type of user he is not allowed to create.
+            raise ResourceForbiddenError(err)
+        except IntegrityError as err:
+            # Integrity errors happen mostly when the user already
+            # exists.
+            raise ResourceIntegrityError(err)
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+        else:
+            # If nothing went wrong, return the newly created object.
+            return_response.data = changed_resource
+
+    # Delete tag
+    if request.method == 'DELETE':
+        raise NotImplementedError('not yet implemented')
 
     # Return the create RESTAPIResponse object
     return return_response

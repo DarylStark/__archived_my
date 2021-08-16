@@ -28,3 +28,9 @@ class PermissionDeniedError(MyDatabaseError):
     """ Exception that happens when the user tries to do something that
         the requesting user is not allowed to do. """
     pass
+
+
+class ResourceNotFoundError(MyDatabaseError):
+    """ Exception that happens when the user tries to change or delete
+        a resource that doesn't exists. """
+    pass
