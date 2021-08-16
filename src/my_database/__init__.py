@@ -17,7 +17,6 @@ if not ConfigLoader.load_settings():
 logger = getLogger('my_database')
 
 # Get the database credentials
-# TODO: retrieve this from the configuration
 username = ConfigLoader.config['database']['username']
 password = ConfigLoader.config['database']['password']
 server = ConfigLoader.config['database']['server']
