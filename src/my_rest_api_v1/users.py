@@ -216,7 +216,7 @@ def users_update_delete(auth: Optional[Authorization],
             'fullname', 'username', 'email',
             'role'
         ]
-        for field in post_data:
+        for field in post_data.keys():
             if field not in optional_fields:
                 raise ResourceNotFoundError(
                     f'Field "{field}" is not a valid field for this request')
