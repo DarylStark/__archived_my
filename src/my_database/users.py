@@ -96,6 +96,8 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
     except Exception as e:
         raise ServerError(e)
 
+    return None
+
 
 def get_users(
     req_user: User,
@@ -202,7 +204,7 @@ def update_user(
     if resource is None or len(resource) == 0:
         raise ResourceNotFoundError(f'User with ID {user_id} is not found.')
 
-    # Appeaently we have resources. Because the result is a list, we
+    # Appearently we have resources. Because the result is a list, we
     # we can assume the first one in the list is the one we are
     # interested in.
     resource = resource[0]
@@ -236,12 +238,20 @@ def update_user(
 
     # Save the fields
     try:
-        update_object(resource)
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            # Add the changed resource to the session
+            session.merge(resource)
+
+            # Done! Return the resource
+            return resource
     except IntegrityError:
         # Add a custom text to the exception
         raise IntegrityError('User already exists')
-    else:
-        return resource
+
+    return None
 
 
 def delete_user(
