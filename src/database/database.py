@@ -45,7 +45,8 @@ class Database:
                 pool_recycle: int = 10,
                 pool_size: int = 5,
                 pool_overflow: int = 10,
-                create_tables: bool = False) -> None:
+                create_tables: bool = False,
+                drop_tables_first: bool = True) -> None:
         """ Method to create a SQLAlchemy engine. Uses the database and
             credentials given by the user. Since this is a static
             class, we set it in the class parameter. This way, the
@@ -83,6 +84,9 @@ class Database:
             create_tables : bool
                 Specifies if the method should create tables.
 
+            drop_tables_first : bool
+                Specifies if the method should drop tables.
+
 
             Returns
             -------
@@ -99,6 +103,11 @@ class Database:
                 pool_size=pool_size,
                 max_overflow=pool_overflow
             )
+
+            # If the user request the tables to be dropped first, we do
+            # that now
+            if drop_tables_first:
+                cls.base_class.metadata.drop_all(cls._engine)
 
             # Create the configured tables, if the user requested to do
             # this

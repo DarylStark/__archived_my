@@ -29,6 +29,9 @@ if __name__ == '__main__':
     parser.add_argument('--create-data',
                         action='store_true',
                         help='Wheter or not testdata should be created')
+    parser.add_argument('--drop-tables',
+                        action='store_true',
+                        help='Wheter or not the tables should be dropped')
 
     args = parser.parse_args()
 
@@ -76,7 +79,8 @@ if __name__ == '__main__':
     try:
         Database.connect(
             connection=connection_string,
-            create_tables=True
+            create_tables=True,
+            drop_tables_first=args.drop_tables
         )
     except DatabaseConnectionError:
         logger.critical('Couldn\'t connect to the database!')
@@ -180,7 +184,7 @@ if __name__ == '__main__':
             logger.warning('API token not added; already in the database')
 
         # Add scopes to the created API token
-        data = [1, 2, 3, 4, 7]
+        data = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         try:
             for entry in data:
                 with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
@@ -198,6 +202,32 @@ if __name__ == '__main__':
                     session.add(new_token_scope)
         except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
             logger.warning('API tokenscope not added; already in the database')
+
+        # Create Tags
+        data = [
+            {'user_id': 1, 'tag': 'Tag for Root - #1'},
+            {'user_id': 1, 'tag': 'Tag for Root - #2'},
+            {'user_id': 1, 'tag': 'Tag for Root - #3'},
+            {'user_id': 2, 'tag': 'Tag for Daryl - #1'},
+            {'user_id': 2, 'tag': 'Tag for Daryl - #2'},
+            {'user_id': 2, 'tag': 'Tag for Daryl - #3'}
+        ]
+        try:
+            for entry in data:
+                with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
+                        as session:
+
+                    # Create a new APIToken-object
+                    new_tag = Tag(
+                        user_id=entry['user_id'],
+                        title=entry['tag'],
+                    )
+
+                    # Add the user to the database
+                    logger.info(f'Creating tag "{new_tag.title}"')
+                    session.add(new_tag)
+        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
+            logger.warning('API token not added; already in the database')
 
     # Done!
     logger.info('Script done')
