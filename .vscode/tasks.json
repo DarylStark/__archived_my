@@ -23,6 +23,29 @@
                 "--create-data"
             ],
             "problemMatcher": []
+        },
+        {
+            "label": "Development - Database - Create (with data and drop)",
+            "type": "shell",
+            "command": "${workspaceFolder}/env/bin/python",
+            "args": [
+                "tools/database-create.py",
+                "${workspaceFolder}/.environment/development.env",
+                "--create-data",
+                "--drop-tables"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Development - Database - Create (without data and drop)",
+            "type": "shell",
+            "command": "${workspaceFolder}/env/bin/python",
+            "args": [
+                "tools/database-create.py",
+                "${workspaceFolder}/.environment/development.env",
+                "--drop-tables"
+            ],
+            "problemMatcher": []
         }
     ]
 }
