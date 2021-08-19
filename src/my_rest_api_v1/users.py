@@ -144,23 +144,24 @@ def users_retrieve(auth: Optional[Authorization],
     # Set the data
     try:
         # Check if we received a ID
-        user_id = None
+        resource_id = None
         if len(url_match.groups()) > 0:
-            user_id = int(url_match.groups(0)[0])
+            resource_id = int(url_match.groups(0)[0])
             return_response.type = ResponseType.SINGLE_RESOURCE
 
-        # Get the users
+        # Get the resources
         return_response.data = get_users(
             auth.data.user,
-            flt_id=user_id
+            flt_id=resource_id
         )
 
-        if len(return_response.data) == 0 and user_id is not None:
+        # Check if we received data
+        if len(return_response.data) == 0 and resource_id is not None:
             raise ResourceNotFoundError('Not a valid user ID')
 
         # If the user requested only one resource, we only put that
         # resource in the return
-        if user_id is not None:
+        if resource_id is not None:
             return_response.data = return_response.data[0]
     except MyDatabaseError:
         raise ResourceNotFoundError
