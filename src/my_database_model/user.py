@@ -46,7 +46,7 @@ class User(Database.base_class):
     # Fields that need to be hidden from the API
     api_hide_fields = ['password']
 
-    # Rlationships
+    # Many-to-one relationships
     clients = relationship(
         'APIClient',
         lazy='subquery',
