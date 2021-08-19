@@ -47,9 +47,21 @@ class User(Database.base_class):
     api_hide_fields = ['password']
 
     # Rlationships
-    clients = relationship('APIClient', lazy='subquery', back_populates='user')
-    tokens = relationship('APIToken', lazy='subquery', back_populates='user')
-    tags = relationship('Tag', lazy='subquery', back_populates='user')
+    clients = relationship(
+        'APIClient',
+        lazy='subquery',
+        back_populates='user',
+        cascade='all, delete, save-update')
+    tokens = relationship(
+        'APIToken',
+        lazy='subquery',
+        back_populates='user',
+        cascade='all, delete, save-update')
+    tags = relationship(
+        'Tag',
+        lazy='subquery',
+        back_populates='user',
+        cascade='all, delete, save-update')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """

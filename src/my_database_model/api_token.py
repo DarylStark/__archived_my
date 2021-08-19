@@ -34,9 +34,10 @@ class APIToken(Database.base_class):
     # Rlationships
     client = relationship('APIClient', lazy='subquery',
                           back_populates='tokens')
-    user = relationship('User', lazy='subquery', back_populates='tokens')
+    user = relationship('User', lazy='subquery',
+                        back_populates='tokens')
     token_scopes = relationship(
-        'APITokenScope', lazy='subquery', back_populates='token')
+        'APITokenScope', lazy='subquery', back_populates='token', cascade='all, delete')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """

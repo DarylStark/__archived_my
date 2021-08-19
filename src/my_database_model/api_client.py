@@ -38,7 +38,7 @@ class APIClient(Database.base_class):
     user = relationship('User', lazy='subquery',
                         back_populates='clients')
     tokens = relationship('APIToken', lazy='subquery',
-                          back_populates='client')
+                          back_populates='client', cascade='all, delete, save-update')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """

@@ -5,17 +5,16 @@
 import random
 import string
 from typing import List, Optional, Type
+
+import sqlalchemy
 from database import DatabaseSession
-from my_database.clients import delete_api_client
-from my_database.tags import delete_tag
-from my_database.tokens import delete_token
 from my_database_model import User, UserRole
 from sqlalchemy.orm.query import Query
 from my_database import logger
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, PermissionDeniedError,
                                     ResourceNotFoundError)
-from my_database.generic import create_object, delete_object, update_object
+from my_database.generic import create_object, update_object
 
 
 def create_user(req_user: User, **kwargs: dict) -> User:
@@ -257,66 +256,38 @@ def delete_user(
             True on success.
     """
 
-    # Get the resource object
-    resource: Optional[List[User]] = get_users(req_user, flt_id=user_id)
+    # If a 'normal' user is requesting this, we fail immidiatly
+    if req_user.role == UserRole.user:
+        raise PermissionDeniedError('A normal user cannot delete users')
 
-    # Check if we got a resource. If we didn't, we rise an error
-    # indicating that the resource wasn't found. This can be either
-    # because it didn't exist, or because the user has no permissions
-    # to it.
-    if resource is None or len(resource) == 0:
-        raise ResourceNotFoundError(f'User with ID {user_id} is not found.')
-
-    # Appearently we have resources. Because the result is a list, we
-    # we can assume the first one in the list is the one we are
-    # interested in.
-    resource = resource[0]
-
-    # Check if the context user can delete the requested user. Normal
-    # users cannot delete any users, admin users can only delete normal
-    # users and root users can delete everything.
-    if (req_user.role == UserRole.user):
-        raise PermissionDeniedError(
-            'A user with role "user" cannot delete users')
-    elif (req_user.role == UserRole.admin and
-            resource.role != UserRole.user):
-        raise PermissionDeniedError(
-            'A user with role "admin" can only delete normal users')
-
-    # Delete the resource
+    # Create a database session
     try:
-        # Before we can delete the resource, we have to get the
-        # resources that are connected to this resource.
-        # Delete all connected tags
-        for connected_resource in [rs for rs in resource.tags]:
-            # Remove the connected resource
-            delete_tag(
-                req_user=None,
-                tag_id=connected_resource.id)
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            # Get the resource to delete
+            resource = session.query(User).filter(User.id == user_id).first()
+            if resource is None:
+                raise ResourceNotFoundError(
+                    f'User with id {user_id} is not found')
 
-            # Remove it from the resource
-            resource.tags.remove(connected_resource)
+            # Check if the context user can delete the requested user.
+            # Admin users can only delete normal users and root users
+            # can delete everything.
+            if (req_user.role == UserRole.admin and
+                    resource.role != UserRole.user):
+                raise PermissionDeniedError(
+                    'A admin user can only delete normal users')
 
-        # Delete all connected tokens
-        for connected_resource in [rs for rs in resource.tokens]:
-            # Remove the connected resource
-            delete_token(req_user, connected_resource.id)
+            # A user cannot remove itself
+            if req_user.id == user_id:
+                raise PermissionDeniedError(
+                    'You cannot remove your own user account')
 
-            # Remove it from the resource
-            resource.tokens.remove(connected_resource)
-
-        # Delete all connected clients
-        for connected_resource in [rs for rs in resource.clients]:
-            # Remove the connected resource
-            delete_api_client(req_user, connected_resource.id)
-
-            # Remove it from the resource
-            resource.clients.remove(connected_resource)
-
-        # Finally, delete the resource itself
-        delete_object(resource)
-    except IntegrityError:
-        # Add a custom text to the exception
+            # Delete the resource
+            session.delete(resource)
+    except sqlalchemy.exc.IntegrityError:
         raise IntegrityError(
             'User couldn\'t be deleted because it still has resources ' +
             'connected to it')
