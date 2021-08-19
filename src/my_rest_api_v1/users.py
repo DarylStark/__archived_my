@@ -7,7 +7,7 @@ from typing import Optional
 from flask import request
 from my_database.exceptions import (IntegrityError, MyDatabaseError,
                                     PermissionDeniedError)
-from my_database.users import create_user, get_users, update_user
+from my_database.users import create_user, delete_user, get_users, update_user
 from my_database_model import User
 from my_database_model.user import UserRole
 from rest_api_generator import Authorization, Group, Response, ResponseType
@@ -106,7 +106,7 @@ def users_create(auth: Optional[Authorization],
         # If nothing went wrong, return the newly created object.
         return_response.data = new_object
 
-    # Return the create RESTAPIResponse object
+    # Return the created RESTAPIResponse object
     return return_response
 
 
@@ -166,7 +166,7 @@ def users_retrieve(auth: Optional[Authorization],
     except MyDatabaseError:
         raise ResourceNotFoundError
 
-    # Return the create RESTAPIResponse object
+    # Return the created RESTAPIResponse object
     return return_response
 
 
@@ -244,8 +244,8 @@ def users_update_delete(auth: Optional[Authorization],
                 **post_data
             )
         except PermissionDeniedError as err:
-            # Permission denied errors happen when a user tries to add
-            # a type of user he is not allowed to create.
+            # Permission denied errors happen when a user tries to
+            # change a type of user he is not allowed to create.
             raise ResourceForbiddenError(err)
         except IntegrityError as err:
             # Integrity errors happen mostly when the user already
@@ -260,7 +260,29 @@ def users_update_delete(auth: Optional[Authorization],
 
     # Delete user
     if request.method == 'DELETE':
-        raise NotImplementedError('not yet implemented')
+        try:
+            delete_user(
+                req_user=auth.data.user,
+                user_id=resource_id
+            )
+        except PermissionDeniedError as err:
+            # Permission denied errors happen when a user tries to
+            # delete a type of resource he is not allowed to delete.
+            raise ResourceForbiddenError(err)
+        except IntegrityError as err:
+            # Integrity errors happen mostly when the resource has
+            # connections to other resources that should be deleted
+            # first.
+            raise ResourceIntegrityError(err)
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+        else:
+            # If nothing went wrong, we create a object with the key
+            # 'deleted' that we return to the client.
+            return_response.data = {
+                'deleted': True
+            }
 
-    # Return the create RESTAPIResponse object
+    # Return the created RESTAPIResponse object
     return return_response

@@ -31,11 +31,12 @@ class APIToken(Database.base_class):
     enabled = Column(Boolean, default=True, nullable=False)
     token = Column(String(32), nullable=False)
 
-    # Many-to-one relationships
-    client = relationship('APIClient', lazy='joined')
-    user = relationship('User', lazy='joined')
+    # Rlationships
+    client = relationship('APIClient', lazy='subquery',
+                          back_populates='tokens')
+    user = relationship('User', lazy='subquery', back_populates='tokens')
     token_scopes = relationship(
-        'APITokenScope', lazy='joined', back_populates='token')
+        'APITokenScope', lazy='subquery', back_populates='token')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """

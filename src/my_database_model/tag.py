@@ -2,6 +2,7 @@
     This module includes the Tag class which will be used by
     SQLalchemy ORM.
 """
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from database import Database
 from sqlalchemy import (Column, Integer, String, UniqueConstraint)
@@ -23,6 +24,9 @@ class Tag(Database.base_class):
     user_id = Column(ForeignKey("users.id"),
                      nullable=False)
     title = Column(String(32), nullable=False)
+
+    # Relationships
+    user = relationship('User', lazy='subquery', back_populates='tags')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """

@@ -4,6 +4,8 @@
 """
 import datetime
 import enum
+
+from sqlalchemy.orm import backref, relationship
 from database import Database
 from passlib.hash import argon2
 from sqlalchemy import (Column, DateTime, Enum, Integer, String,
@@ -43,6 +45,11 @@ class User(Database.base_class):
 
     # Fields that need to be hidden from the API
     api_hide_fields = ['password']
+
+    # Rlationships
+    clients = relationship('APIClient', lazy='subquery', back_populates='user')
+    tokens = relationship('APIToken', lazy='subquery', back_populates='user')
+    tags = relationship('Tag', lazy='subquery', back_populates='user')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """
