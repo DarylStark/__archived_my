@@ -201,7 +201,7 @@ class RESTAPIGenerator:
         # Otherwise, we create a RESTAPIResponse that we can return
         if not self.abort_on_error:
             self.logger.debug(
-                f'Not aborting the request because we got a {code} error with \
+                f'Aborting the request because we got a {code} error with \
                     message: {msg}. Generating API error response.')
 
             error_response = Response(ResponseType.ERROR)
@@ -385,13 +385,6 @@ class RESTAPIGenerator:
                                 auth,
                                 endpoint_regex
                             )
-                    except ResourceIntegrityError as exception:
-                        # Integrity error occured
-                        error = self.raise_error(400, str(exception))
-                        if error:
-                            return_value = error
-                        else:
-                            return None
                     except UnauthorizedForResourceError as exception:
                         # User is not authorized, raise a 401-error
                         error = self.raise_error(401, str(exception))
@@ -413,7 +406,7 @@ class RESTAPIGenerator:
                             return_value = error
                         else:
                             return None
-                    except ServerError as exception:
+                    except (ServerError, ResourceIntegrityError) as exception:
                         # A server error occured; raise a 500-error
                         error = self.raise_error(500, str(exception))
                         if error:

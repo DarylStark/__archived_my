@@ -46,7 +46,7 @@ class ResourceNotFoundError(RESTAPIGeneratorEndpointError):
 
 class ResourceIntegrityError(RESTAPIGeneratorEndpointError):
     """ Exception that indicates that a integrity error occurred.
-        Should be handled as HTTP 400 error """
+        Should be handled as HTTP 500 error """
     pass
 
 
