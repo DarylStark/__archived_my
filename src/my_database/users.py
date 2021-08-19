@@ -14,10 +14,11 @@ from my_database import logger
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, PermissionDeniedError,
                                     ResourceNotFoundError)
-from my_database.generic import create_object, update_object
+from my_database.generic import update_object
+from rest_api_generator.exceptions import ServerError
 
 
-def create_user(req_user: User, **kwargs: dict) -> User:
+def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
     """" Method to create a user 
 
         Parameters
@@ -59,33 +60,41 @@ def create_user(req_user: User, **kwargs: dict) -> User:
         raise PermissionDeniedError(
             'A user with role "admin" can only create normal users')
 
-    # Create a user
-    new_object = User(
-        fullname=kwargs['fullname'],
-        username=kwargs['username'],
-        email=kwargs['email'],
-        role=kwargs['role'],
-    )
-
-    # Generate a random password for this user
-    characters = string.ascii_letters
-    characters += string.digits
-    characters += string.punctuation
-    length = random.randint(24, 33)
-    random_password = [random.choice(characters) for i in range(0, length)]
-    random_password = ''.join(random_password)
-
-    # Set the password for the user
-    new_object.set_password(random_password)
-
-    # Add the object
     try:
-        create_object(new_object)
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            # Create the resource
+            new_resource = User(
+                fullname=kwargs['fullname'],
+                username=kwargs['username'],
+                email=kwargs['email'],
+                role=kwargs['role'],
+            )
+
+            # Generate a random password for this user
+            characters = string.ascii_letters
+            characters += string.digits
+            characters += string.punctuation
+            length = random.randint(24, 33)
+            random_password = [random.choice(characters)
+                               for i in range(0, length)]
+            random_password = ''.join(random_password)
+
+            # Set the password for the user
+            new_resource.set_password(random_password)
+
+            # Add the resource
+            session.add(new_resource)
+
+            # Return the created resource
+            return new_resource
     except IntegrityError:
         # Add a custom text to the exception
         raise IntegrityError('User already exists')
-    else:
-        return new_object
+    except Exception as e:
+        raise ServerError(e)
 
 
 def get_users(
