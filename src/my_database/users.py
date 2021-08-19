@@ -19,7 +19,7 @@ from rest_api_generator.exceptions import ServerError
 
 
 def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
-    """" Method to create a user 
+    """" Method to create a user
 
         Parameters
         ----------
