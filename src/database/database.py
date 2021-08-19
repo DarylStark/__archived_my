@@ -46,7 +46,7 @@ class Database:
                 pool_size: int = 5,
                 pool_overflow: int = 10,
                 create_tables: bool = False,
-                drop_tables_first: bool = True) -> None:
+                drop_tables_first: bool = False) -> None:
         """ Method to create a SQLAlchemy engine. Uses the database and
             credentials given by the user. Since this is a static
             class, we set it in the class parameter. This way, the
