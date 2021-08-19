@@ -34,7 +34,7 @@ api_group_users = Group(
 def users_create(auth: Optional[Authorization],
                  url_match: re.Match) -> Response:
     """
-        REST API Endpoint '/users/user'. Creates a tag.
+        REST API Endpoint '/users/user'. Creates a user.
 
         Parameters
         ----------
@@ -206,7 +206,7 @@ def users_update_delete(auth: Optional[Authorization],
     # Get the user ID
     resource_id = int(url_match.groups(0)[0])
 
-    # Update tag
+    # Update user
     if request.method == 'PATCH':
         # Get the data
         post_data = request.json
@@ -221,7 +221,8 @@ def users_update_delete(auth: Optional[Authorization],
                 raise ResourceNotFoundError(
                     f'Field "{field}" is not a valid field for this request')
 
-        # Transform the role
+        # Transform the role to a role that fits the `my_database`
+        # better.
         if 'role' in post_data.keys():
             roles = {
                 'user': UserRole.user,
@@ -237,7 +238,10 @@ def users_update_delete(auth: Optional[Authorization],
         # Update the user
         try:
             changed_resource = update_user(
-                auth.data.user, resource_id, **post_data)
+                req_user=auth.data.user,
+                user_id=resource_id,
+                **post_data
+            )
         except PermissionDeniedError as err:
             # Permission denied errors happen when a user tries to add
             # a type of user he is not allowed to create.
@@ -253,7 +257,7 @@ def users_update_delete(auth: Optional[Authorization],
             # If nothing went wrong, return the newly created object.
             return_response.data = changed_resource
 
-    # Delete tag
+    # Delete user
     if request.method == 'DELETE':
         raise NotImplementedError('not yet implemented')
 
