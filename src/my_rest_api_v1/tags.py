@@ -121,23 +121,23 @@ def tags_retrieve(auth: Optional[Authorization],
     # Set the data
     try:
         # Check if we received a ID
-        tag_id = None
+        resource_id = None
         if len(url_match.groups()) > 0:
-            tag_id = int(url_match.groups(0)[0])
+            resource_id = int(url_match.groups(0)[0])
             return_response.type = ResponseType.SINGLE_RESOURCE
 
-        # Get the tags
+        # Get the resources
         return_response.data = get_tags(
             auth.data.user,
-            flt_id=tag_id
+            flt_id=resource_id
         )
 
-        if len(return_response.data) == 0 and tag_id is not None:
+        if len(return_response.data) == 0 and resource_id is not None:
             raise ResourceNotFoundError('Not a valid tag ID')
 
         # If the user requested only one resource, we only put that
         # resource in the return
-        if tag_id is not None:
+        if resource_id is not None:
             return_response.data = return_response.data[0]
     except MyDatabaseError:
         raise ResourceNotFoundError
