@@ -37,7 +37,7 @@ def get_tags(
 
     # Empty data list
     data_list: Optional[Query] = None
-    rv: Optional[List[tag]] = None
+    rv: Optional[List[Tag]] = None
 
     # Get the token
     with DatabaseSession(commit_on_end=False, expire_on_commit=False) \
