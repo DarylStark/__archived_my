@@ -182,6 +182,8 @@ def update_user(
     # Get the resource object
     resource: Optional[List[User]] = get_users(req_user, flt_id=user_id)
 
+    # TODO: Check if no 'weird' fields are given
+
     if resource is None or len(resource) == 0:
         raise ResourceNotFoundError(f'User with ID {user_id} is not found.')
 
