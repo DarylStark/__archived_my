@@ -23,9 +23,12 @@ class APIScope(Database.base_class):
     module = Column(String(32), nullable=False)
     subject = Column(String(32), nullable=False)
 
-    # Relationships
+    # One-to-many relationships
     token_scopes = relationship(
-        'APITokenScope', lazy='subquery', back_populates='scope', cascade='all, delete, save-update')
+        'APITokenScope',
+        lazy='subquery',
+        back_populates='scope',
+        cascade='all, delete, save-update')
 
     def __repr__(self):
         """ Represents objects of this class. """

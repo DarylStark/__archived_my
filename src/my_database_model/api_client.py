@@ -34,11 +34,18 @@ class APIClient(Database.base_class):
     app_publisher = Column(String(64), nullable=False)
     token = Column(String(32), nullable=False)
 
-    # Relationships
-    user = relationship('User', lazy='subquery',
-                        back_populates='clients')
-    tokens = relationship('APIToken', lazy='subquery',
-                          back_populates='client', cascade='all, delete, save-update')
+    # Many-to-one relationships
+    user = relationship(
+        'User',
+        lazy='subquery',
+        back_populates='clients')
+
+    # One-to-many relationships
+    tokens = relationship(
+        'APIToken',
+        lazy='subquery',
+        back_populates='client',
+        cascade='all, delete, save-update')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """

@@ -25,8 +25,11 @@ class Tag(Database.base_class):
                      nullable=False)
     title = Column(String(32), nullable=False)
 
-    # Relationships
-    user = relationship('User', lazy='subquery', back_populates='tags')
+    # One-to-many relationships
+    user = relationship(
+        'User',
+        lazy='subquery',
+        back_populates='tags')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """

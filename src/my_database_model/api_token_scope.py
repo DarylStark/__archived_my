@@ -23,11 +23,15 @@ class APITokenScope(Database.base_class):
     token_id = Column(ForeignKey('api_tokens.id'), nullable=False)
     scope_id = Column(ForeignKey('api_scopes.id'), nullable=False)
 
-    # Relationships
-    token = relationship('APIToken', lazy='subquery',
-                         back_populates='token_scopes')
-    scope = relationship('APIScope', lazy='subquery',
-                         back_populates='token_scopes')
+    # Many-to-one relationships
+    token = relationship(
+        'APIToken',
+        lazy='subquery',
+        back_populates='token_scopes')
+    scope = relationship(
+        'APIScope',
+        lazy='subquery',
+        back_populates='token_scopes')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """
