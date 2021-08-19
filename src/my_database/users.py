@@ -184,13 +184,21 @@ def update_user(
 
     # TODO: Check if no 'weird' fields are given
 
+    # Check if we got a resource. If we didn't, we rise an error
+    # indicating that the resource wasn't found. This can be either
+    # because it didn't exist, or because the user has no permissions
+    # to it.
     if resource is None or len(resource) == 0:
         raise ResourceNotFoundError(f'User with ID {user_id} is not found.')
 
+    # Appeaently we have resources. Because the result is a list, we
+    # we can assume the first one in the list is the one we are
+    # interested in.
     resource = resource[0]
 
-    # Normal users cannot change users, admin users can only change
-    # normal users. Root can create whatever he wants.
+    # Check if the context user can change the requested user. Normal
+    # users cannot change any users, admin users can only change normal
+    # users and root users can change everything.
     if (req_user.role == UserRole.user):
         raise PermissionDeniedError(
             'A user with role "user" cannot change users')
@@ -207,7 +215,7 @@ def update_user(
         'role': 'role'
     }
 
-    # Update the object
+    # Update the resource
     for field in kwargs.keys():
         if field in fields.keys():
             setattr(resource, fields[field], kwargs[field])
