@@ -63,10 +63,10 @@ def users_create(auth: Optional[Authorization],
     ]
     for field in needed_fields:
         if field not in post_data.keys():
-            raise ResourceNotFoundError(
+            raise InvalidInputError(
                 f'Field "{field}" missing in request')
 
-    # TODO: Check if no other fields are given
+    # Check if no other fields are given
 
     # Transform the role
     roles = {
@@ -78,7 +78,7 @@ def users_create(auth: Optional[Authorization],
     if post_data['role'] in roles.keys():
         role = roles[post_data['role']]
     else:
-        raise ResourceNotFoundError(
+        raise InvalidInputError(
             f'Role "{post_data["role"]}" is not a valid role')
 
     # Create the user
