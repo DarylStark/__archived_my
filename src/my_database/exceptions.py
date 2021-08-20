@@ -30,7 +30,7 @@ class PermissionDeniedError(MyDatabaseError):
     pass
 
 
-class ResourceNotFoundError(MyDatabaseError):
+class NotFoundError(MyDatabaseError):
     """ Exception that happens when the user tries to change or delete
         a resource that doesn't exists. """
     pass

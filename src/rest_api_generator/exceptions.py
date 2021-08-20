@@ -54,3 +54,8 @@ class ServerError(RESTAPIGeneratorEndpointError):
     """ Exception for server errors. Should be handled as HTTP 5000
         error. """
     pass
+
+
+class InvalidInputError(RESTAPIGeneratorEndpointError):
+    """ Exception that occurs when the user gives invalid input. """
+    pass

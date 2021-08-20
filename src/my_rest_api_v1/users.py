@@ -6,13 +6,12 @@ import re
 from typing import Optional
 from flask import request
 from my_database.exceptions import (IntegrityError, MyDatabaseError,
-                                    PermissionDeniedError)
+                                    NotFoundError, PermissionDeniedError)
 from my_database.users import create_user, delete_user, get_users, update_user
-from my_database_model import User
 from my_database_model.user import UserRole
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
-from rest_api_generator.exceptions import (ResourceForbiddenError,
+from rest_api_generator.exceptions import (InvalidInputError, ResourceForbiddenError,
                                            ResourceIntegrityError,
                                            ResourceNotFoundError, ServerError)
 
@@ -154,17 +153,13 @@ def users_retrieve(auth: Optional[Authorization],
             auth.data.user,
             flt_id=resource_id
         )
-
-        # Check if we received data
-        if len(return_response.data) == 0 and resource_id is not None:
-            raise ResourceNotFoundError('Not a valid user ID')
-
-        # If the user requested only one resource, we only put that
-        # resource in the return
-        if resource_id is not None:
-            return_response.data = return_response.data[0]
-    except MyDatabaseError:
-        raise ResourceNotFoundError
+    except NotFoundError as err:
+        # Resource not found happens when a user tries to change a
+        # user that does not exists
+        raise ResourceNotFoundError(err)
+    except Exception as err:
+        # Every other error should result in a ServerError.
+        raise ServerError(err)
 
     # Return the created RESTAPIResponse object
     return return_response
@@ -219,7 +214,7 @@ def users_update_delete(auth: Optional[Authorization],
         ]
         for field in post_data.keys():
             if field not in optional_fields:
-                raise ResourceNotFoundError(
+                raise InvalidInputError(
                     f'Field "{field}" is not a valid field for this request')
 
         # Transform the role to a role that fits the `my_database`
@@ -233,7 +228,7 @@ def users_update_delete(auth: Optional[Authorization],
             if post_data['role'] in roles.keys():
                 post_data['role'] = roles[post_data['role']]
             else:
-                raise ResourceNotFoundError(
+                raise InvalidInputError(
                     f'Role "{post_data["role"]}" is not a valid role')
 
         # Update the user
@@ -244,9 +239,13 @@ def users_update_delete(auth: Optional[Authorization],
                 **post_data
             )
         except PermissionDeniedError as err:
-            # Permission denied errors happen when a user tries to
+            # Permission denied errors happens when a user tries to
             # change a type of user he is not allowed to create.
             raise ResourceForbiddenError(err)
+        except NotFoundError as err:
+            # Resource not found happens when a user tries to change a
+            # user that does not exists
+            raise ResourceNotFoundError(err)
         except IntegrityError as err:
             # Integrity errors happen mostly when the user already
             # exists.
@@ -254,9 +253,9 @@ def users_update_delete(auth: Optional[Authorization],
         except Exception as err:
             # Every other error should result in a ServerError.
             raise ServerError(err)
-        else:
-            # If nothing went wrong, return the newly created object.
-            return_response.data = changed_resource
+
+        # If nothing went wrong, return the newly created object.
+        return_response.data = changed_resource
 
     # Delete user
     if request.method == 'DELETE':
@@ -269,6 +268,10 @@ def users_update_delete(auth: Optional[Authorization],
             # Permission denied errors happen when a user tries to
             # delete a type of resource he is not allowed to delete.
             raise ResourceForbiddenError(err)
+        except NotFoundError as err:
+            # Resource not found happens when a user tries to delete a
+            # user that does not exists
+            raise ResourceNotFoundError(err)
         except IntegrityError as err:
             # Integrity errors happen mostly when the resource has
             # connections to other resources that should be deleted

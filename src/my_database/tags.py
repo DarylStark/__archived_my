@@ -8,7 +8,7 @@ from my_database.generic import delete_object
 from my_database_model import User, Tag
 from sqlalchemy.orm.query import Query
 from my_database import logger
-from my_database.exceptions import FilterNotValidError, IntegrityError, ResourceNotFoundError
+from my_database.exceptions import FilterNotValidError, IntegrityError, NotFoundError
 
 
 def get_tags(
@@ -100,7 +100,7 @@ def delete_tag(
     # because it didn't exist, or because the user has no permissions
     # to it.
     if resource is None or len(resource) == 0:
-        raise ResourceNotFoundError(f'Tag with ID {tag_id} is not found.')
+        raise NotFoundError(f'Tag with ID {tag_id} is not found.')
 
     # Appearently we have resources. Because the result is a list, we
     # we can assume the first one in the list is the one we are

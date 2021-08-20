@@ -4,8 +4,7 @@
 """
 import random
 import string
-from typing import List, Optional, Type
-
+from typing import List, Optional, Union
 import sqlalchemy
 from database import DatabaseSession
 from my_database_model import User, UserRole
@@ -13,8 +12,7 @@ from sqlalchemy.orm.query import Query
 from my_database import logger
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, PermissionDeniedError,
-                                    ResourceNotFoundError)
-from my_database.generic import update_object
+                                    NotFoundError)
 from rest_api_generator.exceptions import ServerError
 
 
@@ -102,7 +100,7 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
 def get_users(
     req_user: User,
     flt_id: Optional[int] = None
-) -> Optional[List[User]]:
+) -> Optional[Union[List[User], User]]:
     """ Method that retrieves all, or a subset of, the users in the
         database.
 
@@ -120,6 +118,9 @@ def get_users(
         List[User]
             A list with the resulting users.
 
+        User
+            The found user (if filtered on a uniq value, like flt_id).
+
         None
             No users are found.
     """
@@ -135,7 +136,8 @@ def get_users(
         data_list = session.query(User)
 
         # Then, we check the role that this user has. 'Root' users can
-        # retrieve all users. Admin users can retrieve
+        # retrieve all users. Admin users can retrieve normal and admin
+        # users. Normal users can only retrieve themselves.
         role = req_user.role
 
         if role == UserRole.admin:
@@ -146,7 +148,8 @@ def get_users(
             if not flt_id or flt_id == req_user.id:
                 data_list = data_list.filter(User.id == req_user.id)
             else:
-                return None
+                raise NotFoundError(
+                    f'User with ID {flt_id} is not found.')
 
         # Now, we can apply the correct filters
         try:
@@ -160,8 +163,15 @@ def get_users(
                 f'User id should be of type {int}, not {type(flt_id)}.')
 
         # Get the data
-        if data_list is not None:
+        if flt_id:
+            rv = data_list.first()
+            if rv is None:
+                raise NotFoundError(
+                    f'User with ID {flt_id} is not found.')
+        else:
             rv = data_list.all()
+            if len(rv) == 0:
+                rv = None
 
     # Return the data
     return rv
@@ -190,33 +200,25 @@ def update_user(
         -------
         User
             The updated user object.
+
+        None
+            No user updated.
     """
 
     # Get the resource object
-    resource: Optional[List[User]] = get_users(req_user, flt_id=user_id)
+    resource: Optional[Union[List[User], User]] = \
+        get_users(req_user, flt_id=user_id)
 
     # TODO: Check if no 'weird' fields are given
 
-    # Check if we got a resource. If we didn't, we rise an error
-    # indicating that the resource wasn't found. This can be either
-    # because it didn't exist, or because the user has no permissions
-    # to it.
-    if resource is None or len(resource) == 0:
-        raise ResourceNotFoundError(f'User with ID {user_id} is not found.')
-
-    # Appearently we have resources. Because the result is a list, we
-    # we can assume the first one in the list is the one we are
-    # interested in.
-    resource = resource[0]
-
     # Check if the context user can change the requested user. Normal
     # users cannot change any users, admin users can only change normal
-    # users and root users can change everything.
+    # users and admin users. Root users can change everything.
     if (req_user.role == UserRole.user):
         raise PermissionDeniedError(
             'A user with role "user" cannot change users')
     elif (req_user.role == UserRole.admin and
-            resource.role != UserRole.user):
+            resource.role == UserRole.root):
         raise PermissionDeniedError(
             'A user with role "admin" can only change normal users')
 
@@ -245,9 +247,10 @@ def update_user(
             # Add the changed resource to the session
             session.merge(resource)
 
-            # Done! Return the resource
+        # Done! Return the resource
+        if isinstance(resource, User):
             return resource
-    except IntegrityError:
+    except sqlalchemy.exc.IntegrityError:
         # Add a custom text to the exception
         raise IntegrityError('User already exists')
 
@@ -277,7 +280,11 @@ def delete_user(
 
     # If a 'normal' user is requesting this, we fail immidiatly
     if req_user.role == UserRole.user:
-        raise PermissionDeniedError('A normal user cannot delete users')
+        raise PermissionDeniedError(
+            'A user with role "user" cannot delete users')
+
+    # Get the user
+    resource = get_users(req_user=req_user, flt_id=user_id)
 
     # Create a database session
     try:
@@ -285,20 +292,6 @@ def delete_user(
             commit_on_end=True,
             expire_on_commit=True
         ) as session:
-            # Get the resource to delete
-            resource = session.query(User).filter(User.id == user_id).first()
-            if resource is None:
-                raise ResourceNotFoundError(
-                    f'User with id {user_id} is not found')
-
-            # Check if the context user can delete the requested user.
-            # Admin users can only delete normal users and root users
-            # can delete everything.
-            if (req_user.role == UserRole.admin and
-                    resource.role != UserRole.user):
-                raise PermissionDeniedError(
-                    'A admin user can only delete normal users')
-
             # A user cannot remove itself
             if req_user.id == user_id:
                 raise PermissionDeniedError(
@@ -307,7 +300,7 @@ def delete_user(
             # Delete the resource
             session.delete(resource)
     except sqlalchemy.exc.IntegrityError:
-        raise IntegrityError(
+        raise ServerError(
             'User couldn\'t be deleted because it still has resources ' +
             'connected to it')
     else:
