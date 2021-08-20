@@ -46,6 +46,8 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
             raise TypeError(
                 f'Missing required argument "{field}"')
 
+    logger.debug('create_user: all fields are given')
+
     # TODO: Check if no other fields are given
 
     # Normal users cannot create users, admin users can only create
@@ -54,9 +56,11 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
         raise PermissionDeniedError(
             'A user with role "user" cannot create users')
     elif (req_user.role == UserRole.admin and
-            kwargs['role'] != UserRole.user):
+            kwargs['role'] == UserRole.root):
         raise PermissionDeniedError(
-            'A user with role "admin" can only create normal users')
+            'A user with role "admin" can only create admin and normal users')
+
+    logger.debug('create_user: user is authorized')
 
     try:
         with DatabaseSession(
@@ -83,15 +87,19 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
             # Set the password for the user
             new_resource.set_password(random_password)
 
+            logger.debug('create_user: adding user')
+
             # Add the resource
             session.add(new_resource)
 
             # Return the created resource
             return new_resource
-    except IntegrityError:
+    except sqlalchemy.exc.IntegrityError as e:
+        logger.error(f'create_user: IntegrityError: {str(e)}')
         # Add a custom text to the exception
         raise IntegrityError('User already exists')
     except Exception as e:
+        logger.error(f'create_user: Exception: {str(e)}')
         raise ServerError(e)
 
     return None
@@ -151,11 +159,14 @@ def get_users(
                 raise NotFoundError(
                     f'User with ID {flt_id} is not found.')
 
+        logger.debug('get_users: we have the global list of users')
+
         # Now, we can apply the correct filters
         try:
             if flt_id:
                 flt_id = int(flt_id)
                 data_list = data_list.filter(User.id == flt_id)
+                logger.debug('get_users: list is filtered')
         except (ValueError, TypeError):
             logger.error(
                 f'User id should be of type {int}, not {type(flt_id)}.')
@@ -171,9 +182,11 @@ def get_users(
         else:
             rv = data_list.all()
             if len(rv) == 0:
+                logger.debug('get_users: no users to return')
                 rv = None
 
     # Return the data
+    logger.debug('get_users: returning users')
     return rv
 
 
@@ -209,18 +222,9 @@ def update_user(
     resource: Optional[Union[List[User], User]] = \
         get_users(req_user, flt_id=user_id)
 
-    # TODO: Check if no 'weird' fields are given
+    logger.debug('update_user: we have the resource')
 
-    # Check if the context user can change the requested user. Normal
-    # users cannot change any users, admin users can only change normal
-    # users and admin users. Root users can change everything.
-    if (req_user.role == UserRole.user):
-        raise PermissionDeniedError(
-            'A user with role "user" cannot change users')
-    elif (req_user.role == UserRole.admin and
-            resource.role == UserRole.root):
-        raise PermissionDeniedError(
-            'A user with role "admin" can only change normal users')
+    # TODO: Check if no 'weird' fields are given
 
     # Set the variables that are updatable
     fields = {
@@ -244,14 +248,19 @@ def update_user(
             commit_on_end=True,
             expire_on_commit=True
         ) as session:
+            logger.debug('update_user: merging resource into session')
+
             # Add the changed resource to the session
             session.merge(resource)
 
         # Done! Return the resource
         if isinstance(resource, User):
+            logger.debug('update_user: updating was a success!')
             return resource
-    except sqlalchemy.exc.IntegrityError:
+    except sqlalchemy.exc.IntegrityError as e:
         # Add a custom text to the exception
+        logger.error(
+            f'update_user: sqlalchemy.exc.IntegrityError: {str(e)}')
         raise IntegrityError('User already exists')
 
     return None
@@ -286,22 +295,28 @@ def delete_user(
     # Get the user
     resource = get_users(req_user=req_user, flt_id=user_id)
 
+    logger.debug('delete_user: we have the resource')
+
+    # A user cannot remove itself
+    if req_user.id == user_id:
+        raise PermissionDeniedError(
+            'You cannot remove your own user account')
+
     # Create a database session
     try:
         with DatabaseSession(
             commit_on_end=True,
             expire_on_commit=True
         ) as session:
-            # A user cannot remove itself
-            if req_user.id == user_id:
-                raise PermissionDeniedError(
-                    'You cannot remove your own user account')
-
             # Delete the resource
+            logger.debug('delete_user: deleting the resource')
             session.delete(resource)
-    except sqlalchemy.exc.IntegrityError:
+    except sqlalchemy.exc.IntegrityError as e:
+        logger.error(
+            f'delete_user: sqlalchemy.exc.IntegrityError: {str(e)}')
         raise ServerError(
             'User couldn\'t be deleted because it still has resources ' +
             'connected to it')
     else:
+        logger.debug('delete_user: return True because it was a success')
         return True
