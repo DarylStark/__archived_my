@@ -224,7 +224,7 @@ def update_user(
 
     logger.debug('update_user: we have the resource')
 
-    # TODO: Check if no 'weird' fields are given
+    # TODO: Check if no other fields are given
 
     # Set the variables that are updatable
     fields = {

@@ -66,7 +66,7 @@ def users_create(auth: Optional[Authorization],
             raise InvalidInputError(
                 f'Field "{field}" missing in request')
 
-    # Check if no other fields are given
+    # TODO: Check if no other fields are given
 
     # Transform the role
     roles = {
@@ -216,6 +216,8 @@ def users_update_delete(auth: Optional[Authorization],
             if field not in optional_fields:
                 raise InvalidInputError(
                     f'Field "{field}" is not a valid field for this request')
+
+        # TODO: Check if no other fields are given
 
         # Transform the role to a role that fits the `my_database`
         # better.
