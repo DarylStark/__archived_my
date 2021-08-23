@@ -144,7 +144,7 @@ def get_users(
     data_list: Optional[Query] = None
     rv: Optional[List[User]] = None
 
-    # Get the token
+    # Get the resources
     with DatabaseSession(commit_on_end=False, expire_on_commit=False) \
             as session:
         # First, we get all users
