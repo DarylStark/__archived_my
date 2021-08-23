@@ -1,19 +1,20 @@
 """
     Script to create the missing tables from the database
 """
-# Add include path. We need to do this because we are not in the
-# original path
 import sys
 import os
-sys.path.append(
-    os.path.abspath(os.path.join(os.path.dirname(
-        __file__), os.path.pardir)) + '/src'
-)
 import argparse
 import logging
 import pymysql
 import sqlalchemy
 from rich.logging import RichHandler
+
+# Add include path. We need to do this because we are not in the
+# original path
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(
+        __file__), os.path.pardir)) + '/src'
+)
 from database import Database, DatabaseSession
 from database.exceptions import DatabaseConnectionError
 from my_database_model import *
@@ -88,146 +89,99 @@ if __name__ == '__main__':
 
     # Add test data
     if args.create_data:
-        # Create users
-        data = [
-            User(fullname='Root user',
-                 username='root',
-                 email='root@dstark.nl',
-                 role=UserRole.root,
-                 password='test'
-                 ),
-            User(fullname='Daryl Stark',
-                 username='daryl.stark',
-                 email='daryl@dstark.nl',
-                 role=UserRole.user,
-                 password='test'
-                 )
-        ]
+        # Define the objects to create. We define these objects in a
+        # list and set the password as plaintext. In the loop where we
+        # add the objects, we set the password using the correct
+        # method.
 
-        for entry in data:
-            try:
-                with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
-                        as session:
-
-                    # Set the password
-                    entry.set_password(entry.password)
-
-                    # Add the user to the database
-                    logger.info(f'Creating user "{entry.fullname}"')
-                    session.add(entry)
-            except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
-                logger.warning('User not added; already in the database')
-
-        # Create API scopes
-        data = [
+        # The API token will be connected to a user later on. We create
+        # the scopes
+        scopes = [
             'api.ping', 'users.create', 'users.retrieve', 'users.update',
             'users.delete', 'tags.create', 'tags.retrieve', 'tags.update',
             'tags.delete'
         ]
+        api_token_objects = [
+            APIToken(
+                expires=None,
+                enabled=True,
+                token='poiuytrewq',
+                token_scopes=[
+                    APITokenScope(
+                        scope=APIScope(
+                            module=x.split('.')[0],
+                            subject=x.split('.')[1]
+                        )
+                    )
+                    for x in scopes
+                ]
+            )
+        ]
+
+        # The user objects to create. We connect the needed objects for
+        # these user immidiatly.
+        user_objects = [
+            User(
+                fullname='Root user',
+                username='root',
+                email='root@dstark.nl',
+                role=UserRole.root,
+                password='test',
+                tags=[
+                    Tag(title='Root - Testtag1'),
+                    Tag(title='Root - Testtag2')
+                ]
+            ),
+            User(
+                fullname='Daryl Stark',
+                username='daryl.stark',
+                email='daryl@dstark.nl',
+                role=UserRole.user,
+                password='test',
+                tags=[
+                    Tag(title='Daryl - Testtag1'),
+                    Tag(title='Daryl - Testtag2')
+                ],
+                clients=[
+                    APIClient(
+                        expires=None,
+                        user_id=2,
+                        enabled=True,
+                        app_name='Thunder Client',
+                        app_publisher='Ranga Vadhineni',
+                        token='abcdefgh1234567890',
+                        tokens=[
+                            api_token_objects[0]
+                        ]
+                    )
+                ],
+                tokens=[
+                    api_token_objects[0]
+                ]
+            )
+        ]
+
+        # Combine the data objects to create
+        data = list()
+        data += user_objects
 
         for entry in data:
             try:
                 with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
                         as session:
 
-                    # Create a APIScope objects
-                    scope = APIScope(
-                        module=entry.split('.')[0],
-                        subject=entry.split('.')[1]
-                    )
-
-                    # Add the user to the database
-                    logger.info(f'Creating API scope "{entry}"')
-                    session.add(scope)
-            except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
-                logger.warning('Scope not added; already in the database')
-
-        # Create API clients
-        try:
-            with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
-                    as session:
-
-                # Create a new APIClient-object
-                new_client = APIClient(
-                    expires=None,
-                    user_id=2,
-                    enabled=True,
-                    app_name='Thunder Client',
-                    app_publisher='Ranga Vadhineni',
-                    token='abcdefgh1234567890'
-                )
-
-                # Add the user to the database
-                logger.info(f'Creating API client "{new_client.app_name}"')
-                session.add(new_client)
-        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
-            logger.warning('API client not added; already in the database')
-
-        # Create API tokens
-        try:
-            with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
-                    as session:
-
-                # Create a new APIToken-object
-                new_token = APIToken(
-                    expires=None,
-                    client_id=1,
-                    user_id=2,
-                    enabled=True,
-                    token='poiuytrewq'
-                )
-
-                # Add the user to the database
-                logger.info(f'Creating API token "{new_token.token}"')
-                session.add(new_token)
-        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
-            logger.warning('API token not added; already in the database')
-
-        # Add scopes to the created API token
-        data = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        try:
-            for entry in data:
-                with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
-                        as session:
-
-                    # Create a new APITokenScope-object
-                    new_token_scope = APITokenScope(
-                        token_id=1,
-                        scope_id=entry
-                    )
+                    # Set the password (if this is a user)
+                    if isinstance(entry, User):
+                        entry.set_password(entry.password)
 
                     # Add the user to the database
                     logger.info(
-                        f'Creating API token "{new_token_scope.token}/{new_token_scope.scope}"')
-                    session.add(new_token_scope)
-        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
-            logger.warning('API tokenscope not added; already in the database')
+                        f'Creating object "{entry}" and related objects')
+                    session.add(entry)
+            except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+                logger.warning(f'IntegrityError: {str(e)}')
 
-        # Create Tags
-        data = [
-            {'user_id': 1, 'tag': 'Tag for Root - #1'},
-            {'user_id': 1, 'tag': 'Tag for Root - #2'},
-            {'user_id': 1, 'tag': 'Tag for Root - #3'},
-            {'user_id': 2, 'tag': 'Tag for Daryl - #1'},
-            {'user_id': 2, 'tag': 'Tag for Daryl - #2'},
-            {'user_id': 2, 'tag': 'Tag for Daryl - #3'}
-        ]
-        try:
-            for entry in data:
-                with DatabaseSession(commit_on_end=True, expire_on_commit=False) \
-                        as session:
-
-                    # Create a new APIToken-object
-                    new_tag = Tag(
-                        user_id=entry['user_id'],
-                        title=entry['tag'],
-                    )
-
-                    # Add the user to the database
-                    logger.info(f'Creating tag "{new_tag.title}"')
-                    session.add(new_tag)
-        except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError):
-            logger.warning('API token not added; already in the database')
+        sys.exit(1)
 
     # Done!
     logger.info('Script done')
