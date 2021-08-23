@@ -5,16 +5,14 @@
 import re
 from typing import Optional
 from flask import request
-from my_database.exceptions import MyDatabaseError, IntegrityError
-from my_database.generic import create_object, update_object, delete_object
-from my_database.tags import get_tags
-from my_database_model import user
-from my_database_model.tag import Tag
+from my_database.exceptions import (IntegrityError, MyDatabaseError,
+                                    NotFoundError, PermissionDeniedError)
+from my_database.tags import create_tag, delete_tag, get_tags, update_tag
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
-from rest_api_generator.exceptions import (ResourceForbiddenError,
+from rest_api_generator.exceptions import (InvalidInputError, ResourceForbiddenError,
                                            ResourceIntegrityError,
-                                           ResourceNotFoundError)
+                                           ResourceNotFoundError, ServerError)
 
 api_group_tags = Group(
     api_url_prefix='tags',
@@ -50,40 +48,49 @@ def tags_create(auth: Optional[Authorization],
         RESTAPIResponse
             The API response
     """
-
     # Create a RESTAPIResponse object
     return_response = Response(ResponseType.SINGLE_RESOURCE)
 
-    # Set the data
+    # Get the data
+    post_data = request.json
+
+    # Check if we have all fields
+    needed_fields = [
+        'title'
+    ]
+    for field in needed_fields:
+        if field not in post_data.keys():
+            raise InvalidInputError(
+                f'Field "{field}" missing in request')
+
+    # Set the optional fields
+    optional_fields = list()
+
+    # Check if no other fields are given
+    possible_fields = needed_fields + optional_fields
+    for field in post_data.keys():
+        if field not in possible_fields:
+            raise InvalidInputError(
+                f'Unexpected field "{field}"')
+
+    # Create the tag
     try:
-        # Get the data
-        post_data = request.json
-
-        # Check if we have all fields
-        needed_fields = ['title']
-        for field in needed_fields:
-            if field not in post_data.keys():
-                raise ResourceNotFoundError(
-                    f'Field "{field}" missing in request')
-
-        # Create a tag
-        new_object = Tag(
-            user_id=auth.data.user_id,
+        new_object = create_tag(
+            req_user=auth.data.user,
             title=post_data['title']
         )
+    except IntegrityError as err:
+        # Integrity errors happen mostly when the tag already
+        # exists.
+        raise ResourceIntegrityError(err)
+    except Exception as err:
+        # Every other error should result in a ServerError.
+        raise ServerError(err)
+    else:
+        # If nothing went wrong, return the newly created object.
+        return_response.data = new_object
 
-        # Add the object
-        try:
-            create_object(new_object)
-        except IntegrityError:
-            raise ResourceIntegrityError('Tag already exists')
-        else:
-            return_response.data = new_object
-
-    except MyDatabaseError:
-        raise ResourceNotFoundError
-
-    # Return the create RESTAPIResponse object
+    # Return the created RESTAPIResponse object
     return return_response
 
 
@@ -114,7 +121,6 @@ def tags_retrieve(auth: Optional[Authorization],
         RESTAPIResponse
             The API response
     """
-
     # Create a RESTAPIResponse object
     return_response = Response(ResponseType.RESOURCE_SET)
 
@@ -131,18 +137,15 @@ def tags_retrieve(auth: Optional[Authorization],
             auth.data.user,
             flt_id=resource_id
         )
+    except NotFoundError as err:
+        # Resource not found happens when a user tries to get a
+        # tag that does not exists
+        raise ResourceNotFoundError(err)
+    except Exception as err:
+        # Every other error should result in a ServerError.
+        raise ServerError(err)
 
-        if len(return_response.data) == 0 and resource_id is not None:
-            raise ResourceNotFoundError('Not a valid tag ID')
-
-        # If the user requested only one resource, we only put that
-        # resource in the return
-        if resource_id is not None:
-            return_response.data = return_response.data[0]
-    except MyDatabaseError:
-        raise ResourceNotFoundError
-
-    # Return the create RESTAPIResponse object
+    # Return the created RESTAPIResponse object
     return return_response
 
 
@@ -180,63 +183,80 @@ def tags_update_delete(auth: Optional[Authorization],
     # Create a RESTAPIResponse object
     return_response = Response(ResponseType.SINGLE_RESOURCE)
 
-    # Get the tag
-    tag_id = int(url_match.groups(0)[0])
-
-    # Get the tags
-    tags = get_tags(
-        auth.data.user,
-        flt_id=tag_id
-    )
-
-    # Check if we have a tag
-    if tags is None or len(tags) == 0:
-        raise ResourceNotFoundError('Tag not in database')
-
-    # Set the object
-    obj = tags[0]
+    # Get the tag ID
+    resource_id = int(url_match.groups(0)[0])
 
     # Update tag
     if request.method == 'PATCH':
-        # Set the data
+        # Get the data
+        post_data = request.json
+
+        # Check if we have all fields
+        needed_fields = list()
+
+        # Check if we received the correct fields
+        optional_fields = [
+            'title'
+        ]
+
+        # Check if no other fields are given
+        possible_fields = needed_fields + optional_fields
+        for field in post_data.keys():
+            if field not in possible_fields:
+                raise InvalidInputError(
+                    f'Unexpected field "{field}"')
+
+        # Update the tag
         try:
-            # Get the data
-            post_data = request.json
+            changed_resource = update_tag(
+                req_user=auth.data.user,
+                tag_id=resource_id,
+                **post_data
+            )
+        except NotFoundError as err:
+            # Resource not found happens when a user tries to change a
+            # tag that does not exists
+            raise ResourceNotFoundError(err)
+        except IntegrityError as err:
+            # Integrity errors happen mostly when the tag already
+            # exists.
+            raise ResourceIntegrityError(err)
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
 
-            # Check if we have all fields
-            needed_fields = ['title']
-            for field in needed_fields:
-                if field not in post_data.keys():
-                    raise ResourceNotFoundError(
-                        f'Field "{field}" missing in request')
-
-            # Update the object
-            try:
-                obj.title = post_data['title']
-                update_object(obj)
-            except IntegrityError:
-                raise ResourceIntegrityError(
-                    'Tag with this name already exists')
-            else:
-                return_response.data = obj
-
-        except MyDatabaseError:
-            raise ResourceNotFoundError
+        # If nothing went wrong, return the newly created object.
+        return_response.data = changed_resource
 
     # Delete tag
     if request.method == 'DELETE':
         try:
-            # Delete the object
-            try:
-                delete_object(obj)
-            except IntegrityError:
-                raise ResourceIntegrityError(
-                    'Couldn\'t delete tag due to an integrity error')
-            else:
-                return_response.data = {'deleted': True}
+            delete_tag(
+                req_user=auth.data.user,
+                tag_id=resource_id
+            )
+        except PermissionDeniedError as err:
+            # Permission denied errors happen when a user tries to
+            # delete a type of resource he is not allowed to delete.
+            raise ResourceForbiddenError(err)
+        except NotFoundError as err:
+            # Resource not found happens when a user tries to delete a
+            # resource that does not exists
+            raise ResourceNotFoundError(err)
+        except IntegrityError as err:
+            # Integrity errors happen mostly when the resource has
+            # connections to other resources that should be deleted
+            # first.
+            raise ResourceIntegrityError(err)
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+        else:
+            # If nothing went wrong, we create a object with the key
+            # 'deleted' that we return to the client.
+            return_response.data = {
+                'deleted': True
+            }
 
-        except MyDatabaseError:
-            raise ResourceNotFoundError
-
-    # Return the create RESTAPIResponse object
+    # Return the created RESTAPIResponse object
     return return_response
