@@ -152,3 +152,136 @@ def get_tags(
     # Return the data
     logger.debug('get_tags: returning users')
     return rv
+
+
+def update_tag(
+    req_user: User,
+    tag_id: int,
+    **kwargs: dict
+) -> Optional[Tag]:
+    """ Method to update a tag.
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        tag_id : int
+            The ID for the tag to change
+
+        **kwargs : dict
+            A dict containing the fields for the tag.
+
+        Returns
+        -------
+        Tag
+            The updated tag object.
+
+        None
+            No tag updated.
+    """
+
+    # Get the resource object
+    resource: Optional[Union[List[Tag], Tag]] = \
+        get_tags(req_user, flt_id=tag_id)
+
+    logger.debug('update_tag: we have the resource')
+
+    # Check if we have all fields
+    needed_fields = list()
+    for field in needed_fields:
+        if field not in kwargs.keys():
+            raise TypeError(
+                f'Missing required argument "{field}"')
+
+    logger.debug('update_tag: all needed fields are given')
+
+    # Set the optional fields
+    optional_fields = {
+        'title': 'title'
+    }
+
+    # Check if no other fields are given
+    possible_fields = needed_fields + list(optional_fields.keys())
+    for field in kwargs.keys():
+        if field not in possible_fields:
+            raise TypeError(
+                f'Unexpected field "{field}"')
+
+    # Update the resource
+    for field in kwargs.keys():
+        if field in optional_fields.keys():
+            setattr(resource, optional_fields[field], kwargs[field])
+        else:
+            raise FilterNotValidError(
+                f'Field {field} is not a valid field')
+
+    # Save the fields
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            logger.debug('update_tag: merging resource into session')
+
+            # Add the changed resource to the session
+            session.merge(resource)
+
+        # Done! Return the resource
+        if isinstance(resource, Tag):
+            logger.debug('update_tag: updating was a success!')
+            return resource
+    except sqlalchemy.exc.IntegrityError as e:
+        # Add a custom text to the exception
+        logger.error(
+            f'update_tag: sqlalchemy.exc.IntegrityError: {str(e)}')
+        raise IntegrityError('Tag already exists')
+
+    return None
+
+
+def delete_tag(
+    req_user: User,
+    tag_id: int
+) -> bool:
+    """ Method to delete a tag.
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        tag_id : int
+            The ID for the tag to delete.
+
+        Returns
+        -------
+        bool
+            True on success.
+    """
+
+    # Get the tag
+    resource = get_tags(req_user=req_user, flt_id=tag_id)
+
+    logger.debug('delete_tag: we have the resource')
+
+    # Create a database session
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            # Delete the resource
+            logger.debug('delete_tag: deleting the resource')
+            session.delete(resource)
+    except sqlalchemy.exc.IntegrityError as e:
+        logger.error(
+            f'delete_tag: sqlalchemy.exc.IntegrityError: {str(e)}')
+        raise ServerError(
+            'Tag couldn\'t be deleted because it still has resources ' +
+            'connected to it')
+    else:
+        logger.debug('delete_tag: return True because it was a success')
+        return True
