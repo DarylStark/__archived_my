@@ -51,11 +51,12 @@ class ResourceIntegrityError(RESTAPIGeneratorEndpointError):
 
 
 class ServerError(RESTAPIGeneratorEndpointError):
-    """ Exception for server errors. Should be handled as HTTP 5000
+    """ Exception for server errors. Should be handled as HTTP 500
         error. """
     pass
 
 
 class InvalidInputError(RESTAPIGeneratorEndpointError):
-    """ Exception that occurs when the user gives invalid input. """
+    """ Exception that occurs when the user gives invalid input. Sould
+        be handled as HTTP 400 error. """
     pass

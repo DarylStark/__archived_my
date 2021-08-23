@@ -66,7 +66,15 @@ def users_create(auth: Optional[Authorization],
             raise InvalidInputError(
                 f'Field "{field}" missing in request')
 
-    # TODO: Check if no other fields are given
+    # Set the optional fields
+    optional_fields = list()
+
+    # Check if no other fields are given
+    possible_fields = needed_fields + optional_fields
+    for field in post_data.keys():
+        if field not in possible_fields:
+            raise InvalidInputError(
+                f'Unexpected field "{field}"')
 
     # Transform the role
     roles = {
@@ -207,17 +215,21 @@ def users_update_delete(auth: Optional[Authorization],
         # Get the data
         post_data = request.json
 
+        # Check if we have all fields
+        needed_fields = list()
+
         # Check if we received the correct fields
         optional_fields = [
             'fullname', 'username', 'email',
             'role'
         ]
-        for field in post_data.keys():
-            if field not in optional_fields:
-                raise InvalidInputError(
-                    f'Field "{field}" is not a valid field for this request')
 
-        # TODO: Check if no other fields are given
+        # Check if no other fields are given
+        possible_fields = needed_fields + optional_fields
+        for field in post_data.keys():
+            if field not in possible_fields:
+                raise InvalidInputError(
+                    f'Unexpected field "{field}"')
 
         # Transform the role to a role that fits the `my_database`
         # better.

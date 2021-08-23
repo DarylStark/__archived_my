@@ -15,7 +15,7 @@ from flask import abort, request
 from rest_api_generator.authorization import Authorization
 from rest_api_generator.endpoint import Endpoint
 from rest_api_generator.endpoint_url import EndpointURL
-from rest_api_generator.exceptions import (InvalidGroupError,
+from rest_api_generator.exceptions import (InvalidGroupError, InvalidInputError,
                                            ResourceForbiddenError,
                                            ResourceIntegrityError,
                                            ResourceNotFoundError, ServerError,
@@ -385,6 +385,13 @@ class RESTAPIGenerator:
                                 auth,
                                 endpoint_regex
                             )
+                    except InvalidInputError as exception:
+                        # User gave wrong input, raise a 400-error
+                        error = self.raise_error(400, str(exception))
+                        if error:
+                            return_value = error
+                        else:
+                            return None
                     except UnauthorizedForResourceError as exception:
                         # User is not authorized, raise a 401-error
                         error = self.raise_error(401, str(exception))

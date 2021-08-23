@@ -35,20 +35,27 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
 
     """
 
-    # Check if we have al the needed fields
+    # Check if we have all fields
     needed_fields = [
         'fullname', 'username', 'email',
         'role'
     ]
-
     for field in needed_fields:
         if field not in kwargs.keys():
             raise TypeError(
                 f'Missing required argument "{field}"')
 
-    logger.debug('create_user: all fields are given')
+    logger.debug('create_user: all needed fields are given')
 
-    # TODO: Check if no other fields are given
+    # Set the optional fields
+    optional_fields = list()
+
+    # Check if no other fields are given
+    possible_fields = needed_fields + optional_fields
+    for field in kwargs.keys():
+        if field not in possible_fields:
+            raise TypeError(
+                f'Unexpected field "{field}"')
 
     # Normal users cannot create users, admin users can only create
     # normal users. Root can create whatever he wants.
@@ -224,15 +231,29 @@ def update_user(
 
     logger.debug('update_user: we have the resource')
 
-    # TODO: Check if no other fields are given
+    # Check if we have all fields
+    needed_fields = list()
+    for field in needed_fields:
+        if field not in kwargs.keys():
+            raise TypeError(
+                f'Missing required argument "{field}"')
 
-    # Set the variables that are updatable
-    fields = {
+    logger.debug('update_user: all needed fields are given')
+
+    # Set the optional fields
+    optional_fields = {
         'fullname': 'fullname',
         'username': 'username',
         'email': 'email',
         'role': 'role'
     }
+
+    # Check if no other fields are given
+    possible_fields = needed_fields + list(optional_fields.keys())
+    for field in kwargs.keys():
+        if field not in possible_fields:
+            raise TypeError(
+                f'Unexpected field "{field}"')
 
     # Authorize this request; check if the user requesting this is
     # allowed to change the role of the user
@@ -248,8 +269,8 @@ def update_user(
 
     # Update the resource
     for field in kwargs.keys():
-        if field in fields.keys():
-            setattr(resource, fields[field], kwargs[field])
+        if field in optional_fields.keys():
+            setattr(resource, optional_fields[field], kwargs[field])
         else:
             raise FilterNotValidError(
                 f'Field {field} is not a valid field')
