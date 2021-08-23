@@ -65,7 +65,8 @@ class User(Database.base_class):
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """
-        return f'<User for "{self.username}" at {self.id}>'
+        return (f'<User for "{self.username}" ' +
+                '(id: {self.id}) at {hex(id(self))}>')
 
     def set_password(self, password: str) -> None:
         """ Method to set the password for this user

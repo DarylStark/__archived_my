@@ -32,7 +32,8 @@ class APIScope(Database.base_class):
 
     def __repr__(self):
         """ Represents objects of this class. """
-        return f'<APIScope for "{self.module}.{self.subject}" at {self.id}>'
+        return (f'<APIScope for "{self.module}.{self.subject}" ' +
+                '(id: {self.id}) at {hex(id(self))}>')
 
     @property
     def full_scope_name(self) -> str:

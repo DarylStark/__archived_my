@@ -49,4 +49,5 @@ class APIClient(Database.base_class):
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """
-        return f'<APIClient for "{self.app_name}" at {self.id}>'
+        return (f'<APIClient for "{self.app_name}" ' +
+                '(id: {self.id}) at {hex(id(self))} >')

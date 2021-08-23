@@ -33,4 +33,4 @@ class Tag(Database.base_class):
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """
-        return f'<Tag for "{self.title}" at {self.id}>'
+        return f'<Tag for "{self.title}" (id: {self.id}) at {hex(id(self))}>'
