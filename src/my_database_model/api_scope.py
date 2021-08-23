@@ -19,9 +19,15 @@ class APIScope(Database.base_class):
     )
 
     # Database columns for this table
-    id = Column(Integer, primary_key=True)
-    module = Column(String(32), nullable=False)
-    subject = Column(String(32), nullable=False)
+    id = Column(
+        Integer,
+        primary_key=True)
+    module = Column(
+        String(32),
+        nullable=False)
+    subject = Column(
+        String(32),
+        nullable=False)
 
     # One-to-many relationships
     token_scopes = relationship(

@@ -21,15 +21,28 @@ class APIToken(Database.base_class):
     )
 
     # Database columns for this table
-    id = Column(Integer, primary_key=True)
-    created = Column(DateTime, nullable=False,
-                     default=datetime.datetime.utcnow)
-    expires = Column(DateTime)
-    client_id = Column(ForeignKey('api_clients.id'), nullable=False)
-    user_id = Column(ForeignKey("users.id"),
-                     nullable=False)
-    enabled = Column(Boolean, default=True, nullable=False)
-    token = Column(String(32), nullable=False)
+    id = Column(
+        Integer,
+        primary_key=True)
+    created = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.datetime.utcnow)
+    expires = Column(
+        DateTime)
+    client_id = Column(
+        ForeignKey('api_clients.id'),
+        nullable=False)
+    user_id = Column(
+        ForeignKey("users.id"),
+        nullable=False)
+    enabled = Column(
+        Boolean,
+        default=True,
+        nullable=False)
+    token = Column(
+        String(32),
+        nullable=False)
 
     # Many-to-one relationships
     client = relationship(

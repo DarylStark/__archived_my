@@ -19,9 +19,15 @@ class APITokenScope(Database.base_class):
     )
 
     # Database columns for this table
-    id = Column(Integer, primary_key=True)
-    token_id = Column(ForeignKey('api_tokens.id'), nullable=False)
-    scope_id = Column(ForeignKey('api_scopes.id'), nullable=False)
+    id = Column(
+        Integer,
+        primary_key=True)
+    token_id = Column(
+        ForeignKey('api_tokens.id'),
+        nullable=False)
+    scope_id = Column(
+        ForeignKey('api_scopes.id'),
+        nullable=False)
 
     # Many-to-one relationships
     token = relationship(

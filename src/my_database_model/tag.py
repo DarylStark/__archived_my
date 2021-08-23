@@ -20,10 +20,15 @@ class Tag(Database.base_class):
     )
 
     # Database columns for this table
-    id = Column(Integer, primary_key=True)
-    user_id = Column(ForeignKey("users.id"),
-                     nullable=False)
-    title = Column(String(32), nullable=False)
+    id = Column(
+        Integer,
+        primary_key=True)
+    user_id = Column(
+        ForeignKey("users.id"),
+        nullable=False)
+    title = Column(
+        String(32),
+        nullable=False)
 
     # One-to-many relationships
     user = relationship(
