@@ -162,7 +162,7 @@ def users_retrieve(auth: Optional[Authorization],
             flt_id=resource_id
         )
     except NotFoundError as err:
-        # Resource not found happens when a user tries to change a
+        # Resource not found happens when a user tries to get a
         # user that does not exists
         raise ResourceNotFoundError(err)
     except Exception as err:
@@ -284,7 +284,7 @@ def users_update_delete(auth: Optional[Authorization],
             raise ResourceForbiddenError(err)
         except NotFoundError as err:
             # Resource not found happens when a user tries to delete a
-            # user that does not exists
+            # resource that does not exists
             raise ResourceNotFoundError(err)
         except IntegrityError as err:
             # Integrity errors happen mostly when the resource has
