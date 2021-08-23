@@ -181,7 +181,5 @@ if __name__ == '__main__':
             except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
                 logger.warning(f'IntegrityError: {str(e)}')
 
-        sys.exit(1)
-
     # Done!
     logger.info('Script done')
