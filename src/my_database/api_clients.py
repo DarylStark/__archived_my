@@ -64,9 +64,8 @@ def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
                 user=req_user
             )
 
-            # TODO:
-            # Generate token
-            new_resource.token = 'testtest1'
+            # Set token
+            new_resource.generate_random_token()
 
             logger.debug('create_api_client: adding API client')
 

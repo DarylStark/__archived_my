@@ -3,7 +3,8 @@
     SQLalchemy ORM.
 """
 import datetime
-
+import random
+import string
 from sqlalchemy.orm import relationship
 from database import Database
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
@@ -65,4 +66,28 @@ class APIClient(Database.base_class):
     def __repr__(self) -> str:
         """ Represents objects of this class. """
         return (f'<APIClient for "{self.app_name}" ' +
-                '(id: {self.id}) at {hex(id(self))} >')
+                f'(id: {self.id}) at {hex(id(self))} >')
+
+    def generate_random_token(self, force: bool = False):
+        """
+            Method to generate a random token for this API client.
+
+            Parameters
+            ----------
+            force : bool = False
+                If True, this function will also generate a random
+                token if a token has already been configred.
+
+            Returns
+            -------
+            None
+        """
+        if self.token is None or force:
+            # Generate random token
+            characters = string.ascii_letters
+            characters += string.digits
+            length = random.randint(32, 32)
+            random_password = [random.choice(characters)
+                               for i in range(0, length)]
+            random_password = ''.join(random_password)
+            self.token = random_password
