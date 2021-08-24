@@ -42,4 +42,4 @@ class APITokenScope(Database.base_class):
     def __repr__(self) -> str:
         """ Represents objects of this class. """
         return (f'<APITokenScope for "{self.token_id}.{self.scope_id}" ' +
-                '(id: {self.id}) at {hex(id(self))}>')
+                f'(id: {self.id}) at {hex(id(self))}>')
