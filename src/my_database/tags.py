@@ -11,9 +11,7 @@ from my_database import logger
 from my_database.exceptions import (FilterNotValidError, IntegrityError,
                                     NotFoundError)
 from my_database.exceptions import (FilterNotValidError,
-                                    IntegrityError, PermissionDeniedError,
-                                    NotFoundError)
-from rest_api_generator.exceptions import ServerError
+                                    IntegrityError, NotFoundError)
 
 
 def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
@@ -78,9 +76,6 @@ def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
         logger.error(f'create_tag: IntegrityError: {str(e)}')
         # Add a custom text to the exception
         raise IntegrityError('Tag already exists')
-    except Exception as e:
-        logger.error(f'create_tag: Exception: {str(e)}')
-        raise ServerError(e)
 
     return None
 
@@ -279,7 +274,7 @@ def delete_tag(
     except sqlalchemy.exc.IntegrityError as e:
         logger.error(
             f'delete_tag: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise ServerError(
+        raise IntegrityError(
             'Tag couldn\'t be deleted because it still has resources ' +
             'connected to it')
     else:

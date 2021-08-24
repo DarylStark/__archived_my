@@ -13,7 +13,6 @@ from my_database import logger
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, PermissionDeniedError,
                                     NotFoundError)
-from rest_api_generator.exceptions import ServerError
 
 
 def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
@@ -105,9 +104,6 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
         logger.error(f'create_user: IntegrityError: {str(e)}')
         # Add a custom text to the exception
         raise IntegrityError('User already exists')
-    except Exception as e:
-        logger.error(f'create_user: Exception: {str(e)}')
-        raise ServerError(e)
 
     return None
 
@@ -347,7 +343,7 @@ def delete_user(
     except sqlalchemy.exc.IntegrityError as e:
         logger.error(
             f'delete_user: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise ServerError(
+        raise IntegrityError(
             'User couldn\'t be deleted because it still has resources ' +
             'connected to it')
     else:
