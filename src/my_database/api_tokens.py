@@ -1,6 +1,9 @@
 """
     Module that contains the methods to get and set api token details
-    from the database.
+    from the database. In contrast to other modules in the
+    `my_database` package, this module doesn't contain a method to
+    update API tokens. This is because a API token should not be
+    updatable; it cannot be changed.
 """
 from typing import List, Optional, Union
 import sqlalchemy
