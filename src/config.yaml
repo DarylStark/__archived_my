@@ -5,7 +5,7 @@ default:
     - "development"
   config:
     logging:
-      level: 40
+      level: 30
     database:
       type: "mysql"
       server: "${env:DB_SERVER}"
