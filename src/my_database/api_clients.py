@@ -75,7 +75,7 @@ def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
             # Return the created resource
             return new_resource
     except sqlalchemy.exc.IntegrityError as e:
-        logger.error(f'create_user: IntegrityError: {str(e)}')
+        logger.error(f'create_api_client: IntegrityError: {str(e)}')
         # Add a custom text to the exception
         raise IntegrityError('API client already exists')
 
