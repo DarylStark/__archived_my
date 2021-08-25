@@ -5,6 +5,7 @@
 import datetime
 import random
 import string
+from typing import Optional
 from sqlalchemy.orm import relationship
 from database import Database
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
@@ -68,7 +69,7 @@ class APIClient(Database.base_class):
         return (f'<APIClient for "{self.app_name}" ' +
                 f'(id: {self.id}) at {hex(id(self))} >')
 
-    def generate_random_token(self, force: bool = False):
+    def generate_random_token(self, force: bool = False) -> Optional[str]:
         """
             Method to generate a random token for this API client.
 
@@ -80,14 +81,19 @@ class APIClient(Database.base_class):
 
             Returns
             -------
+            str
+                The generated token
+
             None
+                No token generated because one is already set.
         """
         if self.token is None or force:
             # Generate random token
             characters = string.ascii_letters
             characters += string.digits
             length = random.randint(32, 32)
-            random_password = [random.choice(characters)
-                               for i in range(0, length)]
-            random_password = ''.join(random_password)
-            self.token = random_password
+            random_token = [random.choice(characters)
+                            for i in range(0, length)]
+            random_token = ''.join(random_token)
+            self.token = random_token
+            return random_token
