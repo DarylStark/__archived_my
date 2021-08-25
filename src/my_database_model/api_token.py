@@ -3,6 +3,9 @@
     SQLalchemy ORM.
 """
 import datetime
+import random
+import string
+from typing import Optional
 from database import Database
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
                         UniqueConstraint)
@@ -65,3 +68,32 @@ class APIToken(Database.base_class):
         """ Represents objects of this class. """
         return (f'<APIToken for "{self.client_id}" ' +
                 f'(id: {self.id}) at {hex(id(self))}>')
+
+    def generate_random_token(self, force: bool = False) -> Optional[str]:
+        """
+            Method to generate a random token for this API token.
+
+            Parameters
+            ----------
+            force : bool = False
+                If True, this function will also generate a random
+                token if a token has already been configred.
+
+            Returns
+            -------
+            str
+                The generated token
+
+            None
+                No token generated because one is already set.
+        """
+        if self.token is None or force:
+            # Generate random token
+            characters = string.ascii_letters
+            characters += string.digits
+            length = random.randint(32, 32)
+            random_token = [random.choice(characters)
+                            for i in range(0, length)]
+            random_token = ''.join(random_token)
+            self.token = random_token
+            return random_token

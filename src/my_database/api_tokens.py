@@ -3,11 +3,82 @@
     from the database.
 """
 from typing import List, Optional, Union
+import sqlalchemy
 from database import DatabaseSession
 from my_database_model import APIToken, User
 from sqlalchemy.orm.query import Query
 from my_database import logger
-from my_database.exceptions import (FilterNotValidError, NotFoundError)
+from my_database.exceptions import (FilterNotValidError,
+                                    IntegrityError, NotFoundError)
+
+
+def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
+    """" Method to create a API token
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        **kwargs : dict
+            A dict containing the fields for the API token.
+
+        Returns
+        -------
+        APIToken
+            The created API token object.
+
+    """
+
+    # Check if we have all fields
+    needed_fields = [
+        'client_id'
+    ]
+    for field in needed_fields:
+        if field not in kwargs.keys():
+            raise TypeError(
+                f'Missing required argument "{field}"')
+
+    logger.debug('create_api_token: all needed fields are given')
+
+    # Set the optional fields
+    optional_fields = list()
+
+    # Check if no other fields are given
+    possible_fields = needed_fields + optional_fields
+    for field in kwargs.keys():
+        if field not in possible_fields:
+            raise TypeError(
+                f'Unexpected field "{field}"')
+
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            # Create the resource
+            new_resource = APIToken(
+                user=req_user,
+                client_id=kwargs['client_id']
+            )
+
+            # Set token
+            new_resource.generate_random_token()
+
+            logger.debug('create_api_token: adding API token')
+
+            # Add the resource
+            session.add(new_resource)
+
+            # Return the created resource
+            return new_resource
+    except sqlalchemy.exc.IntegrityError as e:
+        logger.error(f'create_api_token: IntegrityError: {str(e)}')
+        # Add a custom text to the exception
+        raise IntegrityError('API token already exists')
+
+    return None
 
 
 def get_api_tokens(
@@ -104,3 +175,49 @@ def get_api_tokens(
     # Return the data
     logger.debug('get_api_tokens: returning API token')
     return rv
+
+
+def delete_api_token(
+    req_user: User,
+    api_token_id: int
+) -> bool:
+    """ Method to delete a API token.
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        api_token_id : int
+            The ID for the API token to delete.
+
+        Returns
+        -------
+        bool
+            True on success.
+    """
+
+    # Get the API token
+    resource = get_api_tokens(req_user=req_user, flt_id=api_token_id)
+
+    logger.debug('delete_api_token: we have the resource')
+
+    # Create a database session
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            # Delete the resource
+            logger.debug('delete_api_token: deleting the resource')
+            session.delete(resource)
+    except sqlalchemy.exc.IntegrityError as e:
+        logger.error(
+            f'delete_api_token: sqlalchemy.exc.IntegrityError: {str(e)}')
+        raise IntegrityError(
+            'API token couldn\'t be deleted because it still has resources ' +
+            'connected to it')
+    else:
+        logger.debug('delete_api_token: return True because it was a success')
+        return True
