@@ -4,7 +4,7 @@
 """
 import logging
 from typing import List, Optional, Union
-from my_database.api_authorization import get_token_information
+from my_database.api_tokens import get_api_tokens
 from rest_api_generator.authorization import Authorization
 from rest_api_generator.rest_api_generator import (BasicAuthorization,
                                                    BearerAuthorzation)
@@ -46,11 +46,12 @@ def authorization(
     # Check the type of authorization we received. We only accept the
     # 'Bearer' kind, since that is being used in OAuth world.
     if type(auth) is not BearerAuthorzation:
-        logger.error(f'Auth is of type {type(auth)}, not BearerAuthorization')
+        logger.error(
+            f'Auth is of type {type(auth)}, should be BearerAuthorization')
         return auth_object
 
     # Get the token object
-    token_object = get_token_information(auth.token)
+    token_object = get_api_tokens(flt_token=auth.token)
 
     # If we didn't get a object, the token is wrong
     if token_object is None:
