@@ -6,6 +6,7 @@ from logging import getLogger
 from config_loader import ConfigLoader
 from database import Database
 from my_database.exceptions import ConfigNotLoadedError
+from my_database.validate_input import validate_input
 from my_database_model import *
 
 # Load the settings

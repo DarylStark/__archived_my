@@ -6,6 +6,7 @@ from typing import List, Optional, Union
 from my_database.field import Field
 import sqlalchemy
 from database import DatabaseSession
+from my_database.validate_input import validate_input
 from my_database_model import APIClient, User
 from sqlalchemy.orm.query import Query
 from my_database import logger
@@ -189,7 +190,7 @@ def update_api_client(
     logger.debug('update_api_client: we have the resource')
 
     # Set the needed fields
-    required_fields = dict()
+    required_fields = None
 
     # Set the optional fields
     optional_fields = {
@@ -199,32 +200,20 @@ def update_api_client(
         'expires': Field('expires', datetime)
     }
 
-    # Combine the 'needed' and 'optional' fields
+    # Validate the user input
+    validate_input(
+        input_values=kwargs,
+        required_fields=required_fields,
+        optional_fields=optional_fields)
+
+    logger.debug('update_api_client: all arguments are validated')
+
+    # Combine the arguments
     all_fields: dict = dict()
-    all_fields.update(required_fields)
-    all_fields.update(optional_fields)
-
-    # Check if no other unexpected keys are given
-    for field in kwargs.keys():
-        if field not in all_fields:
-            raise TypeError(
-                f'Unexpected field "{field}"')
-
-    # Check if we have all required fields
-    for field in required_fields.keys():
-        if field not in kwargs.keys():
-            raise TypeError(
-                f'Missing required argument "{field}"')
-
-    # Check if the given fields are of the correct type
-    for field, value in kwargs.items():
-        expected_data_type = all_fields[field].datatype
-        if type(value) is not expected_data_type:
-            raise TypeError(
-                f'{field} should be of type {expected_data_type}, ' +
-                f'not {type(value)}.')
-
-    logger.debug('update_api_client: all fields are given and validated')
+    if required_fields:
+        all_fields.update(required_fields)
+    if optional_fields:
+        all_fields.update(optional_fields)
 
     # Update the resource
     for field in kwargs.keys():
