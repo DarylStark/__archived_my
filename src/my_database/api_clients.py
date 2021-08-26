@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 from my_database.field import Field
 import sqlalchemy
 from database import DatabaseSession
-from my_database.validate_input import validate_input
+from my_database import validate_input
 from my_database_model import APIClient, User
 from sqlalchemy.orm.query import Query
 from my_database import logger
