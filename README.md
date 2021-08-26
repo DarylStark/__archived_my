@@ -18,7 +18,7 @@ The project is divided in a few directories:
 └── tools
 ```
 
-### .vscode
+### /.vscode
 
 The `.vscode` directory contains files that are needed for VScode to understand this repository. The `settings.json` defines the settings for the project. The `launch.json` contains the debug targets that can be used.
 
@@ -26,7 +26,7 @@ The `.vscode` directory contains files that are needed for VScode to understand 
 
 This directory wil contain documentation about the project.
 
-### env
+### /env
 
 _Warning: this directory is not included in the Git repository_
 
@@ -41,11 +41,11 @@ source env/bin/activate
 
 The _src_ directory will hold the source for the services for this version of the software. As of right now, there are three services:
 
-#### _my_backend_
+#### src/_my_backend_
 
 The backend will be responsible for to run long-running tasks like retrieving data online. It won't be callable by the end-user.
 
-#### _my_rest_api_v1_
+#### src/_my_rest_api_v1_
 
 The REST API v1 package will be responsible to expose a REST API to the end user that he or she can use to create data in the application, update data, remove data and retrieve data. The API will be one of the most important parts of the application
 
