@@ -3,11 +3,13 @@
     from the database.
 """
 from typing import List, Optional, Union
+from my_database.field import Field
 import sqlalchemy
 from database import DatabaseSession
 from my_database_model import APIClient, User
 from sqlalchemy.orm.query import Query
 from my_database import logger
+from datetime import datetime
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, NotFoundError)
 
@@ -184,35 +186,59 @@ def update_api_client(
     # Get the resource object
     resource: Optional[Union[List[APIClient], APIClient]] = \
         get_api_clients(req_user, flt_id=api_client_id)
-
     logger.debug('update_api_client: we have the resource')
 
-    # Check if we have all fields
-    needed_fields = list()
-    for field in needed_fields:
+    # Set the needed fields
+    required_fields = dict()
+
+    # Set the optional fields
+    optional_fields = {
+        'app_name': Field('app_name', str),
+        'app_publisher': Field('app_publisher', str),
+        'enabled': Field('enabled', bool),
+        'expires': Field('expires', datetime)
+    }
+
+    # Combine the 'needed' and 'optional' fields
+    all_fields: dict = dict()
+    all_fields.update(required_fields)
+    all_fields.update(optional_fields)
+
+    # Check if no other unexpected keys are given
+    for field in kwargs.keys():
+        if field not in all_fields:
+            raise TypeError(
+                f'Unexpected field "{field}"')
+
+    # Check if we have all required fields
+    for field in required_fields.keys():
         if field not in kwargs.keys():
             raise TypeError(
                 f'Missing required argument "{field}"')
 
-    logger.debug('update_api_client: all needed fields are given')
-
-    # Set the optional fields
-    optional_fields = {
-        'app_name': 'app_name',
-        'app_publisher': 'app_publisher'
-    }
-
-    # Check if no other fields are given
-    possible_fields = needed_fields + list(optional_fields.keys())
-    for field in kwargs.keys():
-        if field not in possible_fields:
+    # Check if the given fields are of the correct type
+    for field, value in kwargs.items():
+        expected_data_type = all_fields[field].datatype
+        if type(value) is not expected_data_type:
             raise TypeError(
-                f'Unexpected field "{field}"')
+                f'{field} should be of type {expected_data_type}, ' +
+                f'not {type(value)}.')
+
+    logger.debug('update_api_client: all fields are given and validated')
 
     # Update the resource
     for field in kwargs.keys():
-        if field in optional_fields.keys():
-            setattr(resource, optional_fields[field], kwargs[field])
+        if field in all_fields.keys():
+            if hasattr(resource, all_fields[field].object_field):
+                setattr(
+                    resource,
+                    all_fields[field].object_field,
+                    kwargs[field])
+            else:
+                raise AttributeError(
+                    f"'{type(resource)}' has no attribute " +
+                    f"'{all_fields[field].object_field}'"
+                )
         else:
             raise FilterNotValidError(
                 f'Field {field} is not a valid field')
