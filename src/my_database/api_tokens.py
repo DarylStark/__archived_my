@@ -1,16 +1,16 @@
 """
     Module that contains the methods to get and set api token details
-    from the database. In contrast to other modules in the
-    `my_database` package, this module doesn't contain a method to
-    update API tokens. This is because a API token should not be
-    updatable; it cannot be changed.
+    from the database.
 """
 from typing import List, Optional, Union
+from my_database.field import Field
 import sqlalchemy
 from database import DatabaseSession
+from my_database import validate_input
 from my_database_model import APIToken, User
 from sqlalchemy.orm.query import Query
 from my_database import logger
+from datetime import datetime
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, NotFoundError)
 
@@ -178,6 +178,104 @@ def get_api_tokens(
     # Return the data
     logger.debug('get_api_tokens: returning API token')
     return rv
+
+
+def update_api_token(
+    req_user: User,
+    api_token_id: int,
+    **kwargs: dict
+) -> Optional[APIToken]:
+    """ Method to update a API token.
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        token_id : int
+            The ID for the API token to change
+
+        **kwargs : dict
+            A dict containing the fields for the API token.
+
+        Returns
+        -------
+        APIToken
+            The updated API token object.
+
+        None
+            No API token updated.
+    """
+
+    # Get the resource object
+    resource: Optional[Union[List[APIToken], APIToken]] = \
+        get_api_tokens(req_user, flt_id=api_token_id)
+    logger.debug('update_api_token: we have the resource')
+
+    # Set the needed fields
+    required_fields = None
+
+    # Set the optional fields
+    optional_fields = {
+        'enabled': Field('enabled', bool),
+        'expires': Field('expires', datetime)
+    }
+
+    # Validate the user input
+    validate_input(
+        input_values=kwargs,
+        required_fields=required_fields,
+        optional_fields=optional_fields)
+
+    logger.debug('update_api_token: all arguments are validated')
+
+    # Combine the arguments
+    all_fields: dict = dict()
+    if required_fields:
+        all_fields.update(required_fields)
+    if optional_fields:
+        all_fields.update(optional_fields)
+
+    # Update the resource
+    for field in kwargs.keys():
+        if field in all_fields.keys():
+            if hasattr(resource, all_fields[field].object_field):
+                setattr(
+                    resource,
+                    all_fields[field].object_field,
+                    kwargs[field])
+            else:
+                raise AttributeError(
+                    f"'{type(resource)}' has no attribute " +
+                    f"'{all_fields[field].object_field}'"
+                )
+        else:
+            raise FilterNotValidError(
+                f'Field {field} is not a valid field')
+
+    # Save the fields
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            logger.debug('update_api_token: merging resource into session')
+
+            # Add the changed resource to the session
+            session.merge(resource)
+
+        # Done! Return the resource
+        if isinstance(resource, APIToken):
+            logger.debug('update_api_token: updating was a success!')
+            return resource
+    except sqlalchemy.exc.IntegrityError as e:
+        # Add a custom text to the exception
+        logger.error(
+            f'update_api_token: sqlalchemy.exc.IntegrityError: {str(e)}')
+        raise IntegrityError('API token already exists')
+
+    return None
 
 
 def delete_api_token(
