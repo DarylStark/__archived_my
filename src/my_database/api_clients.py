@@ -36,8 +36,14 @@ def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
 
     # Set the needed fields
     required_fields = {
-        'app_name': Field('app_name', str),
-        'app_publisher': Field('app_publisher', str)
+        'app_name': Field(
+            'app_name',
+            str,
+            str_regex_validator=r'[A-Za-z0-9\-_. ]+'),
+        'app_publisher': Field(
+            'app_publisher',
+            str,
+            str_regex_validator=r'[A-Za-z0-9\-_. ]+')
     }
 
     # Set the optional fields
@@ -213,8 +219,14 @@ def update_api_client(
 
     # Set the optional fields
     optional_fields = {
-        'app_name': Field('app_name', str),
-        'app_publisher': Field('app_publisher', str),
+        'app_name': Field(
+            'app_name',
+            str,
+            str_regex_validator=r'[A-Za-z0-9\-_. ]+'),
+        'app_publisher': Field(
+            'app_publisher',
+            str,
+            str_regex_validator=r'[A-Za-z0-9\-_. ]+'),
         'enabled': Field('enabled', bool),
         'expires': Field('expires', datetime)
     }

@@ -4,7 +4,7 @@
 """
 
 from dataclasses import dataclass
-from typing import Type
+from typing import Optional, Type
 
 
 @dataclass
@@ -20,6 +20,10 @@ class Field:
 
         datatype : Type
             The type that it should be
+
+        str_regex_validator : Optional[str] [default=None]
+            A regex that can be used to validate strings
     """
     object_field: str
     datatype: type
+    str_regex_validator: Optional[str] = None

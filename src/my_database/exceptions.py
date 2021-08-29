@@ -34,3 +34,9 @@ class NotFoundError(MyDatabaseError):
     """ Exception that happens when the user tries to change or delete
         a resource that doesn't exists. """
     pass
+
+
+class FieldNotValidatedError(MyDatabaseError):
+    """ Exception that happens when a user tries to use a value that is
+        not aloud """
+    pass

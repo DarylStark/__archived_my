@@ -37,7 +37,10 @@ def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
 
     # Set the needed fields
     required_fields = {
-        'title': Field('title', str)
+        'title': Field(
+            'title',
+            str,
+            str_regex_validator=r'[A-Za-z0-9\-_. ]+')
     }
 
     # Set the optional fields
@@ -203,7 +206,10 @@ def update_tag(
 
     # Set the needed fields
     required_fields = {
-        'title': Field('title', str)
+        'title': Field(
+            'title',
+            str,
+            str_regex_validator=r'[A-Za-z0-9\-_. ]+')
     }
 
     # Set the optional fields

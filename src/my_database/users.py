@@ -38,9 +38,18 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
 
     # Set the needed fields
     required_fields = {
-        'fullname': Field('fullname', str),
-        'username': Field('username', str),
-        'email': Field('email', str),
+        'fullname': Field(
+            'fullname',
+            str,
+            str_regex_validator=r'[A-Za-z0-9\- ]+'),
+        'username': Field(
+            'username',
+            str,
+            str_regex_validator=r'[A-Za-z0-9\-_.]+'),
+        'email': Field(
+            'email',
+            str,
+            str_regex_validator=r'[a-z0-9_\-.]+@[a-z.-]+\.[a-z.]+'),
         'role': Field('role', UserRole),
     }
 
@@ -251,9 +260,18 @@ def update_user(
 
     # Set the optional fields
     optional_fields = {
-        'fullname': Field('fullname', str),
-        'username': Field('username', str),
-        'email': Field('email', str),
+        'fullname': Field(
+            'fullname',
+            str,
+            str_regex_validator=r'[A-Za-z0-9\- ]+'),
+        'username': Field(
+            'username',
+            str,
+            str_regex_validator=r'[A-Za-z0-9\-_.]+'),
+        'email': Field(
+            'email',
+            str,
+            str_regex_validator=r'[a-z0-9_\-.]+@[a-z.-]+\.[a-z.]+'),
         'role': Field('role', UserRole)
     }
 

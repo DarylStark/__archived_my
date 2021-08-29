@@ -3,8 +3,10 @@
     should be used to validate input from the user.
 """
 
-
-from typing import Optional
+from re import match
+from typing import Dict, Optional
+from my_database.exceptions import FieldNotValidatedError
+from my_database.field import Field
 
 
 def validate_input(
@@ -33,7 +35,7 @@ def validate_input(
             True if all fields are validated
     """
     # Combine the 'needed' and 'optional' fields
-    all_fields: dict = dict()
+    all_fields: Dict[str, Field] = dict()
     if required_fields:
         all_fields.update(required_fields)
     if optional_fields:
@@ -54,11 +56,22 @@ def validate_input(
 
     # Check if the given fields are of the correct type
     for field, value in input_values.items():
+        # Get the validators
         expected_data_type = all_fields[field].datatype
+
+        # Validate the type
         if type(value) is not expected_data_type:
             raise TypeError(
                 f'{field} should be of type {expected_data_type}, ' +
                 f'not {type(value)}.')
+
+        # Validate the field - strings
+        if type(value) is str:
+            regex = all_fields[field].str_regex_validator
+            if regex:
+                if not match(regex, value):
+                    raise FieldNotValidatedError(
+                        f'Value "{value}" is not valid for "{field}"')
 
     # Everything is validated
     return True
