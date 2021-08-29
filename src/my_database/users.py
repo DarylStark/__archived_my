@@ -7,6 +7,8 @@ import string
 from typing import List, Optional, Union
 import sqlalchemy
 from database import DatabaseSession
+from my_database import validate_input
+from my_database.field import Field
 from my_database_model import User, UserRole
 from sqlalchemy.orm.query import Query
 from my_database import logger
@@ -34,30 +36,34 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
 
     """
 
-    # Check if we have all fields
-    needed_fields = [
-        'fullname', 'username', 'email',
-        'role'
-    ]
-    for field in needed_fields:
-        if field not in kwargs.keys():
-            raise TypeError(
-                f'Missing required argument "{field}"')
-
-    logger.debug('create_user: all needed fields are given')
+    # Set the needed fields
+    required_fields = {
+        'fullname': Field('fullname', str),
+        'username': Field('username', str),
+        'email': Field('email', str),
+        'role': Field('role', UserRole),
+    }
 
     # Set the optional fields
-    optional_fields = list()
+    optional_fields = None
 
-    # Check if no other fields are given
-    possible_fields = needed_fields + optional_fields
-    for field in kwargs.keys():
-        if field not in possible_fields:
-            raise TypeError(
-                f'Unexpected field "{field}"')
+    # Validate the user input
+    validate_input(
+        input_values=kwargs,
+        required_fields=required_fields,
+        optional_fields=optional_fields)
+
+    logger.debug('create_user: all arguments are validated')
+
+    # Combine the arguments
+    all_fields: dict = dict()
+    if required_fields:
+        all_fields.update(required_fields)
+    if optional_fields:
+        all_fields.update(optional_fields)
 
     # Normal users cannot create users, admin users can only create
-    # normal users. Root can create whatever he wants.
+    # normal and admin users. Root can create whatever it wants.
     if (req_user.role == UserRole.user):
         raise PermissionDeniedError(
             'A user with role "user" cannot create users')
@@ -74,14 +80,27 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
             expire_on_commit=True
         ) as session:
             # Create the resource
-            new_resource = User(
-                fullname=kwargs['fullname'],
-                username=kwargs['username'],
-                email=kwargs['email'],
-                role=kwargs['role'],
-            )
+            new_resource = User()
+
+            # Set the fields
+            for field in kwargs.keys():
+                if field in all_fields.keys():
+                    if hasattr(new_resource, all_fields[field].object_field):
+                        setattr(
+                            new_resource,
+                            all_fields[field].object_field,
+                            kwargs[field])
+                    else:
+                        raise AttributeError(
+                            f"'{type(new_resource)}' has no attribute " +
+                            f"'{all_fields[field].object_field}'"
+                        )
+                else:
+                    raise FilterNotValidError(
+                        f'Field {field} is not a valid field')
 
             # Generate a random password for this user
+            # TODO: Move this method to the User-class
             characters = string.ascii_letters
             characters += string.digits
             characters += string.punctuation
@@ -227,29 +246,31 @@ def update_user(
 
     logger.debug('update_user: we have the resource')
 
-    # Check if we have all fields
-    needed_fields = list()
-    for field in needed_fields:
-        if field not in kwargs.keys():
-            raise TypeError(
-                f'Missing required argument "{field}"')
-
-    logger.debug('update_user: all needed fields are given')
+    # Set the needed fields
+    required_fields = None
 
     # Set the optional fields
     optional_fields = {
-        'fullname': 'fullname',
-        'username': 'username',
-        'email': 'email',
-        'role': 'role'
+        'fullname': Field('fullname', str),
+        'username': Field('username', str),
+        'email': Field('email', str),
+        'role': Field('role', UserRole)
     }
 
-    # Check if no other fields are given
-    possible_fields = needed_fields + list(optional_fields.keys())
-    for field in kwargs.keys():
-        if field not in possible_fields:
-            raise TypeError(
-                f'Unexpected field "{field}"')
+    # Validate the user input
+    validate_input(
+        input_values=kwargs,
+        required_fields=required_fields,
+        optional_fields=optional_fields)
+
+    logger.debug('update_user: all arguments are validated')
+
+    # Combine the arguments
+    all_fields: dict = dict()
+    if required_fields:
+        all_fields.update(required_fields)
+    if optional_fields:
+        all_fields.update(optional_fields)
 
     # Authorize this request; check if the user requesting this is
     # allowed to change the role of the user
@@ -265,8 +286,17 @@ def update_user(
 
     # Update the resource
     for field in kwargs.keys():
-        if field in optional_fields.keys():
-            setattr(resource, optional_fields[field], kwargs[field])
+        if field in all_fields.keys():
+            if hasattr(resource, all_fields[field].object_field):
+                setattr(
+                    resource,
+                    all_fields[field].object_field,
+                    kwargs[field])
+            else:
+                raise AttributeError(
+                    f"'{type(resource)}' has no attribute " +
+                    f"'{all_fields[field].object_field}'"
+                )
         else:
             raise FilterNotValidError(
                 f'Field {field} is not a valid field')
