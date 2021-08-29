@@ -6,6 +6,8 @@ from typing import List, Optional, Union
 import sqlalchemy
 from sqlalchemy.orm.query import Query
 from database import DatabaseSession
+from my_database import validate_input
+from my_database.field import Field
 from my_database_model import Tag, User
 from my_database import logger
 from my_database.exceptions import (FilterNotValidError, IntegrityError,
@@ -33,26 +35,28 @@ def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
 
     """
 
-    # Check if we have all fields
-    needed_fields = [
-        'title'
-    ]
-    for field in needed_fields:
-        if field not in kwargs.keys():
-            raise TypeError(
-                f'Missing required argument "{field}"')
-
-    logger.debug('create_tag: all needed fields are given')
+    # Set the needed fields
+    required_fields = {
+        'title': Field('title', str)
+    }
 
     # Set the optional fields
-    optional_fields = list()
+    optional_fields = None
 
-    # Check if no other fields are given
-    possible_fields = needed_fields + optional_fields
-    for field in kwargs.keys():
-        if field not in possible_fields:
-            raise TypeError(
-                f'Unexpected field "{field}"')
+    # Validate the user input
+    validate_input(
+        input_values=kwargs,
+        required_fields=required_fields,
+        optional_fields=optional_fields)
+
+    logger.debug('create_tag: all arguments are validated')
+
+    # Combine the arguments
+    all_fields: dict = dict()
+    if required_fields:
+        all_fields.update(required_fields)
+    if optional_fields:
+        all_fields.update(optional_fields)
 
     try:
         with DatabaseSession(
@@ -60,10 +64,24 @@ def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
             expire_on_commit=True
         ) as session:
             # Create the resource
-            new_resource = Tag(
-                user=req_user,
-                title=kwargs['title']
-            )
+            new_resource = Tag(user=req_user)
+
+            # Set the fields
+            for field in kwargs.keys():
+                if field in all_fields.keys():
+                    if hasattr(new_resource, all_fields[field].object_field):
+                        setattr(
+                            new_resource,
+                            all_fields[field].object_field,
+                            kwargs[field])
+                    else:
+                        raise AttributeError(
+                            f"'{type(new_resource)}' has no attribute " +
+                            f"'{all_fields[field].object_field}'"
+                        )
+                else:
+                    raise FilterNotValidError(
+                        f'Field {field} is not a valid field')
 
             logger.debug('create_tag: adding tag')
 
@@ -183,31 +201,42 @@ def update_tag(
 
     logger.debug('update_tag: we have the resource')
 
-    # Check if we have all fields
-    needed_fields = list()
-    for field in needed_fields:
-        if field not in kwargs.keys():
-            raise TypeError(
-                f'Missing required argument "{field}"')
-
-    logger.debug('update_tag: all needed fields are given')
-
-    # Set the optional fields
-    optional_fields = {
-        'title': 'title'
+    # Set the needed fields
+    required_fields = {
+        'title': Field('title', str)
     }
 
-    # Check if no other fields are given
-    possible_fields = needed_fields + list(optional_fields.keys())
-    for field in kwargs.keys():
-        if field not in possible_fields:
-            raise TypeError(
-                f'Unexpected field "{field}"')
+    # Set the optional fields
+    optional_fields = None
+
+    # Validate the user input
+    validate_input(
+        input_values=kwargs,
+        required_fields=required_fields,
+        optional_fields=optional_fields)
+
+    logger.debug('update_tag: all arguments are validated')
+
+    # Combine the arguments
+    all_fields: dict = dict()
+    if required_fields:
+        all_fields.update(required_fields)
+    if optional_fields:
+        all_fields.update(optional_fields)
 
     # Update the resource
     for field in kwargs.keys():
-        if field in optional_fields.keys():
-            setattr(resource, optional_fields[field], kwargs[field])
+        if field in all_fields.keys():
+            if hasattr(resource, all_fields[field].object_field):
+                setattr(
+                    resource,
+                    all_fields[field].object_field,
+                    kwargs[field])
+            else:
+                raise AttributeError(
+                    f"'{type(resource)}' has no attribute " +
+                    f"'{all_fields[field].object_field}'"
+                )
         else:
             raise FilterNotValidError(
                 f'Field {field} is not a valid field')
