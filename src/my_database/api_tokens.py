@@ -14,6 +14,13 @@ from datetime import datetime
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, NotFoundError)
 
+# Define the fields for validation
+validation_fields = {
+    'client_id': Field('client_id', int),
+    'enabled': Field('enabled', bool),
+    'expires': Field('expires', datetime)
+}
+
 
 def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
     """" Method to create a API token
@@ -36,13 +43,13 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
 
     # Set the needed fields
     required_fields = {
-        'client_id': Field('client_id', int)
+        'client_id': validation_fields['client_id']
     }
 
     # Set the optional fields
     optional_fields = {
-        'enabled': Field('enabled', bool),
-        'expires': Field('expires', datetime)
+        'enabled': validation_fields['enabled'],
+        'expires': validation_fields['expires']
     }
 
     # Validate the user input
@@ -237,8 +244,8 @@ def update_api_token(
 
     # Set the optional fields
     optional_fields = {
-        'enabled': Field('enabled', bool),
-        'expires': Field('expires', datetime)
+        'enabled': validation_fields['enabled'],
+        'expires': validation_fields['expires']
     }
 
     # Validate the user input
