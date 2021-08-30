@@ -16,6 +16,23 @@ from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, PermissionDeniedError,
                                     NotFoundError)
 
+# Define the fields for validation
+validation_fields = {
+    'fullname': Field(
+        'fullname',
+        str,
+        str_regex_validator=r'[A-Za-z0-9\- ]+'),
+    'username': Field(
+        'username',
+        str,
+        str_regex_validator=r'[A-Za-z0-9\-_.]+'),
+    'email': Field(
+        'email',
+        str,
+        str_regex_validator=r'[a-z0-9_\-.]+@[a-z.-]+\.[a-z.]+'),
+    'role': Field('role', UserRole)
+}
+
 
 def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
     """" Method to create a user
@@ -38,19 +55,10 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
 
     # Set the needed fields
     required_fields = {
-        'fullname': Field(
-            'fullname',
-            str,
-            str_regex_validator=r'[A-Za-z0-9\- ]+'),
-        'username': Field(
-            'username',
-            str,
-            str_regex_validator=r'[A-Za-z0-9\-_.]+'),
-        'email': Field(
-            'email',
-            str,
-            str_regex_validator=r'[a-z0-9_\-.]+@[a-z.-]+\.[a-z.]+'),
-        'role': Field('role', UserRole),
+        'fullname': validation_fields['fullname'],
+        'username': validation_fields['username'],
+        'email': validation_fields['email'],
+        'role': validation_fields['role']
     }
 
     # Set the optional fields
@@ -260,19 +268,10 @@ def update_user(
 
     # Set the optional fields
     optional_fields = {
-        'fullname': Field(
-            'fullname',
-            str,
-            str_regex_validator=r'[A-Za-z0-9\- ]+'),
-        'username': Field(
-            'username',
-            str,
-            str_regex_validator=r'[A-Za-z0-9\-_.]+'),
-        'email': Field(
-            'email',
-            str,
-            str_regex_validator=r'[a-z0-9_\-.]+@[a-z.-]+\.[a-z.]+'),
-        'role': Field('role', UserRole)
+        'fullname': validation_fields['fullname'],
+        'username': validation_fields['username'],
+        'email': validation_fields['email'],
+        'role': validation_fields['role']
     }
 
     # Validate the user input
