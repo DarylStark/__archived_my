@@ -15,6 +15,14 @@ from my_database.exceptions import (FilterNotValidError, IntegrityError,
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, NotFoundError)
 
+# Define the fiels for validation
+validation_fields = {
+    'title': Field(
+        'title',
+        str,
+        str_regex_validator=r'[A-Za-z0-9\-_. ]+')
+}
+
 
 def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
     """" Method to create a tag
@@ -37,10 +45,7 @@ def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
 
     # Set the needed fields
     required_fields = {
-        'title': Field(
-            'title',
-            str,
-            str_regex_validator=r'[A-Za-z0-9\-_. ]+')
+        'title': validation_fields['title']
     }
 
     # Set the optional fields
@@ -206,10 +211,7 @@ def update_tag(
 
     # Set the needed fields
     required_fields = {
-        'title': Field(
-            'title',
-            str,
-            str_regex_validator=r'[A-Za-z0-9\-_. ]+')
+        'title': validation_fields['title']
     }
 
     # Set the optional fields
