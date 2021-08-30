@@ -5,7 +5,9 @@
 import re
 from typing import Optional
 from flask import request
-from my_database.exceptions import (IntegrityError, MyDatabaseError,
+from my_database import validate_input
+from my_database.users import validation_fields
+from my_database.exceptions import (FieldNotValidatedError, IntegrityError, MyDatabaseError,
                                     NotFoundError, PermissionDeniedError)
 from my_database.users import create_user, delete_user, get_users, update_user
 from my_database_model.user import UserRole
@@ -56,26 +58,6 @@ def users_create(auth: Optional[Authorization],
     # Get the data
     post_data = request.json
 
-    # Check if we have all fields
-    needed_fields = [
-        'fullname', 'username', 'email',
-        'role'
-    ]
-    for field in needed_fields:
-        if field not in post_data.keys():
-            raise InvalidInputError(
-                f'Field "{field}" missing in request')
-
-    # Set the optional fields
-    optional_fields = list()
-
-    # Check if no other fields are given
-    possible_fields = needed_fields + optional_fields
-    for field in post_data.keys():
-        if field not in possible_fields:
-            raise InvalidInputError(
-                f'Unexpected field "{field}"')
-
     # Transform the role
     roles = {
         'user': UserRole.user,
@@ -84,19 +66,36 @@ def users_create(auth: Optional[Authorization],
     }
     role: UserRole = UserRole.user
     if post_data['role'] in roles.keys():
-        role = roles[post_data['role']]
+        post_data['role'] = roles[post_data['role']]
     else:
         raise InvalidInputError(
             f'Role "{post_data["role"]}" is not a valid role')
+
+    # Set the needed fields
+    required_fields = {
+        'fullname': validation_fields['fullname'],
+        'username': validation_fields['username'],
+        'email': validation_fields['email'],
+        'role': validation_fields['role']
+    }
+
+    # Set the optional fields
+    optional_fields = None
+
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
 
     # Create the user
     try:
         new_object = create_user(
             req_user=auth.data.user,
-            fullname=post_data['fullname'],
-            username=post_data['username'],
-            email=post_data['email'],
-            role=role
+            **post_data
         )
     except PermissionDeniedError as err:
         # Permission denied errors happen when a user tries to add
@@ -215,22 +214,6 @@ def users_update_delete(auth: Optional[Authorization],
         # Get the data
         post_data = request.json
 
-        # Check if we have all fields
-        needed_fields = list()
-
-        # Check if we received the correct fields
-        optional_fields = [
-            'fullname', 'username', 'email',
-            'role'
-        ]
-
-        # Check if no other fields are given
-        possible_fields = needed_fields + optional_fields
-        for field in post_data.keys():
-            if field not in possible_fields:
-                raise InvalidInputError(
-                    f'Unexpected field "{field}"')
-
         # Transform the role to a role that fits the `my_database`
         # better.
         if 'role' in post_data.keys():
@@ -244,6 +227,26 @@ def users_update_delete(auth: Optional[Authorization],
             else:
                 raise InvalidInputError(
                     f'Role "{post_data["role"]}" is not a valid role')
+
+        # Set the needed fields
+        required_fields = None
+
+        # Set the optional fields
+        optional_fields = {
+            'fullname': validation_fields['fullname'],
+            'username': validation_fields['username'],
+            'email': validation_fields['email'],
+            'role': validation_fields['role']
+        }
+
+        try:
+            # Validate the user input
+            validate_input(
+                input_values=post_data,
+                required_fields=required_fields,
+                optional_fields=optional_fields)
+        except (TypeError, FieldNotValidatedError) as e:
+            raise InvalidInputError(e)
 
         # Update the user
         try:

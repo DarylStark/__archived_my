@@ -3,7 +3,7 @@
     should be used to validate input from the user.
 """
 
-from re import match
+from re import fullmatch
 from typing import Dict, Optional
 from my_database.exceptions import FieldNotValidatedError
 from my_database.field import Field
@@ -69,7 +69,7 @@ def validate_input(
         if type(value) is str:
             regex = all_fields[field].str_regex_validator
             if regex:
-                if not match(regex, value):
+                if not fullmatch(regex, value):
                     raise FieldNotValidatedError(
                         f'Value "{value}" is not valid for "{field}"')
 

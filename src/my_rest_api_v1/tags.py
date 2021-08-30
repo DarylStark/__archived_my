@@ -5,14 +5,19 @@
 import re
 from typing import Optional
 from flask import request
-from my_database.exceptions import (IntegrityError, MyDatabaseError,
-                                    NotFoundError, PermissionDeniedError)
+from my_database import validate_input
+from my_database.tags import validation_fields
+from my_database.exceptions import (FieldNotValidatedError, IntegrityError,
+                                    MyDatabaseError, NotFoundError,
+                                    PermissionDeniedError)
 from my_database.tags import create_tag, delete_tag, get_tags, update_tag
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
-from rest_api_generator.exceptions import (InvalidInputError, ResourceForbiddenError,
+from rest_api_generator.exceptions import (InvalidInputError,
+                                           ResourceForbiddenError,
                                            ResourceIntegrityError,
-                                           ResourceNotFoundError, ServerError)
+                                           ResourceNotFoundError,
+                                           ServerError)
 
 api_group_tags = Group(
     api_url_prefix='tags',
@@ -54,30 +59,28 @@ def tags_create(auth: Optional[Authorization],
     # Get the data
     post_data = request.json
 
-    # Check if we have all fields
-    needed_fields = [
-        'title'
-    ]
-    for field in needed_fields:
-        if field not in post_data.keys():
-            raise InvalidInputError(
-                f'Field "{field}" missing in request')
+    # Set the needed fields
+    required_fields = {
+        'title': validation_fields['title']
+    }
 
     # Set the optional fields
-    optional_fields = list()
+    optional_fields = None
 
-    # Check if no other fields are given
-    possible_fields = needed_fields + optional_fields
-    for field in post_data.keys():
-        if field not in possible_fields:
-            raise InvalidInputError(
-                f'Unexpected field "{field}"')
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
 
     # Create the tag
     try:
         new_object = create_tag(
             req_user=auth.data.user,
-            title=post_data['title']
+            **post_data
         )
     except IntegrityError as err:
         # Integrity errors happen mostly when the tag already
@@ -191,20 +194,22 @@ def tags_update_delete(auth: Optional[Authorization],
         # Get the data
         post_data = request.json
 
-        # Check if we have all fields
-        needed_fields = list()
+        # Set the needed fields
+        required_fields = {
+            'title': validation_fields['title']
+        }
 
-        # Check if we received the correct fields
-        optional_fields = [
-            'title'
-        ]
+        # Set the optional fields
+        optional_fields = None
 
-        # Check if no other fields are given
-        possible_fields = needed_fields + optional_fields
-        for field in post_data.keys():
-            if field not in possible_fields:
-                raise InvalidInputError(
-                    f'Unexpected field "{field}"')
+        try:
+            # Validate the user input
+            validate_input(
+                input_values=post_data,
+                required_fields=required_fields,
+                optional_fields=optional_fields)
+        except (TypeError, FieldNotValidatedError) as e:
+            raise InvalidInputError(e)
 
         # Update the tag
         try:
