@@ -6,7 +6,6 @@ import re
 from typing import Optional
 from flask import request
 from my_database import validate_input
-from my_database.field import Field
 from my_database.tags import validation_fields
 from my_database.exceptions import (FieldNotValidatedError, IntegrityError,
                                     MyDatabaseError, NotFoundError,
