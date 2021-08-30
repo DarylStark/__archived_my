@@ -15,7 +15,7 @@ from my_database.exceptions import (FilterNotValidError, IntegrityError,
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, NotFoundError)
 
-# Define the fiels for validation
+# Define the fields for validation
 validation_fields = {
     'title': Field(
         'title',
