@@ -14,6 +14,20 @@ from datetime import datetime
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, NotFoundError)
 
+# Define the fields for validation
+validation_fields = {
+    'app_name': Field(
+        'app_name',
+        str,
+        str_regex_validator=r'[A-Za-z0-9\-_. ]+'),
+    'app_publisher': Field(
+        'app_publisher',
+        str,
+        str_regex_validator=r'[A-Za-z0-9\-_. ]+'),
+    'enabled': Field('enabled', bool),
+    'expires': Field('expires', datetime)
+}
+
 
 def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
     """" Method to create a API client
@@ -36,20 +50,14 @@ def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
 
     # Set the needed fields
     required_fields = {
-        'app_name': Field(
-            'app_name',
-            str,
-            str_regex_validator=r'[A-Za-z0-9\-_. ]+'),
-        'app_publisher': Field(
-            'app_publisher',
-            str,
-            str_regex_validator=r'[A-Za-z0-9\-_. ]+')
+        'app_name': validation_fields['app_name'],
+        'app_publisher': validation_fields['app_publisher']
     }
 
     # Set the optional fields
     optional_fields = {
-        'enabled': Field('enabled', bool),
-        'expires': Field('expires', datetime)
+        'enabled': validation_fields['enabled'],
+        'expires': validation_fields['expires']
     }
 
     # Validate the user input
@@ -219,16 +227,10 @@ def update_api_client(
 
     # Set the optional fields
     optional_fields = {
-        'app_name': Field(
-            'app_name',
-            str,
-            str_regex_validator=r'[A-Za-z0-9\-_. ]+'),
-        'app_publisher': Field(
-            'app_publisher',
-            str,
-            str_regex_validator=r'[A-Za-z0-9\-_. ]+'),
-        'enabled': Field('enabled', bool),
-        'expires': Field('expires', datetime)
+        'app_name': validation_fields['app_name'],
+        'app_publisher': validation_fields['app_publisher'],
+        'enabled': validation_fields['enabled'],
+        'expires': validation_fields['expires']
     }
 
     # Validate the user input
