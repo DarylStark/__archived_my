@@ -81,15 +81,17 @@ def authorization(
 
     # Check if the token is not expired and the API client is not
     # expired
-    if token_date < datetime.utcnow():
-        logger.error(f'Token "{auth.token}" was expired on "{token_date}"')
-        return auth_object
+    if token_date:
+        if token_date < datetime.utcnow():
+            logger.error(f'Token "{auth.token}" was expired on "{token_date}"')
+            return auth_object
 
-    if client_date < datetime.utcnow():
-        logger.error(
-            f'Client "{token_object.client.app_name}" for token ' +
-            f'"{auth.token} was expired on "{client_date}"')
-        return auth_object
+    if client_date:
+        if client_date < datetime.utcnow():
+            logger.error(
+                f'Client "{token_object.client.app_name}" for token ' +
+                f'"{auth.token} was expired on "{client_date}"')
+            return auth_object
 
     # Get the associated scopes
     token_scopes = [
