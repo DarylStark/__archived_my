@@ -2,9 +2,11 @@
     Module that has the authorization function. This function will be
     used by the REST API to authorize API requests.
 """
+from datetime import datetime
 import logging
 from typing import List, Optional, Union
 from my_database.api_tokens import get_api_tokens
+from my_database_model.api_token import APIToken
 from rest_api_generator.authorization import Authorization
 from rest_api_generator.rest_api_generator import (BasicAuthorization,
                                                    BearerAuthorzation)
@@ -51,12 +53,42 @@ def authorization(
         return auth_object
 
     # Get the token object
-    token_object = get_api_tokens(flt_token=auth.token)
+    token_object: Optional[APIToken] = get_api_tokens(flt_token=auth.token)
 
     # If we didn't get a object, the token is wrong
     if token_object is None:
         logger.error('Got no token object; authorization failed')
         auth_object.authorized = False
+        return auth_object
+
+    # Get the dates of the token and the 'enabled' state
+    token_date: datetime = token_object.expires
+    token_state: bool = token_object.enabled
+    client_date: datetime = token_object.client.expires
+    client_state: bool = token_object.client.enabled
+
+    # Check if this token is not disabled and if the API client is not
+    # disabled
+    if not token_state:
+        logger.error(f'Token "{auth.token}" is not enabled')
+        return auth_object
+
+    if not client_state:
+        logger.error(
+            f'Client "{token_object.client.app_name}" for token ' +
+            f'"{auth.token}" is not enabled')
+        return auth_object
+
+    # Check if the token is not expired and the API client is not
+    # expired
+    if token_date < datetime.utcnow():
+        logger.error(f'Token "{auth.token}" was expired on "{token_date}"')
+        return auth_object
+
+    if client_date < datetime.utcnow():
+        logger.error(
+            f'Client "{token_object.client.app_name}" for token ' +
+            f'"{auth.token} was expired on "{client_date}"')
         return auth_object
 
     # Get the associated scopes
