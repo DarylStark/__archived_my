@@ -1,7 +1,6 @@
-"""
-    Module that keeps the RESTAPIJSONEncoder class, which seriales
-    a RESTAPIResponse to a JSON serializable object.
-"""
+""" Module that keeps the RESTAPIJSONEncoder class, which seriales
+    a RESTAPIResponse to a JSON serializable object. """
+
 from datetime import datetime
 from enum import Enum
 from json import JSONEncoder
@@ -61,7 +60,7 @@ class RESTAPIJSONEncoder(JSONEncoder):
 
             Parameters
             ----------
-            object : Any
+            object : Response
                 The object to encode.
 
             Returns

@@ -1,7 +1,5 @@
-"""
-    Module that has the authorization function. This function will be
-    used by the REST API to authorize API requests.
-"""
+""" Module that has the authorization function. This function will be
+    used by the REST API to authorize API requests. """
 from datetime import datetime
 import logging
 from typing import List, Optional, Union

@@ -1,7 +1,6 @@
-"""
-    Module that contains the static 'Database' class. This class can
-    and should be used to communicate with the database.
-"""
+""" Module that contains the static 'Database' class. This class can
+    and should be used to communicate with the database. """
+
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base

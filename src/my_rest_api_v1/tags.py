@@ -1,7 +1,6 @@
-"""
-    Module that has the RESTAPIGroup for the 'tags' group of the API.
-    This group can be used to get tag information.
-"""
+""" Module that has the RESTAPIGroup for the 'tags' group of the API.
+    This group can be used to get tag information. """
+
 import re
 from typing import Optional
 from flask import request

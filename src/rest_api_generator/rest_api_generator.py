@@ -1,7 +1,6 @@
-"""
-    This module includes the RESTAPIGenerator class that can be used to
-    generate the REST API blueprint.
-"""
+""" This module includes the RESTAPIGenerator class that can be used to
+    generate the REST API blueprint. """
+
 import re
 import timeit
 from dataclasses import dataclass
@@ -71,14 +70,14 @@ class RESTAPIGenerator:
 
             Parameters
             ----------
-            bp_name : str (default = 'api_generator')
+            bp_name : str [default='api_generator']
                 The name that will be used to create the Blueprint
 
-            bp_import_name : str (default = __name__)
+            bp_import_name : str [default=__name__]
                 The import name that will be used to create the
                 Blueprint
 
-            bp_url_prefix: Optional[str] (default = None)
+            bp_url_prefix: Optional[str] [default=None]
                 The url prefix for the Blueprint. Will be used by Flask
                 to route all the requests.
 
@@ -182,12 +181,16 @@ class RESTAPIGenerator:
             code : int
                 The HTTP error code for this error.
 
-            msg : Optional[str]
+            msg : Optional[str] [default=None]
                 The message to append
 
             Returns
             -------
+            Response
+                The API error response
+
             None
+                No response
         """
 
         # If the 'abort_on_error' is set to True, we abort the request

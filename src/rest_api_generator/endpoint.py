@@ -1,5 +1,4 @@
-"""
-    This module includes the Endpoint which represents a API endpoint.
+""" This module includes the Endpoint which represents a API endpoint.
 """
 import re
 from dataclasses import dataclass, field
@@ -21,20 +20,20 @@ class Endpoint:
         func : Callable[[], Response]
             The function to run for this endpoint.
 
-        http_methods : List[str](default=None)
+        http_methods : List[str] [default=list()]
             HTTP methods that this API endpoint supports.
 
-        name : str(default=None)
+        name : str [default='']
             The name for the API endpoint. Is used in help pages.
 
-        description : str(default=None)
+        description : str [default='']
             Description for the API endpoint. Is used in help pages.
 
-        auth_needed : bool
+        auth_needed : bool [default=bool]
             Determines if there is authorization needed for this
             endpoint.
 
-        auth_scopes : List[str]
+        auth_scopes : Optional[EndpointScope] [default=None]
             A list of permissions which the user needs at least one of
             to authorize for this endpoint.
     """

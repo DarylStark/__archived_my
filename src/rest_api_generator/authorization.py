@@ -1,7 +1,5 @@
-"""
-    This module includes the Authorization class, which can be used to
-    identify if a user is authorized to do something.
-"""
+""" This module includes the Authorization class, which can be used to
+    identify if a user is authorized to do something. """
 from dataclasses import dataclass
 from typing import Any
 
@@ -12,10 +10,10 @@ class Authorization:
 
         Members
         -------
-        authorized : bool
+        authorized : bool [default=False]
             Identifies if a request is authorized or not.
 
-        data : Any
+        data : Any [default=None]
             Any type of data that the client wants to append. Can be,
             for example, a user object identifing the user.
     """

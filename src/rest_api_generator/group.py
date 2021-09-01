@@ -1,6 +1,4 @@
-"""
-    This module includes the Group which represents a API group.
-"""
+""" This module includes the Group which represents a API group. """
 import re
 from logging import getLogger
 from typing import Callable, List, Optional
@@ -29,10 +27,10 @@ class Group:
                 'users', the complete URL for this group will be
                 '/api/users'.
 
-            name : str (default=None)
+            name : str [default=None]
                 The name for the API group. Is used in help pages
 
-            description : str (default=None)
+            description : str [default=None]
                 Description for the API group. Is used in help pages
 
             Returns
@@ -99,30 +97,30 @@ class Group:
             url_suffix : str
                 The URL suffix for the endpoint.
 
-            name : str (default=None)
+            name : str [default=None]
                 The name for the API endpoint. Is used in help pages.
 
             http_methods : Optional[RESTAPIEndpointPermissions]
                 RESTAPIEndpointPermissions object that specifies the
                 needed OAuth permissions for this endpoint.
 
-            description : str (default=None)
+            description : str [default=None]
                 Description for the API endpoint. Is used in help
                 pages.
 
-            auth_needed : bool (default=False)
+            auth_needed : bool [default=False]
                 Specifies if authorization is required for this
                 endpoint.
 
             auth_scpoes : Optional[RESTAPIEndpointPermissions]
-                          (default=None)
+                          [default=None]
                 Specifies the scopes for this endpoint. In the
                 registered auth method, the user can use this
                 information to authorize a request.
 
             Returns
             -------
-            method
+            Callable
                 The decorator
         """
 
@@ -137,12 +135,12 @@ class Group:
 
                 Parameters
                 ----------
-                func
+                func : Callable[]
                     The function to register
 
                 Returns
                 -------
-                func
+                func : Callable[]
                     The function that is given
             """
             # Add the endpoint to the list

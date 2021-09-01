@@ -1,7 +1,5 @@
-"""
-    Module that has the RESTAPIGroup for the 'users' group of the API.
-    This group can be used to get user information.
-"""
+""" Module that has the RESTAPIGroup for the 'users' group of the API.
+    This group can be used to get user information. """
 import re
 from typing import Optional
 from flask import request

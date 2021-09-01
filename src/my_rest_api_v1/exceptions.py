@@ -1,6 +1,4 @@
-"""
-    Exceptions for the 'my_rest_api_v1' package.
-"""
+""" Exceptions for the 'my_rest_api_v1' package. """
 
 
 class MyRestAPIv1Error(Exception):

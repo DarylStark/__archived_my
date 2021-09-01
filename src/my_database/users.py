@@ -1,7 +1,6 @@
-"""
-    Module that contains the methods to get and set user details from
-    the database.
-"""
+""" Module that contains the methods to get and set user details from
+    the database. """
+
 import random
 import string
 from typing import List, Optional, Union
@@ -51,6 +50,8 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
         User
             The created user object.
 
+        None
+            The user was not created.
     """
 
     # Set the needed fields
@@ -157,7 +158,7 @@ def get_users(
             The user who is requesting this. Should be used to verify
             what results the user gets.
 
-        flt_id : Optional[int]
+        flt_id : Optional[int] [default=None]
             Filter on a specific user ID.
 
         Returns

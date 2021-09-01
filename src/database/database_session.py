@@ -1,7 +1,7 @@
-"""
-    Module that contains the DatabaseSession class. Can be used as
+""" Module that contains the DatabaseSession class. Can be used as
     context manager to communicate with the database in a safe manner.
 """
+
 from types import TracebackType
 from typing import Optional, Type
 
@@ -24,11 +24,11 @@ class DatabaseSession:
 
             Parameters
             ----------
-            commit_on_end : bool, default=False
+            commit_on_end : bool [default=False]
                 Tells the object to commit when the context manager is
                 done.
 
-            expire_on_commit : bool, default=True
+            expire_on_commit : bool [default=True]
                 Tells the object to either expire or not expire created
                 objects after the context manager is done.
 
@@ -90,7 +90,7 @@ class DatabaseSession:
 
             Returns
             -------
-            session
+            Session
                 The database session
         """
         return self.session
@@ -116,8 +116,8 @@ class DatabaseSession:
             Returns
             -------
             bool
-            True is everything went fine, False if there was an
-            exception.
+                True is everything went fine, False if there was an
+                exception.
         """
 
         # Commit, if needed

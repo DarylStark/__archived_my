@@ -1,5 +1,4 @@
-"""
-    The database package will be a wrapper for the SQLalchemy package
+""" The database package will be a wrapper for the SQLalchemy package
     and will contain classes and methods to interact with databases.
 
     To use this package, you'll have to create classes that represents
@@ -18,7 +17,7 @@
     ```
 
     After that, you can use the created class like a normal
-    SQLalchemy ORM object.
-"""
+    SQLalchemy ORM object. """
+
 from database.database import Database
 from database.database_session import DatabaseSession

@@ -1,7 +1,6 @@
-"""
-    This module includes the APIToken class which will be used by
-    SQLalchemy ORM.
-"""
+""" This module includes the APIToken class which will be used by
+    SQLalchemy ORM. """
+
 import datetime
 import random
 import string

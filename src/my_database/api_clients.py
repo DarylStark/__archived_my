@@ -1,7 +1,6 @@
-"""
-    Module that contains the methods to get and set api client details
-    from the database.
-"""
+""" Module that contains the methods to get and set api client details
+    from the database. """
+
 from typing import List, Optional, Union
 from my_database.field import Field
 import sqlalchemy
@@ -46,6 +45,8 @@ def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
         APIClient
             The created API client object.
 
+        None:
+            The API client was not created.
     """
 
     # Set the needed fields
@@ -131,7 +132,7 @@ def get_api_clients(
             The user who is requesting this. Should be used to verify
             what results the user gets.
 
-        flt_id : Optional[int]
+        flt_id : Optional[int] [default=None]
             Filter on a specific client ID.
 
         Returns

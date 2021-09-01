@@ -1,7 +1,5 @@
-"""
-    Module that has the RESTAPIGroup for the 'api' group of the API.
-    This group can be used to get specific API information.
-"""
+""" Module that has the RESTAPIGroup for the 'api' group of the API.
+    This group can be used to get specific API information. """
 import re
 from typing import Optional
 from rest_api_generator import Authorization, Group, Response, ResponseType

@@ -1,6 +1,4 @@
-"""
-    Exceptions for the 'database' package.
-"""
+""" Exceptions for the 'database' package. """
 
 
 class DatabaseError(Exception):

@@ -1,6 +1,4 @@
-"""
-    Exceptions for the 'rest_api_generator' package.
-"""
+""" Exceptions for the 'rest_api_generator' package. """
 
 
 class RESTAPIGeneratorError(Exception):

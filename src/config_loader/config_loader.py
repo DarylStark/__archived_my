@@ -1,7 +1,6 @@
-"""
-    Module that contains the static 'ConfigLoader' class. This is a
-    class with only class-methods.
-"""
+""" Module that contains the static 'ConfigLoader' class. This is a
+    class with only class-methods. """
+
 import collections
 import os
 import re
@@ -36,8 +35,7 @@ class ConfigLoader:
 
     @classmethod
     def set_file(cls, yaml_file: str) -> None:
-        """
-            Method to set the YAML file.
+        """ Method to set the YAML file.
 
             Parameters
             ----------
@@ -54,8 +52,7 @@ class ConfigLoader:
 
     @classmethod
     def set_environment(cls, environment: str) -> None:
-        """
-            Method to set the environment.
+        """ Method to set the environment.
 
             Parameters
             ----------
@@ -72,12 +69,11 @@ class ConfigLoader:
 
     @classmethod
     def load_settings(cls, yaml_file: Optional[str] = None) -> bool:
-        """
-            Method to load the settings into the application.
+        """ Method to load the settings into the application.
 
             Parameters
             ----------
-            yaml_file : str
+            yaml_file : Optional[str] [default=None]
                 The YAML file to retrieve the config from. If not set,
                 the script wil try to get if from the environment. If
                 that also doesn't work, it assumes 'config.yaml'.
@@ -157,8 +153,7 @@ class ConfigLoader:
 
     @classmethod
     def merge_environment(cls, config: dict, environment: dict) -> None:
-        """
-            Method to merge the config of the selected environment
+        """ Method to merge the config of the selected environment
             into the configuration.
 
             Parameters
@@ -187,8 +182,7 @@ class ConfigLoader:
 
     @classmethod
     def set_environment_variables(cls, config: dict) -> None:
-        """
-            Method to replace all values that should be a environment
+        """ Method to replace all values that should be a environment
             variable.
 
             Parameters

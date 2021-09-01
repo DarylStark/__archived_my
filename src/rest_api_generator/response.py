@@ -1,5 +1,4 @@
-"""
-    This module includes the Response which represents a API response.
+""" This module includes the Response which represents a API response.
 """
 from dataclasses import dataclass
 from enum import Enum
@@ -33,33 +32,36 @@ class Response:
 
         Members
         -------
-        success : bool
+        type : ResponseType [default=ResponseType.RESOURCE_SET]
+            The type of response.
+
+        success : bool [default=True]
             Specifies if the endpoint ran successfully.
 
-        data : Any
+        data : Any [default=None]
             The data returned by the endpoint. Can be of any type.
 
-        error_code : int
+        error_code : int [default=0]
             If a error occured, this field will be filled with the
             error code.
 
-        error_message : str
+        error_message : Optional[str] [default=None]
             The message that belongs to the error.
 
-        paginate : bool
+        paginate : bool [default=True]
             Determines if this result should be paginated by the API
             generator.
 
-        page : int
+        page : int [default=0]
             The pagenumber the user is on.
 
-        limit : int
+        limit : int [default=0]
             The maximum number of items on one page.
 
-        last_page : int
+        last_page : int [default=0]
             The maximum page for the resource.
 
-        runtime : float (default=0)
+        runtime : float [default=0]
             The amount of miliseconds the endpoint has run.
     """
 

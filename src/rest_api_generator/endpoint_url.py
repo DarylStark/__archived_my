@@ -1,7 +1,5 @@
-"""
-    This module includes the EndpointURL which is a object that
-    contains the URL for and endpoint and Endpoint object.
-"""
+""" This module includes the EndpointURL which is a object that
+    contains the URL for and endpoint and Endpoint object. """
 from dataclasses import dataclass
 from rest_api_generator.endpoint import Endpoint
 

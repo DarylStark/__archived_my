@@ -1,7 +1,5 @@
-"""
-    Module that contains the 'validate_input' function which can and
-    should be used to validate input from the user.
-"""
+""" Module that contains the 'validate_input' function which can and
+    should be used to validate input from the user. """
 
 from re import fullmatch
 from typing import Dict, Optional

@@ -1,7 +1,6 @@
-"""
-    Module that contains the methods to get and set api token details
-    from the database.
-"""
+""" Module that contains the methods to get and set api token details
+    from the database. """
+
 from typing import List, Optional, Union
 from my_database.field import Field
 import sqlalchemy
@@ -39,6 +38,8 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
         APIToken
             The created API token object.
 
+        None
+            The API token was not created.
     """
 
     # Set the needed fields
@@ -125,10 +126,10 @@ def get_api_tokens(
             what results the user gets. If this is not given, we assume
             this is a root user.
 
-        flt_id : Optional[int]
+        flt_id : Optional[int] [default=None]
             Filter on a specific token ID.
 
-        flt_token : Optional[str]
+        flt_token : Optional[str] [default=None]
             Filter on a specific token.
 
         Returns

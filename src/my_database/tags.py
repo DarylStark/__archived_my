@@ -1,7 +1,6 @@
-"""
-    Module that contains the methods to get tag details from the
-    database.
-"""
+""" Module that contains the methods to get tag details from the
+    database. """
+
 from typing import List, Optional, Union
 import sqlalchemy
 from sqlalchemy.orm.query import Query
@@ -41,6 +40,8 @@ def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
         Tag
             The created tag object.
 
+        None
+            The tag was not created.
     """
 
     # Set the needed fields
@@ -119,7 +120,7 @@ def get_tags(
             The user who is requesting this. Should be used to verify
             what results the user gets.
 
-        flt_id : Optional[int]
+        flt_id : Optional[int] [default=None]
             Filter on a specific tag ID.
 
         Returns

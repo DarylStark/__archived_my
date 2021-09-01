@@ -1,7 +1,5 @@
-"""
-    The my_database_model will contain the complete database model for
-    the project.
-"""
+""" The my_database_model will contain the complete database model for
+    the project. """
 from database.database import Database
 from my_database_model.api_client import APIClient
 from my_database_model.api_scope import APIScope

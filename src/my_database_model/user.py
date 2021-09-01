@@ -1,10 +1,8 @@
-"""
-    This module includes the User class which will be used by
-    SQLalchemy ORM.
-"""
+""" This module includes the User class which will be used by
+    SQLalchemy ORM. """
+
 import datetime
 import enum
-
 from sqlalchemy.orm import backref, relationship
 from database import Database
 from passlib.hash import argon2

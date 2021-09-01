@@ -1,7 +1,5 @@
-"""
-    The api_generator package can be used to create a REST API for
-    Flask by using classes to specify a API group.
-"""
+""" The api_generator package can be used to create a REST API for
+    Flask by using classes to specify a API group. """
 from rest_api_generator.authorization import Authorization
 from rest_api_generator.endpoint import Endpoint
 from rest_api_generator.endpoint_scopes import EndpointScopes

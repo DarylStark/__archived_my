@@ -1,6 +1,4 @@
-"""
-    Exceptions for the 'config_loader' package.
-"""
+""" Exceptions for the 'config_loader' package. """
 
 
 class ConfigLoaderError(Exception):

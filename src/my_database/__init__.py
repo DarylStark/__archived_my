@@ -1,7 +1,6 @@
-"""
-    The `my_database` package does all the database handling for the
-    'My' application.
-"""
+""" The `my_database` package does all the database handling for the
+    'My' application. """
+
 from logging import getLogger
 from config_loader import ConfigLoader
 from database import Database

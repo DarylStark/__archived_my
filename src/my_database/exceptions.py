@@ -1,6 +1,4 @@
-"""
-    Exceptions for the 'my_database' package.
-"""
+""" Exceptions for the 'my_database' package. """
 
 
 class MyDatabaseError(Exception):
