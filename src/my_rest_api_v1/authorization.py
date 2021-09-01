@@ -29,7 +29,7 @@ def authorization(
 
         Returns
         -------
-        RESTAPIAuthorization:
+        Authorization:
             A object containing the authorization information.
     """
 

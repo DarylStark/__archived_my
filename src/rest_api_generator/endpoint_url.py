@@ -7,14 +7,14 @@ from rest_api_generator.endpoint import Endpoint
 @dataclass
 class EndpointURL:
     """ Class used to create objects that contain a URL as string and
-        a RESTAPIEndpoint object.
+        a Endpoint object.
 
         Members
         -------
         url : str
             The URL for the endpoint
 
-        endpoint : RESTAPIEndpoint
+        endpoint : Endpoint
             The endpoint object for the endpoint
     """
 

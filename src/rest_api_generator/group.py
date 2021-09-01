@@ -71,7 +71,7 @@ class Group:
 
             Parameters
             ----------
-            group : RESTAPIGroup
+            group : Group
                 The group object to add
 
             Returns
@@ -100,8 +100,8 @@ class Group:
             name : str [default=None]
                 The name for the API endpoint. Is used in help pages.
 
-            http_methods : Optional[RESTAPIEndpointPermissions]
-                RESTAPIEndpointPermissions object that specifies the
+            http_methods : Optional[EndpointPermissions]
+                EndpointPermissions object that specifies the
                 needed OAuth permissions for this endpoint.
 
             description : str [default=None]
@@ -112,7 +112,7 @@ class Group:
                 Specifies if authorization is required for this
                 endpoint.
 
-            auth_scpoes : Optional[RESTAPIEndpointPermissions]
+            auth_scpoes : Optional[EndpointPermissions]
                           [default=None]
                 Specifies the scopes for this endpoint. In the
                 registered auth method, the user can use this
@@ -164,8 +164,8 @@ class Group:
         return decorator
 
     def get_endpoints(self) -> List[EndpointURL]:
-        """ Method that returns a list with RESTAPIEndpointURL objects.
-            These objects contain the URL and RESTAPIEndpoint objects
+        """ Method that returns a list with EndpointURL objects.
+            These objects contain the URL and Endpoint objects
             for all registered endpoints in this group and subgroup.
 
             Parameter
@@ -174,8 +174,8 @@ class Group:
 
             Returns
             -------
-            list[RESTAPIEndpointURL]
-                A list with RESTAPIEndpointURLs for this group and it's
+            list[EndpointURL]
+                A list with EndpointURLs for this group and it's
                 subgroups
         """
 

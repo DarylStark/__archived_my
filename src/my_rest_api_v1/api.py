@@ -1,4 +1,4 @@
-""" Module that has the RESTAPIGroup for the 'api' group of the API.
+""" Module that has the Group for the 'api' group of the API.
     This group can be used to get specific API information. """
 import re
 from typing import Optional
@@ -28,7 +28,7 @@ def ping(auth: Optional[Authorization],
 
         Parameters
         ----------
-        auth : RESTAPIAuthorization
+        auth : Authorization
             A object that contains authorization information.
 
         url_match : re.Match
@@ -37,11 +37,11 @@ def ping(auth: Optional[Authorization],
 
         Returns
         -------
-        RESTAPIResponse
+        Response
             The API response
     """
 
-    # Create a RESTAPIResponse object
+    # Create a Response object
     return_response = Response(ResponseType.SINGLE_RESOURCE)
 
     # Set the data
@@ -49,5 +49,5 @@ def ping(auth: Optional[Authorization],
         'ping': 'pong'
     }
 
-    # Return the create RESTAPIResponse object
+    # Return the create Response object
     return return_response

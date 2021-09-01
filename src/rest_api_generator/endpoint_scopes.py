@@ -7,7 +7,7 @@ from typing import List, Optional
 @dataclass
 class EndpointScopes:
     """ Class used to create objects that contain the auth scopes for a
-        specific RESTAPIEndpoint
+        specific Endpoint
 
         Members
         -------

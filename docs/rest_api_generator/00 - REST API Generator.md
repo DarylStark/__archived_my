@@ -12,17 +12,17 @@ The following code is an example to create a REST API that contains a group with
 
 ```python
 from flask import Flask
-from rest_api_generator import RESTAPIGenerator, RESTAPIGroup, RESTAPIResponse
-from rest_api_generator import RESTAPIAuthorization, ResponseType
+from rest_api_generator import RESTAPIGenerator, Group, Response
+from rest_api_generator import Authorization, ResponseType
 
-def authorization(auth: str, permissions: Optional[List[str]]) -> RESTAPIAuthorization:
+def authorization(auth: str, permissions: Optional[List[str]]) -> Authorization:
     """ Authorization method for the REST API """
 
     # For the example, we always return a 'True' value. In a production
     # environment, you should use the authorization object and the 
     # given scopes to verify if the user is authorized to run this
     # endpoint
-    auth = RESTAPIAuthorization()
+    auth = Authorization()
     auth.authorized = True
 
     # Set a 'data' object. We set this to a empty dict for now, but in
@@ -57,8 +57,8 @@ my_rest_api_v1.accept_method('POST')
 my_rest_api_v1.accept_method('PATCH')
 my_rest_api_v1.accept_method('DELETE')
 
-# Create a RESTAPIGroup for users
-api_group_users = RESTAPIGroup(
+# Create a Group for users
+api_group_users = Group(
     api_url_prefix='users',
     name='api',
     description='Contains endpoints for users'
@@ -71,14 +71,14 @@ api_group_users = RESTAPIGroup(
     name='users',
     description='Endpoint to retrieve users',
     auth_needed=True,
-    auth_scopes=RESTAPIEndpointPermissions(GET=['users.retrieve'])
+    auth_scopes=EndpointPermissions(GET=['users.retrieve'])
 )
-def users(auth: Optional[RESTAPIAuthorization],
-          url_match: re.Match) -> RESTAPIResponse:
+def users(auth: Optional[Authorization],
+          url_match: re.Match) -> Response:
     """ 'users' endpoint """
     
     # Create a response object
-    retval = RESTAPIResponse()
+    retval = Response()
     retval.data = [
         { 'id': 10, 'username': 'daryl.stark' },
         { 'id': 11, 'username': 'test.user1' },

@@ -1,5 +1,5 @@
 """ Module that keeps the RESTAPIJSONEncoder class, which seriales
-    a RESTAPIResponse to a JSON serializable object. """
+    a Response to a JSON serializable object. """
 
 from datetime import datetime
 from enum import Enum
@@ -10,7 +10,7 @@ from rest_api_generator.response import Response, ResponseType
 
 
 class RESTAPIJSONEncoder(JSONEncoder):
-    """ Class that can be used to serialize RESTAPIResponse objects """
+    """ Class that can be used to serialize Response objects """
 
     def default(self, object: Any) -> Union[Dict, int, str]:
         """ The default method of the encoder gets the objects that the
@@ -56,7 +56,7 @@ class RESTAPIJSONEncoder(JSONEncoder):
                 f'Unserializable object "{object}" of type "{type(object)}"')
 
     def encode_rest_api_response(self, object: Response) -> Dict:
-        """ Method to encode a RESTAPIResponse object.
+        """ Method to encode a Response object.
 
             Parameters
             ----------

@@ -174,7 +174,7 @@ class RESTAPIGenerator:
                     msg: Optional[str] = None
                     ) -> Optional[Response]:
         """ Method that either aborts the request, or returns a
-            RESTAPIRespone with a error code.
+            Response with a error code.
 
             Parameters
             ----------
@@ -201,7 +201,7 @@ class RESTAPIGenerator:
                      message: {msg}')
             abort(code)
 
-        # Otherwise, we create a RESTAPIResponse that we can return
+        # Otherwise, we create a Response that we can return
         if not self.abort_on_error:
             self.logger.debug(
                 f'Aborting the request because we got a {code} error with \
@@ -490,7 +490,7 @@ class RESTAPIGenerator:
 
             Parameters
             ----------
-            group : RESTAPIGroup
+            group : Group
                 The group to register
 
             Returns
@@ -502,7 +502,7 @@ class RESTAPIGenerator:
         # user made a mistake and we raise an exception
         if isinstance(group, Group):
             # Add the group to the set
-            self.logger.debug(f'Adding RESTAPIGroup: {group.name}')
+            self.logger.debug(f'Adding Group: {group.name}')
             self.groups.add(group)
         else:
             # Wrong type, give error
@@ -510,8 +510,8 @@ class RESTAPIGenerator:
                 f'Group is of type "{type(group)}", expected "{Group}"')
 
     def get_all_endpoints(self) -> List[EndpointURL]:
-        """ Method that returns all RESTAPIEndpoints for this REST API
-            in a list with RESTAPIEndpointURL objects.
+        """ Method that returns all Endpoints for this REST API
+            in a list with EndpointURL objects.
 
             Parameter
             ---------
@@ -519,8 +519,8 @@ class RESTAPIGenerator:
 
             Returns
             -------
-            list[RESTAPIEndpointURL]
-                A list with RESTAPIEndpointURLs for this REST API.
+            list[EndpointURL]
+                A list with EndpointURLs for this REST API.
         """
 
         self.logger.debug('Creating a list with all endpoints')

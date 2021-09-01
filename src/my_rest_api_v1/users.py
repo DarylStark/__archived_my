@@ -1,4 +1,4 @@
-""" Module that has the RESTAPIGroup for the 'users' group of the API.
+""" Module that has the Group for the 'users' group of the API.
     This group can be used to get user information. """
 import re
 from typing import Optional
@@ -37,7 +37,7 @@ def users_create(auth: Optional[Authorization],
 
         Parameters
         ----------
-        auth : RESTAPIAuthorization
+        auth : Authorization
             A object that contains authorization information.
 
         url_match : re.Match
@@ -46,11 +46,11 @@ def users_create(auth: Optional[Authorization],
 
         Returns
         -------
-        RESTAPIResponse
+        Response
             The API response
     """
 
-    # Create a RESTAPIResponse object
+    # Create a Response object
     return_response = Response(ResponseType.SINGLE_RESOURCE)
 
     # Get the data
@@ -110,7 +110,7 @@ def users_create(auth: Optional[Authorization],
         # If nothing went wrong, return the newly created object.
         return_response.data = new_object
 
-    # Return the created RESTAPIResponse object
+    # Return the created Response object
     return return_response
 
 
@@ -129,7 +129,7 @@ def users_retrieve(auth: Optional[Authorization],
 
         Parameters
         ----------
-        auth : RESTAPIAuthorization
+        auth : Authorization
             A object that contains authorization information.
 
         url_match : re.Match
@@ -138,11 +138,11 @@ def users_retrieve(auth: Optional[Authorization],
 
         Returns
         -------
-        RESTAPIResponse
+        Response
             The API response
     """
 
-    # Create a RESTAPIResponse object
+    # Create a Response object
     return_response = Response(ResponseType.RESOURCE_SET)
 
     # Set the data
@@ -166,7 +166,7 @@ def users_retrieve(auth: Optional[Authorization],
         # Every other error should result in a ServerError.
         raise ServerError(err)
 
-    # Return the created RESTAPIResponse object
+    # Return the created Response object
     return return_response
 
 
@@ -188,7 +188,7 @@ def users_update_delete(auth: Optional[Authorization],
 
         Parameters
         ----------
-        auth : RESTAPIAuthorization
+        auth : Authorization
             A object that contains authorization information.
 
         url_match : re.Match
@@ -197,11 +197,11 @@ def users_update_delete(auth: Optional[Authorization],
 
         Returns
         -------
-        RESTAPIResponse
+        Response
             The API response
     """
 
-    # Create a RESTAPIResponse object
+    # Create a Response object
     return_response = Response(ResponseType.SINGLE_RESOURCE)
 
     # Get the user ID
@@ -302,5 +302,5 @@ def users_update_delete(auth: Optional[Authorization],
                 'deleted': True
             }
 
-    # Return the created RESTAPIResponse object
+    # Return the created Response object
     return return_response
