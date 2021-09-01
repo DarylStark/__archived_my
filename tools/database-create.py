@@ -97,7 +97,7 @@ if __name__ == '__main__':
         # The API token will be connected to a user later on. We create
         # the scopes
         scopes = [
-            'api.ping', 'users.create', 'users.retrieve', 'users.update',
+            'api.ping', 'api.auth', 'users.create', 'users.retrieve', 'users.update',
             'users.delete', 'tags.create', 'tags.retrieve', 'tags.update',
             'tags.delete'
         ]
