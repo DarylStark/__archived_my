@@ -94,7 +94,11 @@ def auth(auth: Optional[Authorization],
         'api_token': {
             'id': auth.data.id,
             'expires': auth.data.expires,
-            'token_scopes': sorted([x.scope.full_scope_name for x in auth.data.token_scopes])
+            'token_scopes': sorted(
+                [
+                    x.scope.full_scope_name
+                    for x in auth.data.token_scopes
+                ])
         },
         'client': {
             'id': auth.data.client.id,
