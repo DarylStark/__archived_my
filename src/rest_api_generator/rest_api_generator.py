@@ -423,6 +423,17 @@ class RESTAPIGenerator:
                             return_value = error
                         else:
                             return None
+                    except Exception as exception:
+                        # All other errors will be reported as unknown error to
+                        # the user, but we will log the real error
+                        self.logger.error(
+                            f'Error: "{exception}" on path "{path}"')
+                        self.logger.error(f'Given data: \'{request.data}\'')
+                        error = self.raise_error(500, 'Unknown error')
+                        if error:
+                            return_value = error
+                        else:
+                            return None
 
                     # Paginate the result (if requested)
                     if return_value.paginate and \
