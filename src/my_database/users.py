@@ -1,8 +1,6 @@
 """ Module that contains the methods to get and set user details from
     the database. """
 
-import random
-import string
 from typing import List, Optional, Union
 import sqlalchemy
 from database import DatabaseSession
@@ -117,18 +115,8 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
                     raise FilterNotValidError(
                         f'Field {field} is not a valid field')
 
-            # Generate a random password for this user
-            # TODO: Move this method to the User-class
-            characters = string.ascii_letters
-            characters += string.digits
-            characters += string.punctuation
-            length = random.randint(24, 33)
-            random_password = [random.choice(characters)
-                               for i in range(0, length)]
-            random_password = ''.join(random_password)
-
-            # Set the password for the user
-            new_resource.set_password(random_password)
+            # Set a password for this user
+            new_resource.set_random_password()
 
             logger.debug('create_user: adding user')
 

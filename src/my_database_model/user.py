@@ -3,6 +3,8 @@
 
 import datetime
 import enum
+import random
+import string
 from sqlalchemy.orm import backref, relationship
 from database import Database
 from passlib.hash import argon2
@@ -65,6 +67,41 @@ class User(Database.base_class):
         """ Represents objects of this class. """
         return (f'<User for "{self.username}" ' +
                 f'(id: {self.id}) at {hex(id(self))}>')
+
+    def set_random_password(
+            self,
+            min_length: int = 24,
+            max_length: int = 33) -> str:
+        """ Method to set a random password for the user.
+
+            Parameters
+            ----------
+            min_length : int [default=24]
+                The minimum lenght of the password
+
+            max_length : int [default=33]
+                The maximum lenght of the password
+
+            Returns
+            -------
+            str
+                The generated password.
+        """
+
+        # Generate a random password for this user
+        characters = string.ascii_letters
+        characters += string.digits
+        characters += string.punctuation
+        length = random.randint(min_length, max_length)
+        random_password = [random.choice(characters)
+                           for i in range(0, length)]
+        random_password = ''.join(random_password)
+
+        # Set the password for the user
+        self.set_password(random_password)
+
+        # Return the created password
+        return random_password
 
     def set_password(self, password: str) -> None:
         """ Method to set the password for this user
