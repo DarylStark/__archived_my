@@ -23,7 +23,9 @@ api_group_users = Group(
 
 
 @api_group_users.register_endpoint(
-    url_suffix=['user'],
+    url_suffix=[
+        r'user'
+    ],
     http_methods=['POST'],
     name='user',
     description='Endpoint to create a user',
@@ -115,7 +117,11 @@ def users_create(auth: Optional[Authorization],
 
 
 @api_group_users.register_endpoint(
-    url_suffix=['users', 'users/', 'users/([0-9]+)'],
+    url_suffix=[
+        r'users',
+        r'users/',
+        r'users/([0-9]+)'
+    ],
     http_methods=['GET'],
     name='users',
     description='Endpoint to retrieve all or a subset of the users',
@@ -171,7 +177,9 @@ def users_retrieve(auth: Optional[Authorization],
 
 
 @api_group_users.register_endpoint(
-    url_suffix=['user/([0-9]+)'],
+    url_suffix=[
+        r'user/([0-9]+)'
+    ],
     http_methods=['PATCH', 'DELETE'],
     name='user',
     description='Endpoint to edit or delete a user',

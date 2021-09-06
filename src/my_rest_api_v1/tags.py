@@ -26,7 +26,9 @@ api_group_tags = Group(
 
 
 @api_group_tags.register_endpoint(
-    url_suffix=['tag'],
+    url_suffix=[
+        r'tag'
+    ],
     http_methods=['POST'],
     name='tag',
     description='Endpoint to create a tag',
@@ -98,10 +100,10 @@ def tags_create(auth: Optional[Authorization],
 
 @api_group_tags.register_endpoint(
     url_suffix=[
-        'tags',
-        'tags/',
-        'tags/(?P<resource_id>[0-9]+)',
-        'tags/(?P<resource_title>[A-Za-z][A-Za-z0-9\-_.\+]+)'
+        r'tags',
+        r'tags/',
+        r'tags/(?P<resource_id>[0-9]+)',
+        r'tags/(?P<resource_title>[A-Za-z][A-Za-z0-9\-_.\+]+)'
     ],
     http_methods=['GET'],
     name='tags',
@@ -171,7 +173,9 @@ def tags_retrieve(auth: Optional[Authorization],
 
 
 @api_group_tags.register_endpoint(
-    url_suffix=['tag/([0-9]+)'],
+    url_suffix=[
+        r'tag/([0-9]+)'
+    ],
     http_methods=['PATCH', 'DELETE'],
     name='tag',
     description='Endpoint to edit or delete a tag',
