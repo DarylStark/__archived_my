@@ -13,7 +13,10 @@ api_group_api = Group(
 
 
 @api_group_api.register_endpoint(
-    url_suffix=['ping', 'ping/'],
+    url_suffix=[
+        r'ping',
+        r'ping/'
+    ],
     http_methods=['GET'],
     name='ping',
     description='Endpoint to check if the service is available',
