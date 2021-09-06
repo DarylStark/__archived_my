@@ -97,7 +97,12 @@ def tags_create(auth: Optional[Authorization],
 
 
 @api_group_tags.register_endpoint(
-    url_suffix=['tags', 'tags/', 'tags/([0-9]+)'],
+    url_suffix=[
+        'tags',
+        'tags/',
+        'tags/(?P<resource_id>[0-9]+)',
+        'tags/(?P<resource_title>[A-Za-z][A-Za-z0-9_-]+)'
+    ],
     http_methods=['GET'],
     name='tags',
     description='Endpoint to retrieve all or a subset of the tags',
@@ -128,16 +133,30 @@ def tags_retrieve(auth: Optional[Authorization],
 
     # Set the data
     try:
+        # Create a dict to send a filter to the database
+        filters = {
+            'flt_id': None,
+            'flt_title': None
+        }
+
         # Check if we received a ID
-        resource_id = None
-        if len(url_match.groups()) > 0:
-            resource_id = int(url_match.groups(0)[0])
+        if 'resource_id' in url_match.groupdict().keys():
+            filters['flt_id'] = int(url_match.group('resource_id'))
+            return_response.type = ResponseType.SINGLE_RESOURCE
+
+        # Check if we received a title
+        if 'resource_title' in url_match.groupdict().keys():
+            # Replace triple dashes with a spaces, so a user can
+            # retrieve tags like 'my tag' as 'my---tag'
+            resource_title = url_match.group('resource_title')
+            resource_title = resource_title.replace('---', ' ')
+            filters['flt_title'] = resource_title
             return_response.type = ResponseType.SINGLE_RESOURCE
 
         # Get the resources
         return_response.data = get_tags(
             auth.data.user,
-            flt_id=resource_id
+            **filters
         )
     except NotFoundError as err:
         # Resource not found happens when a user tries to get a

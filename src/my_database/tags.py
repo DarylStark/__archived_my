@@ -19,7 +19,7 @@ validation_fields = {
     'title': Field(
         'title',
         str,
-        str_regex_validator=r'[A-Za-z0-9\-_. ]+')
+        str_regex_validator=r'[A-Za-z][A-Za-z0-9\-_. ]+')
 }
 
 
@@ -109,7 +109,8 @@ def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
 
 def get_tags(
     req_user: User,
-    flt_id: Optional[int] = None
+    flt_id: Optional[int] = None,
+    flt_title: Optional[str] = None
 ) -> Optional[Union[List[Tag], Tag]]:
     """ Method that retrieves all, or a subset of, the tags in the
         database.
@@ -122,6 +123,9 @@ def get_tags(
 
         flt_id : Optional[int] [default=None]
             Filter on a specific tag ID.
+
+        flt_title : Optional[str] [default=None]
+            Filter on a specific tag title.
 
         Returns
         -------
@@ -147,17 +151,23 @@ def get_tags(
 
         logger.debug('get_tags: we have the global list of tags for this user')
 
-        # Now, we can apply the correct filters
+        # Apply filter for ID
         try:
             if flt_id:
                 flt_id = int(flt_id)
                 data_list = data_list.filter(Tag.id == flt_id)
-                logger.debug('get_tags: list is filtered')
+                logger.debug('get_tags: list is filtered on ID')
         except (ValueError, TypeError):
             logger.error(
                 f'Tag id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
                 f'Tag id should be of type {int}, not {type(flt_id)}.')
+
+        # Apply filter for title
+        if flt_title:
+            flt_title = flt_title
+            data_list = data_list.filter(Tag.title == flt_title)
+            logger.debug('get_tags: list is filtered on title')
 
         # Get the data
         if flt_id:
@@ -165,6 +175,11 @@ def get_tags(
             if rv is None:
                 raise NotFoundError(
                     f'Tag with ID {flt_id} is not found.')
+        elif flt_title:
+            rv = data_list.first()
+            if rv is None:
+                raise NotFoundError(
+                    f'Tag with title "{flt_title}" is not found.')
         else:
             rv = data_list.all()
             if len(rv) == 0:
