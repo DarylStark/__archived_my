@@ -101,7 +101,7 @@ def tags_create(auth: Optional[Authorization],
         'tags',
         'tags/',
         'tags/(?P<resource_id>[0-9]+)',
-        'tags/(?P<resource_title>[A-Za-z][A-Za-z0-9_-]+)'
+        'tags/(?P<resource_title>[A-Za-z][A-Za-z0-9\-_.\+]+)'
     ],
     http_methods=['GET'],
     name='tags',
@@ -146,10 +146,10 @@ def tags_retrieve(auth: Optional[Authorization],
 
         # Check if we received a title
         if 'resource_title' in url_match.groupdict().keys():
-            # Replace triple dashes with a spaces, so a user can
-            # retrieve tags like 'my tag' as 'my---tag'
+            # Replace plus signes with a spaces, so a user can retrieve
+            # tags like 'my tag' as 'my+tag'
             resource_title = url_match.group('resource_title')
-            resource_title = resource_title.replace('---', ' ')
+            resource_title = resource_title.replace('+', ' ')
             filters['flt_title'] = resource_title
             return_response.type = ResponseType.SINGLE_RESOURCE
 
