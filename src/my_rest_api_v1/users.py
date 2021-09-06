@@ -115,7 +115,12 @@ def users_create(auth: Optional[Authorization],
 
 
 @api_group_users.register_endpoint(
-    url_suffix=['users', 'users/', 'users/([0-9]+)'],
+    url_suffix=[
+        'users',
+        'users/',
+        'users/(?P<resource_id>[0-9]+)',
+        'users/(?P<resource_username>[A-Za-z][A-Za-z0-9\-_.]+)'
+    ],
     http_methods=['GET'],
     name='users',
     description='Endpoint to retrieve all or a subset of the users',
@@ -147,16 +152,26 @@ def users_retrieve(auth: Optional[Authorization],
 
     # Set the data
     try:
+        # Create a dict to send a filter to the database
+        filters = {
+            'flt_id': None,
+            'flt_username': None
+        }
+
         # Check if we received a ID
-        resource_id = None
-        if len(url_match.groups()) > 0:
-            resource_id = int(url_match.groups(0)[0])
+        if 'resource_id' in url_match.groupdict().keys():
+            filters['flt_id'] = int(url_match.group('resource_id'))
+            return_response.type = ResponseType.SINGLE_RESOURCE
+
+        # Check if we received a username
+        if 'resource_username' in url_match.groupdict().keys():
+            filters['flt_username'] = url_match.group('resource_username')
             return_response.type = ResponseType.SINGLE_RESOURCE
 
         # Get the resources
         return_response.data = get_users(
             auth.data.user,
-            flt_id=resource_id
+            **filters
         )
     except NotFoundError as err:
         # Resource not found happens when a user tries to get a
