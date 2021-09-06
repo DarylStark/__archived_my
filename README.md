@@ -1,6 +1,6 @@
 # The My Daryl Stark application
 
-Services for the My application that will act as a personal assistant for Daryl Stark. The personal assistant will be repsonsible for a few tasks, which will grow to demand of Daryl Stark. For startes, it will be the backend for a Notepad application with REST API.
+Services for the My application that will act as a personal assistant for Daryl Stark. The personal assistant will be repsonsible for a few tasks, which will grow to demand of Daryl Stark. For starters, it will be the backend for a Notebook application with REST API. This Notebook will serve as a integral part of the complete application.
 
 ## Folder structure
 
@@ -10,21 +10,38 @@ The project is divided in a few directories:
 .
 ├── .vscode
 ├── docs
+│   ├── code
+│   ├── config_loader
+│   ├── database
+│   └── rest_api_generator
 ├── env
 ├── src
-│   ├── my_backend
-│   └── my_rest_api_v1
+│   ├── config_loader
+│   ├── database
+│   ├── my_database
+│   ├── my_database_model
+│   ├── my_rest_api_v1
+│   └── rest_api_generator
 ├── tests
 └── tools
 ```
 
 ### /.vscode
 
-The `.vscode` directory contains files that are needed for VScode to understand this repository. The `settings.json` defines the settings for the project. The `launch.json` contains the debug targets that can be used.
+The `.vscode` directory contains files that are needed for VScode to work with this repository. The `settings.json` defines the settings for the project. The `launch.json` contains the debug targets that can be used. These files are created by Daryl Stark to use by Daryl Stark and should only be overwritten by Daryl Stark.
 
 ### /docs
 
-This directory wil contain documentation about the project.
+This directory wil contain documentation about the project. There are a few subdirectories in this directory:
+
+-   code
+    -   Contains documentation about the code, like the style guide
+-   config_loader
+    -   Contains documentation about the Config Loader package
+-   database
+    -   Contains documentation about the database model for this application
+-   rest_api_generator
+    -   Contains documentation about the REST API Generator package
 
 ### /env
 
@@ -37,17 +54,49 @@ python3 -m venv env
 source env/bin/activate
 ```
 
+After that, install the needed libraries with the following command:
+
+```bash
+pip3 install -r src/requirements.txt
+```
+
 ### /src
 
-The _src_ directory will hold the source for the services for this version of the software. As of right now, there are three services:
+The _src_ directory will hold the source for the services for this version of the software and the packages used by these services. The following packages are created:
 
-#### src/_my_backend_
+-   `config_loader`
+-   `database`
+-   `my_database`
+-   `my_database_model`
+-   `rest_api_generator`
 
-The backend will be responsible for to run long-running tasks like retrieving data online. It won't be callable by the end-user.
+The following services are created:
 
-#### src/_my_rest_api_v1_
+-   `my_rest_api_v1`
 
-The REST API v1 package will be responsible to expose a REST API to the end user that he or she can use to create data in the application, update data, remove data and retrieve data. The API will be one of the most important parts of the application
+As convention, every package that starts with the prefix `my_` is created for the sole purpose of the My-application. The other packagers can be used as reusable components for other applications.
+
+#### Package `config_loader`
+
+The config_loader package is responsible to load application configuration from a YAML file. Extended docs are in the [docs/config_loader](docs/config_loader/00%20-%20ConfigLoader.md) folder.
+
+#### Package `database`
+
+The database package can be used to create a SQLalchemy connection to a SQL database in a modest way; it doesn't create too many connections and provides a Context Manager which can be used for database sessions. Extended docs are in the [docs/database](docs/database/00%20-%20Database.md) folder.
+
+#### Pacakge `my_database`
+
+Serves as the backend for the complete application and all services. This package contains functions to perform specific commands on the database, like created, retrieving, updating and deleting resources. This package relies heavily on the `database` package.
+
+#### Package `my_database_model`
+
+Contains the complete database schema for the My-application. This package uses the `database` package to define a database schema in a ORM fashion.
+
+#### Package `rest_api_generator`
+
+A reusable package to easily create a JSON based REST API using a Flask Blueprint. Extended docs are in [docs/rest_api_generator](docs/rest_api_generator/00%20-%20REST%20API%20Generator.md).
+
+#### Service `my_rest_api_v1`
 
 ###  /tests
 
@@ -62,7 +111,7 @@ For more information about unit testing, check the [Unit testing](#unit_testing)
 
 ### /tools
 
-The tools directory will contain scripts and tools to automate specific tasks that are neede during programming
+The tools directory will contain scripts and tools to automate specific tasks that are neede during programming. Right now, it contains one tool: `database-create.py`. This script can be used to (re-)create the database or it's data.
 
 ## <a name="unit_testing"></a>Unit testing
 
