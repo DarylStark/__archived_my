@@ -22,7 +22,7 @@ validation_fields = {
     'username': Field(
         'username',
         str,
-        str_regex_validator=r'[A-Za-z0-9\-_.]+'),
+        str_regex_validator=r'[A-Za-z][A-Za-z0-9\-_.]+'),
     'email': Field(
         'email',
         str,
@@ -135,7 +135,8 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
 
 def get_users(
     req_user: User,
-    flt_id: Optional[int] = None
+    flt_id: Optional[int] = None,
+    flt_username: Optional[str] = None
 ) -> Optional[Union[List[User], User]]:
     """ Method that retrieves all, or a subset of, the users in the
         database.
@@ -148,6 +149,9 @@ def get_users(
 
         flt_id : Optional[int] [default=None]
             Filter on a specific user ID.
+
+        flt_username : Optional[str] [default=None]
+            Filter on a specific username.
 
         Returns
         -------
@@ -189,7 +193,7 @@ def get_users(
 
         logger.debug('get_users: we have the global list of users')
 
-        # Now, we can apply the correct filters
+        # Apply filter for ID
         try:
             if flt_id:
                 flt_id = int(flt_id)
@@ -201,12 +205,23 @@ def get_users(
             raise FilterNotValidError(
                 f'User id should be of type {int}, not {type(flt_id)}.')
 
+        # Apply filter for username
+        if flt_username:
+            flt_username = flt_username
+            data_list = data_list.filter(User.username == flt_username)
+            logger.debug('get_users: list is filtered on username')
+
         # Get the data
         if flt_id:
             rv = data_list.first()
             if rv is None:
                 raise NotFoundError(
                     f'User with ID {flt_id} is not found.')
+        elif flt_username:
+            rv = data_list.first()
+            if rv is None:
+                raise NotFoundError(
+                    f'User with username "{flt_username}" is not found.')
         else:
             rv = data_list.all()
             if len(rv) == 0:
