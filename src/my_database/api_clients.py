@@ -18,11 +18,11 @@ validation_fields = {
     'app_name': Field(
         'app_name',
         str,
-        str_regex_validator=r'[A-Za-z0-9\-_. ]+'),
+        str_regex_validator=r'[A-Za-z][A-Za-z0-9\-_. ]+'),
     'app_publisher': Field(
         'app_publisher',
         str,
-        str_regex_validator=r'[A-Za-z0-9\-_. ]+'),
+        str_regex_validator=r'[A-Za-z][A-Za-z0-9\-_. ]+'),
     'enabled': Field('enabled', bool),
     'expires': Field('expires', datetime)
 }
