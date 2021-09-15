@@ -6,12 +6,6 @@ class MyRestAPIv1Error(Exception):
     pass
 
 
-class EnvironmentNotSetError(MyRestAPIv1Error):
-    """ Exception when the environment is not set via environment
-        variabled. """
-    pass
-
-
 class ConfigNotLoadedError(MyRestAPIv1Error):
     """ Exception when the configuration couldn't be loaded. """
     pass
