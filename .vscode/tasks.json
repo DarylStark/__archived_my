@@ -46,6 +46,26 @@
                 "--drop-tables"
             ],
             "problemMatcher": []
+        },
+        {
+            "label": "Start VueJS development server - no debug",
+            "type": "npm",
+            "script": "serve",
+            "path": "${workspaceFolder}/src/my_ceres/nodejs-dashboard",
+            "options": {
+                "cwd": "${workspaceFolder}/src/my_ceres/nodejs-dashboard"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Compile VueJS project",
+            "type": "npm",
+            "script": "build",
+            "path": "${workspaceFolder}/src/my_ceres/nodejs-dashboard",
+            "options": {
+                "cwd": "${workspaceFolder}/src/my_ceres/nodejs-dashboard"
+            },
+            "problemMatcher": []
         }
     ]
 }
