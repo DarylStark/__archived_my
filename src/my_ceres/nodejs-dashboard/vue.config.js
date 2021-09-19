@@ -1,4 +1,12 @@
 module.exports = {
+    devServer: {
+        proxy: {
+            '^/data': {
+                target: 'http://localhost:3080',
+                changeOrigin: true
+            },
+        }
+    },
     pages: {
         dashboard: {
             entry: 'src/dashboard.js',
