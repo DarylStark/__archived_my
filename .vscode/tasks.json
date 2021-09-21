@@ -48,9 +48,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Start VueJS development server",
+            "label": "My Ganymade - Start - VueJS development server",
             "type": "npm",
-            "script": "serve",
+            "script": "vuejs-serve",
             "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
             "options": {
                 "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
@@ -58,9 +58,29 @@
             "problemMatcher": []
         },
         {
-            "label": "Compile VueJS project",
+            "label": "My Ganymade - Compile - VueJS project",
             "type": "npm",
-            "script": "build",
+            "script": "vuejs-build",
+            "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
+            "options": {
+                "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "My Ganymade - Start - SCSS live compiler",
+            "type": "npm",
+            "script": "scss-watch",
+            "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
+            "options": {
+                "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "My Ganymade - Compile - SCSS files",
+            "type": "npm",
+            "script": "scss-build",
             "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
             "options": {
                 "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"

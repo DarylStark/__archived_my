@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "vuejs-serve": "vue-cli-service serve",
+    "vuejs-build": "vue-cli-service build",
+    "scss-watch": "node-sass --watch scss --output public/css --ouput-style compressed",
+    "scss-build": "node-sass scss --output dist/css --output-style compressed"
   },
   "dependencies": {
     "vue": "^3.0.0",
@@ -15,6 +17,7 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0"
+    "@vue/compiler-sfc": "^3.0.0",
+    "node-sass": "^6.0.1"
   }
 }
