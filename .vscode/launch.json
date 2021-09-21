@@ -33,6 +33,25 @@
             "jinja": false,
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.environment/development.env"
+        },
+        {
+            "name": "Debug - Services - Ganymade",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "cwd": "${workspaceFolder}/src",
+            "env": {
+                "FLASK_APP": "my_ganymade:flask_app",
+                "FLASK_ENV": "development"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload"
+            ],
+            "jinja": false,
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.environment/development.env"
         }
     ]
 }

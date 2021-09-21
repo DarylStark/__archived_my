@@ -7,6 +7,8 @@ from config_loader import ConfigLoader
 from flask import Flask
 from rich.logging import RichHandler
 from my_ganymade.exceptions import ConfigNotLoadedError
+from my_ganymade.backend import blueprint_backend
+from my_ganymade.static import blueprint_static
 
 # Load the settings
 if not ConfigLoader.load_settings():
@@ -28,7 +30,6 @@ logger = logging.getLogger('MyGanymade')
 logger.debug('Creating Flask object')
 flask_app = Flask(__name__)
 
-
-@flask_app.route('/')
-def index():
-    return 'Welcome to Ganymade!'
+# Register the blueprints for the data and the static pages
+flask_app.register_blueprint(blueprint_backend)
+flask_app.register_blueprint(blueprint_static)
