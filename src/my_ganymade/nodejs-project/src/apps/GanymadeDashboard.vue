@@ -1,5 +1,7 @@
 <template>
-  <b>Dashboard will be here</b>
+  <div>
+    <b>Dashboard will be here</b>
+  </div>
 </template>
 
 <script>
