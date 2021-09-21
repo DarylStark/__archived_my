@@ -1,9 +1,9 @@
 <template>
-  <b>components come here</b>
+  <b>Dashboard will be here</b>
 </template>
 
 <script>
 export default {
-  name: "Dashboard",
+  name: "GanymadeDashboard",
 };
 </script>

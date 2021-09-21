@@ -48,12 +48,12 @@
             "problemMatcher": []
         },
         {
-            "label": "Start VueJS development server - no debug",
+            "label": "Start VueJS development server",
             "type": "npm",
             "script": "serve",
-            "path": "${workspaceFolder}/src/my_ceres/nodejs-dashboard",
+            "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
             "options": {
-                "cwd": "${workspaceFolder}/src/my_ceres/nodejs-dashboard"
+                "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
             },
             "problemMatcher": []
         },
@@ -61,9 +61,9 @@
             "label": "Compile VueJS project",
             "type": "npm",
             "script": "build",
-            "path": "${workspaceFolder}/src/my_ceres/nodejs-dashboard",
+            "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
             "options": {
-                "cwd": "${workspaceFolder}/src/my_ceres/nodejs-dashboard"
+                "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
             },
             "problemMatcher": []
         }

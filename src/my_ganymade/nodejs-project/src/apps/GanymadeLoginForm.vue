@@ -5,8 +5,9 @@
 
 <script>
 import Input from "../components/Input.vue";
+
 export default {
-  name: "FormLogin",
+  name: "GanymadeLogin",
   components: {
     Input,
   },

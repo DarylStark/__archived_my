@@ -1,12 +1,12 @@
-""" The my_ceres package is the frontend for the application. It is a
-    VueJS application that is served using a Python Flask Application.
+""" The my_ganymade package is the frontend for the application. It is
+    a VueJS application that is served using a Python Flask Application.
     This package contains the Flask application and the NodeJS files to
     create the VueJS frontend """
 import logging
 from config_loader import ConfigLoader
 from flask import Flask
 from rich.logging import RichHandler
-from my_ceres.exceptions import ConfigNotLoadedError
+from my_ganymade.exceptions import ConfigNotLoadedError
 
 # Load the settings
 if not ConfigLoader.load_settings():
@@ -21,8 +21,8 @@ logging.basicConfig(
     handlers=[RichHandler()]
 )
 
-# Create a logger for the My Ceres package
-logger = logging.getLogger('MyCeres')
+# Create a logger for the My Ganymade package
+logger = logging.getLogger('MyGanymade')
 
 # Create a Flask object
 logger.debug('Creating Flask object')
@@ -31,4 +31,4 @@ flask_app = Flask(__name__)
 
 @flask_app.route('/')
 def index():
-    return 'Welcome to Ceres!'
+    return 'Welcome to Ganymade!'
