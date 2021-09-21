@@ -55,6 +55,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
             },
+            "group": "test",
             "problemMatcher": []
         },
         {
@@ -65,16 +66,18 @@
             "options": {
                 "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
             },
+            "group": "build",
             "problemMatcher": []
         },
         {
-            "label": "My Ganymade - Start - SCSS live compiler",
+            "label": "My Ganymade - Start - SCSS watcher",
             "type": "npm",
             "script": "scss-watch",
             "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
             "options": {
                 "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
             },
+            "group": "test",
             "problemMatcher": []
         },
         {
@@ -85,6 +88,17 @@
             "options": {
                 "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
             },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "My Ganymade - Compile - Full NodeJS source",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "My Ganymade - Compile - VueJS project",
+                "My Ganymade - Compile - SCSS files"
+            ],
+            "group": "build",
             "problemMatcher": []
         }
     ]
