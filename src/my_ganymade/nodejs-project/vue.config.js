@@ -20,5 +20,9 @@ module.exports = {
             filename: 'login.html',
             title: 'Login'
         }
+    },
+    filenameHashing: false,
+    chainWebpack: config => {
+        config.optimization.delete('splitChunks')
     }
 }
