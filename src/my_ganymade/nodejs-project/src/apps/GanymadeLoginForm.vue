@@ -1,6 +1,8 @@
 <template>
-  <Input value="username"></Input>
-  <Input value="password"></Input>
+  <div id="app_loginform">
+    <Input value="username"></Input>
+    <Input value="password"></Input>
+  </div>
 </template>
 
 <script>
