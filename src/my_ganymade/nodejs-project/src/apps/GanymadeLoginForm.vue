@@ -1,6 +1,6 @@
 <template>
   <div id="app_loginform">
-    <card></card>
+    <card title="Login">Loginform</card>
   </div>
 </template>
 

@@ -4,7 +4,21 @@ div.card {
     border-color: var(--border-card-color);
     border-width: var(--border-card-width);
     border-style: var(--border-card-style);
-    width: 500px;
-    max-width: 100%;
-    padding: 20px;
+    border-radius: var(--border-card-radius);
+
+    div.title {
+        background-color: var(--color-card-title-background);
+        color: var(--color-card-title-text);
+
+        font-family: var(--font-card-title-family);
+        font-size: var(--font-card-title-size);
+        font-weight: var(--font-card-title-weight);
+        font-style: var(--font-card-title-style);
+        border-bottom: var(--border-card-width) var(--border-card-style) var(--border-card-color);
+        padding: 8px;
+    }
+
+    div.content {
+        padding: 8px;
+    }
 }

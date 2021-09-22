@@ -1,7 +1,9 @@
 <template>
   <div class="card">
-    <div v-if="title">{{ title }}</div>
-    <div>Card content comes here</div>
+    <div v-if="title" class="title">{{ title }}</div>
+    <div class="content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 

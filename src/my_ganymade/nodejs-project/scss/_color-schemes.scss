@@ -3,26 +3,30 @@ $themes: (
     'theme-dark': (
         'colors': (
             'default': (
-                'background': #1c1e2d,
-                'text': #7e818f
+                'background': #0d1117,
+                'text': #8b949e
             ),
             'card': (
-                'background': #ffffff,
-                'text': #000000
+                'background': #161b22,
+                'text': #8b949e
+            ),
+            'card-title': (
+                'background': #21262d,
+                'text':#8b949e
             )
         ),
         'borders': (
             'card': (
-                // TODO: Style this better for Dark Theme
-                'color': #000000,
+                'color': #30363d,
                 'width': 1px,
-                'style': solid
+                'style': solid,
+                'radius': 0px
             )
         ),
         'fonts': (
-            'title': (
-                'family': 'Times New Roman',
-                'size': 16pt,
+            'card-title': (
+                'family': 'Roboto',
+                'size': 14px,
                 'weight': 800,
                 'style': normal,
                 'decoration': none
@@ -39,26 +43,30 @@ $themes: (
     'theme-light': (
         'colors': (
             'default': (
-                'background': #f6f6f8,
-                'text': #000000
+                'background': #ffffff,
+                'text': rgb(87, 96, 106)
             ),
             'card': (
-                'background': #ffffff,
-                'text': #000000
+                'background': #f6f8fa,
+                'text': rgb(87, 96, 106)
+            ),
+            'card-title': (
+                'background': #24292f,
+                'text':rgb(240, 246, 252)
             )
         ),
         'borders': (
             'card': (
-                'color': #cccccc,
+                'color': #d0d7de,
                 'width': 1px,
                 'style': solid
             )
         ),
         'fonts': (
-            'title': (
-                'family': 'Times New Roman',
-                'size': 16px,
-                'weight': 400,
+            'card-title': (
+                'family': 'Roboto',
+                'size': 14px,
+                'weight': 800,
                 'style': normal,
                 'decoration': none
             ),
@@ -91,6 +99,7 @@ $themes: (
             --border-#{$name}-color: #{map-get($border_options, 'color')};
             --border-#{$name}-width: #{map-get($border_options, 'width')};
             --border-#{$name}-style: #{map-get($border_options, 'style')};
+            --border-#{$name}-radius: #{map-get($border_options, 'radius')};
         }
 
         // Set variables for the fonts
