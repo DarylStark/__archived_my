@@ -5,6 +5,18 @@ $themes: (
             'default': (
                 'background': #1c1e2d,
                 'text': #7e818f
+            ),
+            'card': (
+                'background': #ffffff,
+                'text': #000000
+            )
+        ),
+        'borders': (
+            'card': (
+                // TODO: Style this better for Dark Theme
+                'color': #000000,
+                'width': 1px,
+                'style': solid
             )
         ),
         'fonts': (
@@ -29,6 +41,17 @@ $themes: (
             'default': (
                 'background': #f6f6f8,
                 'text': #000000
+            ),
+            'card': (
+                'background': #ffffff,
+                'text': #000000
+            )
+        ),
+        'borders': (
+            'card': (
+                'color': #cccccc,
+                'width': 1px,
+                'style': solid
             )
         ),
         'fonts': (
@@ -56,13 +79,18 @@ $themes: (
     body.#{$theme} {
         // Set variables for the colors
         $colors: map-get($items, 'colors');
-        // @each $name, $color in $colors {
-        //     --color-#{$name}: #{$color};
-        // }
         @each $name, $color_items in $colors {
             @each $item, $color in $color_items {
                 --color-#{$name}-#{$item}: #{$color};
             }
+        }
+
+        // Set variables for the border
+        $borders: map-get($items, 'borders');
+        @each $name, $border_options in $borders {
+            --border-#{$name}-color: #{map-get($border_options, 'color')};
+            --border-#{$name}-width: #{map-get($border_options, 'width')};
+            --border-#{$name}-style: #{map-get($border_options, 'style')};
         }
 
         // Set variables for the fonts

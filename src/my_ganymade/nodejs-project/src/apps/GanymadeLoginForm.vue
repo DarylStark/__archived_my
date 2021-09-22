@@ -1,18 +1,20 @@
 <template>
   <div id="app_loginform">
-    <Input value="username"></Input>
-    <Input value="password"></Input>
-    <p>Random text</p>
+    <card></card>
   </div>
 </template>
 
 <script>
-import Input from "../components/Input.vue";
+import UI from "../mgm/ui";
+import Card from "../layout/Card.vue";
 
 export default {
   name: "GanymadeLogin",
+  created: () => {
+    UI.set_theme();
+  },
   components: {
-    Input,
+    Card,
   },
 };
 </script>

@@ -1,0 +1,10 @@
+div.card {
+    background-color: var(--color-card-background);
+    color: var(--color-card-text);
+    border-color: var(--border-card-color);
+    border-width: var(--border-card-width);
+    border-style: var(--border-card-style);
+    width: 500px;
+    max-width: 100%;
+    padding: 20px;
+}
