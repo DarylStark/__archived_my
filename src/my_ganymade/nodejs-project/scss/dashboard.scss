@@ -1,0 +1,18 @@
+// Import fonts
+@import 'fonts';
+
+// Import the color schemes
+@import 'color-schemes';
+
+body {
+    background-color: var(--color-default-background);
+    color: var(--color-default-text);
+    font-family: var(--font-text-family);
+    font-size: var(--font-text-size);
+    font-weight: var(--font-text-weight);
+    font-style: var(--font-text-style);
+    text-decoration: var(--font-text-decoration);
+}
+
+// Import layout elements
+@import 'layout/card'

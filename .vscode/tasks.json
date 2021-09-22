@@ -46,6 +46,83 @@
                 "--drop-tables"
             ],
             "problemMatcher": []
+        },
+        {
+            "label": "My Ganymade - Start - VueJS development server",
+            "type": "npm",
+            "script": "vuejs-serve",
+            "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
+            "options": {
+                "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
+            },
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "My Ganymade - Compile - VueJS project",
+            "type": "npm",
+            "script": "vuejs-build",
+            "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
+            "options": {
+                "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "My Ganymade - Start - SCSS watcher",
+            "type": "npm",
+            "script": "scss-watch",
+            "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
+            "options": {
+                "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
+            },
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "My Ganymade - Compile - SCSS files",
+            "type": "npm",
+            "script": "scss-build",
+            "path": "${workspaceFolder}/src/my_ganymade/nodejs-project",
+            "options": {
+                "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "My Ganymade - Install - Copy the compiled NodeJS files to My Ganymade",
+            "type": "shell",
+            "command": "${workspaceFolder}/env/bin/python",
+            "args": [
+                "tools/copy-compiled-nodejs-files.py"
+            ],
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "My Ganymade - Compile - Full NodeJS source and copy to Ganymade",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "My Ganymade - Compile - VueJS project",
+                "My Ganymade - Compile - SCSS files",
+                "My Ganymade - Install - Copy the compiled NodeJS files to My Ganymade"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "My Ganymade - Develop - Run VueJS development server and SCSS watcher",
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "My Ganymade - Start - VueJS development server",
+                "My Ganymade - Start - SCSS watcher"
+            ],
+            "group": "test",
+            "problemMatcher": []
         }
     ]
 }

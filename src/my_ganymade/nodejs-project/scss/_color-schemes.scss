@@ -1,0 +1,106 @@
+// Define the themes
+$themes: (
+    'theme-dark': (
+        'colors': (
+            'default': (
+                'background': #1c1e2d,
+                'text': #7e818f
+            ),
+            'card': (
+                'background': #ffffff,
+                'text': #000000
+            )
+        ),
+        'borders': (
+            'card': (
+                // TODO: Style this better for Dark Theme
+                'color': #000000,
+                'width': 1px,
+                'style': solid
+            )
+        ),
+        'fonts': (
+            'title': (
+                'family': 'Times New Roman',
+                'size': 16pt,
+                'weight': 800,
+                'style': normal,
+                'decoration': none
+            ),
+            'text': (
+                'family': 'Roboto',
+                'size': 14px,
+                'weight': 400,
+                'style': normal,
+                'decoration': none
+            )
+        )
+    ),
+    'theme-light': (
+        'colors': (
+            'default': (
+                'background': #f6f6f8,
+                'text': #000000
+            ),
+            'card': (
+                'background': #ffffff,
+                'text': #000000
+            )
+        ),
+        'borders': (
+            'card': (
+                'color': #cccccc,
+                'width': 1px,
+                'style': solid
+            )
+        ),
+        'fonts': (
+            'title': (
+                'family': 'Times New Roman',
+                'size': 16px,
+                'weight': 400,
+                'style': normal,
+                'decoration': none
+            ),
+            'text': (
+                'family': 'Roboto',
+                'size': 14px,
+                'weight': 400,
+                'style': normal,
+                'decoration': none
+            )
+        )
+    )
+);
+
+// Create the 'body' classes for the themes. We only define CSS
+// variables here. We can use these later on.
+@each $theme, $items in $themes {
+    body.#{$theme} {
+        // Set variables for the colors
+        $colors: map-get($items, 'colors');
+        @each $name, $color_items in $colors {
+            @each $item, $color in $color_items {
+                --color-#{$name}-#{$item}: #{$color};
+            }
+        }
+
+        // Set variables for the border
+        $borders: map-get($items, 'borders');
+        @each $name, $border_options in $borders {
+            --border-#{$name}-color: #{map-get($border_options, 'color')};
+            --border-#{$name}-width: #{map-get($border_options, 'width')};
+            --border-#{$name}-style: #{map-get($border_options, 'style')};
+        }
+
+        // Set variables for the fonts
+        $fonts: map-get($items, 'fonts');
+        @each $name, $font_options in $fonts {
+            --font-#{$name}-family: '#{map-get($font_options, 'family')}';
+            --font-#{$name}-size: #{map-get($font_options, 'size')};
+            --font-#{$name}-weight: #{map-get($font_options, 'weight')};
+            --font-#{$name}-style: #{map-get($font_options, 'style')};
+            --font-#{$name}-decoration: #{map-get($font_options, 'decoration')};
+        }
+    }
+};

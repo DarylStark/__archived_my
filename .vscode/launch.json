@@ -33,6 +33,33 @@
             "jinja": false,
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.environment/development.env"
-        }
+        },
+        {
+            "name": "Debug - Services - Ganymade",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "cwd": "${workspaceFolder}/src",
+            "env": {
+                "FLASK_APP": "my_ganymade:flask_app",
+                "FLASK_ENV": "development"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload"
+            ],
+            "jinja": false,
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.environment/development.env"
+        },
+        {
+            "name": "Debug - Tools - Install - Copy compiled NdeJS files",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/tools/copy-compiled-nodejs-files.py",
+            "console": "integratedTerminal"
+        },
     ]
 }
