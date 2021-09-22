@@ -5,12 +5,12 @@
 </template>
 
 <script>
-import MGM from "../my_ganymade";
+import UI from "../mgm/ui";
 
 export default {
   name: "GanymadeDashboard",
   created: function () {
-    MGM.set_colorscheme("dark");
+    UI.set_theme();
   },
 };
 </script>

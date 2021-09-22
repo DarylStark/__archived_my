@@ -9,6 +9,7 @@
     "scss-build": "node-sass scss --output dist/css --output-style compressed"
   },
   "dependencies": {
+    "js-cookie": "^3.0.1",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
