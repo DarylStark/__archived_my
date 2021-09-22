@@ -4,15 +4,22 @@
 // Import the color schemes
 @import 'color-schemes';
 
-// Create CSS for each theme
-@each $theme, $color in $themes {
-    body.#{$theme} {
-        // Colors
-        background-color: map-get($color, 'background');
-        color: map-get($color, 'foreground');
+body {
+    background-color: var(--color-default-background);
+    color: var(--color-default-text);
+    font-family: var(--font-text-family);
+    font-size: var(--font-text-size);
+    font-weight: var(--font-text-weight);
+    font-style: var(--font-text-style);
+    text-decoration: var(--font-text-decoration);
 
-        // Fonts
-        font-family: 'Roboto', sans-serif;
-        font-size: 14px;
+    input {
+        background-color: var(--color-default-background);
+        color: var(--color-default-text);
+        font-family: var(--font-text-family);
+        font-size: var(--font-text-size);
+        font-weight: var(--font-text-weight);
+        font-style: var(--font-text-style);
+        text-decoration: var(--font-text-decoration);
     }
-};
+}

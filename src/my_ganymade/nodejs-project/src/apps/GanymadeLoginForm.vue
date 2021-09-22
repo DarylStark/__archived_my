@@ -2,6 +2,7 @@
   <div id="app_loginform">
     <Input value="username"></Input>
     <Input value="password"></Input>
+    <p>Random text</p>
   </div>
 </template>
 
