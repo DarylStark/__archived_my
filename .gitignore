@@ -24,4 +24,5 @@ src/my_ganymade/nodejs-project/dist
 src/my_ganymade/nodejs-project/public/css
 src/my_ganymade/static/js/*.js
 src/my_ganymade/static/js/*.js.map
+src/my_ganymade/static/css/*.css
 #------------------------------------------------------------------------------

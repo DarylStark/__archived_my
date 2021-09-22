@@ -52,6 +52,14 @@
             "jinja": false,
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.environment/development.env"
-        }
+        },
+        {
+            "name": "Debug - Tools - Install - Copy compiled NdeJS files",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/tools/copy-compiled-nodejs-files.py",
+            "console": "integratedTerminal"
+        },
     ]
 }

@@ -92,11 +92,24 @@
             "problemMatcher": []
         },
         {
-            "label": "My Ganymade - Compile - Full NodeJS source",
+            "label": "My Ganymade - Install - Copy the compiled NodeJS files to My Ganymade",
+            "type": "shell",
+            "command": "${workspaceFolder}/env/bin/python",
+            "args": [
+                "tools/copy-compiled-nodejs-files.py"
+            ],
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "My Ganymade - Compile - Full NodeJS source and copy to Ganymade",
             "dependsOrder": "sequence",
             "dependsOn": [
                 "My Ganymade - Compile - VueJS project",
-                "My Ganymade - Compile - SCSS files"
+                "My Ganymade - Compile - SCSS files",
+                "My Ganymade - Install - Copy the compiled NodeJS files to My Ganymade"
             ],
             "group": "build",
             "problemMatcher": []
