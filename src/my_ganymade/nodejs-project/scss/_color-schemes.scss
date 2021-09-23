@@ -3,38 +3,38 @@ $themes: (
     'theme-dark': (
         'colors': (
             'default': (
-                'background': #0d1117,
-                'text': #8b949e
+                'background': #14152d,
+                'text': #8f9bb3
             ),
             'card': (
-                'background': #161b22,
-                'text': #8b949e
+                'background': #222b45,
+                'text': #8f9bb3
             ),
             'card-title': (
-                'background': #21262d,
-                'text':#8b949e
+                'background': #222b45,
+                'text':#ffffff
             )
         ),
         'borders': (
             'card': (
-                'color': #30363d,
+                'color': #161d38,
                 'width': 1px,
                 'style': solid,
                 'radius': 0px
             )
         ),
         'fonts': (
-            'card-title': (
-                'family': 'Roboto',
-                'size': 14px,
-                'weight': 800,
+            'text': (
+                'family': 'Open Sans',
+                'size': 15px,
+                'weight': 400,
                 'style': normal,
                 'decoration': none
             ),
-            'text': (
-                'family': 'Roboto',
-                'size': 14px,
-                'weight': 400,
+            'card-title': (
+                'family': 'Open Sans',
+                'size': 15px,
+                'weight': 600,
                 'style': normal,
                 'decoration': none
             )
@@ -43,37 +43,37 @@ $themes: (
     'theme-light': (
         'colors': (
             'default': (
-                'background': #ffffff,
-                'text': rgb(87, 96, 106)
+                'background': #eaeef6,
+                'text': #222b45
             ),
             'card': (
-                'background': #f6f8fa,
-                'text': rgb(87, 96, 106)
+                'background': #ffffff,
+                'text': #222b45
             ),
             'card-title': (
-                'background': #24292f,
-                'text':rgb(240, 246, 252)
+                'background': #ffffff,
+                'text': #222b45
             )
         ),
         'borders': (
             'card': (
-                'color': #d0d7de,
+                'color': #eef1f0,
                 'width': 1px,
                 'style': solid
             )
         ),
         'fonts': (
-            'card-title': (
-                'family': 'Roboto',
-                'size': 14px,
-                'weight': 800,
+            'text': (
+                'family': 'Open Sans',
+                'size': 15px,
+                'weight': 400,
                 'style': normal,
                 'decoration': none
             ),
-            'text': (
-                'family': 'Roboto',
-                'size': 14px,
-                'weight': 400,
+            'card-title': (
+                'family': 'Open Sans',
+                'size': 15px,
+                'weight': 600,
                 'style': normal,
                 'decoration': none
             )
