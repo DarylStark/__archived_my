@@ -6,19 +6,32 @@ div.card {
     border-style: var(--border-card-style);
     border-radius: var(--border-card-radius);
 
-    div.title {
+    > div.title {
         background-color: var(--color-card-title-background);
-        color: var(--color-card-title-text);
-
-        font-family: var(--font-card-title-family);
-        font-size: var(--font-card-title-size);
-        font-weight: var(--font-card-title-weight);
-        font-style: var(--font-card-title-style);
         border-bottom: var(--border-card-width) var(--border-card-style) var(--border-card-color);
-        padding: 8px;
+        display: flex;
+
+        > div {
+            padding: 16px;
+        }
+
+        > .text {
+            color: var(--color-card-title-text);
+            flex-grow: 2;
+            font-family: var(--font-card-title-family);
+            font-size: var(--font-card-title-size);
+            font-weight: var(--font-card-title-weight);
+            font-style: var(--font-card-title-style);
+        }
+
+        > .actions {
+            flex-grow: 0;
+            text-align: center;
+            color: var(--color-card-title-text);
+        }
     }
 
     div.content {
-        padding: 8px;
+        padding: 16px;
     }
 }

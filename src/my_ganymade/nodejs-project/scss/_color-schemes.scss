@@ -12,7 +12,7 @@ $themes: (
             ),
             'card-title': (
                 'background': #222b45,
-                'text':#ffffff
+                'text': #ffffff
             )
         ),
         'borders': (
@@ -112,4 +112,4 @@ $themes: (
             --font-#{$name}-decoration: #{map-get($font_options, 'decoration')};
         }
     }
-};
+} ;

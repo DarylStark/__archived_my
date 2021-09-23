@@ -1,6 +1,11 @@
 <template>
   <div class="card">
-    <CardTitle v-if="title">{{ title }}</CardTitle>
+    <CardTitle>
+      <slot name="title"></slot>
+      <template #actions v-if="!!this.$slots['title_actions']">
+        <slot name="title_actions"></slot>
+      </template>
+    </CardTitle>
     <div class="content">
       <slot></slot>
     </div>
@@ -12,9 +17,6 @@ import CardTitle from './CardTitle.vue';
 
 export default {
   name: 'Card',
-  props: {
-    title: String,
-  },
   components: {
     CardTitle,
   },
