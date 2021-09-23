@@ -1,5 +1,5 @@
 <template>
-  <div id="app_loginform">
+  <Flexbox centerv centerh id="app_loginform">
     <Card>
       <template #title>Login</template>
       <template #title_actions>
@@ -8,17 +8,19 @@
         </CardTitleAction>
       </template>
     </Card>
-  </div>
+  </Flexbox>
 </template>
 
 <script>
 import UI from '../mgm/ui';
+import Flexbox from '../layout/Flexbox';
 import Card from '../layout/Card.vue';
 import CardTitleAction from '../layout/CardTitleAction.vue';
 
 export default {
   name: 'GanymadeLogin',
   components: {
+    Flexbox,
     Card,
     CardTitleAction,
   },

@@ -10,8 +10,14 @@
 @import "font-awesome/regular.scss";
 @import "font-awesome/brands.scss";
 
-// The body class
+// The html element
+html {
+    height: 100%;
+}
+
+// The body element
 body {
+    height: 100%;
     background-color: var(--color-default-background);
     color: var(--color-default-text);
     font-family: var(--font-text-family);
@@ -19,6 +25,13 @@ body {
     font-weight: var(--font-text-weight);
     font-style: var(--font-text-style);
     text-decoration: var(--font-text-decoration);
+    margin: 0px;
+    padding: 0px;
+
+    > div {
+        height: 100%;
+        min-height: 100%;
+    }
 }
 
 // Generic styles
@@ -26,5 +39,9 @@ body {
     transform: rotate(180deg);
 }
 
+// Import apps
+@import 'apps/loginform';
+
 // Import layout elements
-@import 'layout/card';
+@import 'layout/_card';
+@import 'layout/_flexbox';
