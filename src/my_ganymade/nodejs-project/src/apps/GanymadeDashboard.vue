@@ -5,12 +5,9 @@
 </template>
 
 <script>
-import UI from "../mgm/ui";
+import UI from '../mgm/ui';
 
 export default {
-  name: "GanymadeDashboard",
-  created: function () {
-    UI.set_theme();
-  },
+  name: 'GanymadeDashboard',
 };
 </script>

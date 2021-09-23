@@ -10,6 +10,7 @@
 @import "font-awesome/regular.scss";
 @import "font-awesome/brands.scss";
 
+// The body class
 body {
     background-color: var(--color-default-background);
     color: var(--color-default-text);
@@ -18,6 +19,11 @@ body {
     font-weight: var(--font-text-weight);
     font-style: var(--font-text-style);
     text-decoration: var(--font-text-decoration);
+}
+
+// Generic styles
+.rotate-180 {
+    transform: rotate(180deg);
 }
 
 // Import layout elements
