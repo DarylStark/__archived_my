@@ -1,0 +1,30 @@
+div.input {
+    margin-bottom: 16px;
+
+    >label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: inline-block;
+    }
+
+    >input {
+        font-family: var(--font-text-family);
+        font-size: var(--font-text-size);
+        font-weight: var(--font-text-weight);
+        font-style: var(--font-text-style);
+        text-decoration: var(--font-text-decoration);
+        background-color: var(--color-input-background);
+        color: var(--color-input-text);
+        border-color: var(--border-input-color);
+        border-width: var(--border-input-width);
+        border-style: var(--border-input-style);
+        border-radius: var(--border-input-radius);
+        padding: 8px;
+        width: 100%;
+        box-sizing: border-box;
+
+        &:focus {
+            outline: none;
+        }
+    }
+}

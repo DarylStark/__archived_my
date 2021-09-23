@@ -7,6 +7,8 @@
           <i class="fas fa-adjust"></i>
         </CardTitleAction>
       </template>
+      <Input id="username" ref="username">Username</Input>
+      <Input id="password" password ref="password">Password</Input>
     </Card>
   </Flexbox>
 </template>
@@ -16,6 +18,7 @@ import UI from '../mgm/ui';
 import Flexbox from '../layout/Flexbox';
 import Card from '../layout/Card.vue';
 import CardTitleAction from '../layout/CardTitleAction.vue';
+import Input from '../components/Input.vue';
 
 export default {
   name: 'GanymadeLogin',
@@ -23,6 +26,10 @@ export default {
     Flexbox,
     Card,
     CardTitleAction,
+    Input,
+  },
+  mounted() {
+    this.$refs.username.focus();
   },
   data: () => {
     return {
@@ -30,7 +37,7 @@ export default {
     };
   },
   methods: {
-    next_theme: function () {
+    next_theme() {
       // Set the next theme
       UI.next_theme();
 

@@ -34,14 +34,12 @@ body {
     }
 }
 
-// Generic styles
-.rotate-180 {
-    transform: rotate(180deg);
-}
-
 // Import apps
 @import 'apps/loginform';
 
 // Import layout elements
 @import 'layout/_card';
 @import 'layout/_flexbox';
+
+// Import components
+@import 'components/input';

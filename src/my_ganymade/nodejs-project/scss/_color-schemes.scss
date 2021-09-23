@@ -18,10 +18,20 @@ $themes: (
                 'background': #222b45,
                 'hover-background': #384058,
                 'text': #ffffff
+            ),
+            'input': (
+                'background': #222b45,
+                'text': #ffffff
             )
         ),
         'borders': (
             'card': (
+                'color': #161d38,
+                'width': 1px,
+                'style': solid,
+                'radius': 0px
+            ),
+            'input': (
                 'color': #161d38,
                 'width': 1px,
                 'style': solid,
@@ -63,10 +73,19 @@ $themes: (
                 'background': #ffffff,
                 'hover-background': #e6e6e6,
                 'text': #222b45
-            )
+            ),
+            'input': (
+                'background': #ffffff,
+                'text': #222b45
+            ),
         ),
         'borders': (
             'card': (
+                'color': #eef1f0,
+                'width': 1px,
+                'style': solid
+            ),
+            'input': (
                 'color': #eef1f0,
                 'width': 1px,
                 'style': solid
