@@ -4,6 +4,12 @@
 // Import the color schemes
 @import 'color-schemes';
 
+// Import Font Awesome for the icons
+@import 'font-awesome/fontawesome.scss';
+@import "font-awesome/solid.scss";
+@import "font-awesome/regular.scss";
+@import "font-awesome/brands.scss";
+
 body {
     background-color: var(--color-default-background);
     color: var(--color-default-text);
