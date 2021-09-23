@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-    <div v-if="title" class="title">{{ title }}</div>
+    <CardTitle v-if="title">{{ title }}</CardTitle>
     <div class="content">
       <slot></slot>
     </div>
@@ -8,10 +8,15 @@
 </template>
 
 <script>
+import CardTitle from './CardTitle.vue';
+
 export default {
-  name: "Card",
+  name: 'Card',
   props: {
     title: String,
+  },
+  components: {
+    CardTitle,
   },
 };
 </script>
