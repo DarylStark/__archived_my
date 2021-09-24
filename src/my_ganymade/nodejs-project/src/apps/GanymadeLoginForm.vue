@@ -1,33 +1,35 @@
 <template>
   <Flexbox centerv centerh id="app_loginform">
-    <Card title_icon="fas fa-user-circle">
-      <template #title>Login</template>
-      <template #title_actions>
-        <CardTitleAction v-on:click="next_theme">
-          <i class="fas fa-adjust"></i>
-        </CardTitleAction>
-      </template>
-      <Input
-        id="username"
-        ref="username"
-        icon="fas fa-user"
-        placeholder="Username"
-      >
-        Username
-      </Input>
-      <Input
-        id="password"
-        password
-        ref="password"
-        icon="fas fa-key"
-        placeholder="Password"
-      >
-        Password
-      </Input>
-      <template #actions>
-        <Button icon="fas fa-sign-in-alt">Login</Button>
-      </template>
-    </Card>
+    <form>
+      <Card title_icon="fas fa-user-circle">
+        <template #title>Login</template>
+        <template #title_actions>
+          <CardTitleAction v-on:click="next_theme">
+            <i class="fas fa-adjust"></i>
+          </CardTitleAction>
+        </template>
+        <Input
+          id="username"
+          ref="username"
+          icon="fas fa-user"
+          placeholder="Username"
+        >
+          Username
+        </Input>
+        <Input
+          id="password"
+          password
+          ref="password"
+          icon="fas fa-key"
+          placeholder="Password"
+        >
+          Password
+        </Input>
+        <template #actions>
+          <Button icon="fas fa-sign-in-alt">Login</Button>
+        </template>
+      </Card>
+    </form>
   </Flexbox>
 </template>
 

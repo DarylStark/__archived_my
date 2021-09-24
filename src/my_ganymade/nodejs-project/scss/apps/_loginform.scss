@@ -1,6 +1,10 @@
 div#app_loginform {
-    div.card {
+    form {
         width: 600px;
         max-width: 90%;
+    }
+    
+    div.card {
+        width: 100%;
     }
 }
