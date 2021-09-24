@@ -1,6 +1,6 @@
 <template>
   <Flexbox centerv centerh id="app_loginform">
-    <form>
+    <form v-on:submit="submit_form">
       <Card title_icon="fas fa-user-circle">
         <template #title>Login</template>
         <template #title_actions>
@@ -13,6 +13,7 @@
           ref="username"
           icon="fas fa-user"
           placeholder="Username"
+          v-model="username"
         >
           Username
         </Input>
@@ -22,6 +23,7 @@
           ref="password"
           icon="fas fa-key"
           placeholder="Password"
+          v-model="password"
         >
           Password
         </Input>
@@ -56,6 +58,8 @@ export default {
   data: () => {
     return {
       theme_index: UI.get_current_theme_index(),
+      username: '',
+      password: '',
     };
   },
   methods: {
@@ -65,6 +69,14 @@ export default {
 
       // Update the index
       this.theme_index = UI.get_current_theme_index();
+    },
+    submit_form(event) {
+      // Prevent the default handler
+      event.preventDefault();
+
+      // Send the command to login
+      console.log(this.username);
+      console.log(this.password);
     },
   },
 };

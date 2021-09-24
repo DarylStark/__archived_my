@@ -12,7 +12,9 @@
         v-bind:id="id"
         v-bind:name="name"
         v-bind:placeholder="placeholder"
+        v-bind:value="value"
         ref="input"
+        v-on:input="update_value"
       />
     </div>
   </div>
@@ -30,10 +32,19 @@ export default {
     password: Boolean,
     icon: String,
     placeholder: String,
+    modelValue: String,
   },
+  emits: ['update:modelValue'],
   methods: {
     focus() {
       this.$refs.input.focus();
+    },
+    update_value(event) {
+      // Update the local data
+      this.value = event.target.value;
+
+      // Send a event so the parent knows the value is changed
+      this.$emit('update:modelValue', event.target.value);
     },
   },
 };
