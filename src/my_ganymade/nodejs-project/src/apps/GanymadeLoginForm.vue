@@ -26,7 +26,7 @@
           Password
         </Input>
         <template #actions>
-          <Button icon="fas fa-sign-in-alt">Login</Button>
+          <Button icon="fas fa-sign-in-alt" type="submit">Login</Button>
         </template>
       </Card>
     </form>

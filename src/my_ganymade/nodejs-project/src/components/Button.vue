@@ -1,5 +1,5 @@
 <template>
-  <button class="button">
+  <button class="button" v-bind:type="type">
     <div>
       <div class="icon" v-if="icon">
         <i v-bind:class="icon"></i>
@@ -16,6 +16,10 @@ export default {
   name: 'Button',
   props: {
     icon: String,
+    type: {
+      type: String,
+      default: 'button',
+    },
   },
 };
 </script>
