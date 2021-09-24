@@ -12,7 +12,7 @@ div.card {
         display: flex;
 
         > .text {
-            padding: 16px;
+            padding: 16px 24px 16px 24px;
             color: var(--color-card-title-text);
             flex-grow: 2;
             font-family: var(--font-card-title-family);
@@ -40,11 +40,18 @@ div.card {
         }
     }
 
-    div.content {
-        padding: 16px;
+    > div.content {
+        padding: 16px 24px 16px 24px;
 
         p {
             margin-top: 0px;
         }
+    }
+
+    > div.actions {
+        background-color: var(--color-card-background);
+        border-top: var(--border-card-width) var(--border-card-style) var(--border-card-color);
+        padding: 16px;
+        text-align: right;
     }
 }

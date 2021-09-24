@@ -2,19 +2,22 @@ div.input {
     margin-bottom: 16px;
 
     >label {
-        font-weight: 600;
+        color: var(--color-input-label-text);
+        font-weight: 700;
+        font-size: 12px;
         margin-bottom: 8px;
         display: inline-block;
     }
 
     div.field {
         display: flex;
-
+        font-size: 15px;
         border-color: var(--border-input-color);
-            border-width: var(--border-input-width);
-            border-style: var(--border-input-style);
-            border-radius: var(--border-input-radius);
-            background-color: var(--color-input-background);
+        border-width: var(--border-input-width);
+        border-style: var(--border-input-style);
+        border-radius: var(--border-input-radius);
+        background-color: var(--color-input-background);
+        border-radius: 4px;
 
         >.icon {
             flex-grow: 0;
@@ -23,7 +26,7 @@ div.input {
 
         >input {
             font-family: var(--font-text-family);
-            font-size: var(--font-text-size);
+            font-size: 15px;
             font-weight: var(--font-text-weight);
             font-style: var(--font-text-style);
             text-decoration: var(--font-text-decoration);
@@ -33,9 +36,18 @@ div.input {
             flex-grow: 1;
             background-color: transparent;
 
+            &::placeholder {
+                color: var(--color-input-placeholder-text);
+                opacity: 1;
+            }
+
             &:focus {
                 outline: none;
             }
+        }
+
+        &:hover {
+            background-color: var(--color-input-hover-background);
         }
     }
 }

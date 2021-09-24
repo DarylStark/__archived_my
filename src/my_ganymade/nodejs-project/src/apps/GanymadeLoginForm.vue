@@ -7,10 +7,26 @@
           <i class="fas fa-adjust"></i>
         </CardTitleAction>
       </template>
-      <Input id="username" ref="username" icon="fas fa-user">Username</Input>
-      <Input id="password" password ref="password" icon="fas fa-key">
+      <Input
+        id="username"
+        ref="username"
+        icon="fas fa-user"
+        placeholder="Username"
+      >
+        Username
+      </Input>
+      <Input
+        id="password"
+        password
+        ref="password"
+        icon="fas fa-key"
+        placeholder="Password"
+      >
         Password
       </Input>
+      <template #actions>
+        <Button>Login</Button>
+      </template>
     </Card>
   </Flexbox>
 </template>
@@ -21,6 +37,7 @@ import Flexbox from '../layout/Flexbox';
 import Card from '../layout/Card.vue';
 import CardTitleAction from '../layout/CardTitleAction.vue';
 import Input from '../components/Input.vue';
+import Button from '../components/Button.vue';
 
 export default {
   name: 'GanymadeLogin',
@@ -29,6 +46,7 @@ export default {
     Card,
     CardTitleAction,
     Input,
+    Button,
   },
   mounted() {
     this.$refs.username.focus();

@@ -6,8 +6,11 @@
         <slot name="title_actions"></slot>
       </template>
     </CardTitle>
-    <div class="content">
+    <div class="content" v-if="!!this.$slots['default']">
       <slot></slot>
+    </div>
+    <div class="actions">
+      <slot name="actions"></slot>
     </div>
   </div>
 </template>

@@ -11,6 +11,7 @@
         v-bind:type="password ? 'password' : 'text'"
         v-bind:id="id"
         v-bind:name="name"
+        v-bind:placeholder="placeholder"
         ref="input"
       />
     </div>
@@ -28,6 +29,7 @@ export default {
     name: String,
     password: Boolean,
     icon: String,
+    placeholder: String,
   },
   methods: {
     focus() {
