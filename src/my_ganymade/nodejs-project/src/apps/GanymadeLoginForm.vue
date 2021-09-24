@@ -8,9 +8,9 @@
         </CardTitleAction>
       </template>
       <Input id="username" ref="username" icon="fas fa-user">Username</Input>
-      <Input id="password" password ref="password" icon="fas fa-key"
-        >Password</Input
-      >
+      <Input id="password" password ref="password" icon="fas fa-key">
+        Password
+      </Input>
     </Card>
   </Flexbox>
 </template>
