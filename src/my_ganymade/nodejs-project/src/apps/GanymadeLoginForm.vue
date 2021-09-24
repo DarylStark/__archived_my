@@ -1,6 +1,6 @@
 <template>
   <Flexbox centerv centerh id="app_loginform">
-    <Card>
+    <Card title_icon="fas fa-adjust">
       <template #title>Login</template>
       <template #title_actions>
         <CardTitleAction v-on:click="next_theme">

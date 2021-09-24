@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-    <CardTitle>
+    <CardTitle v-bind:icon="title_icon">
       <slot name="title"></slot>
       <template #actions v-if="!!this.$slots['title_actions']">
         <slot name="title_actions"></slot>
@@ -22,6 +22,9 @@ export default {
   name: 'Card',
   components: {
     CardTitle,
+  },
+  props: {
+    title_icon: String,
   },
 };
 </script>

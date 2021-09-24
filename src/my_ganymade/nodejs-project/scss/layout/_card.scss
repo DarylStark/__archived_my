@@ -11,6 +11,11 @@ div.card {
         border-bottom: var(--border-card-width) var(--border-card-style) var(--border-card-color);
         display: flex;
 
+        > .icon {
+            padding: 16px 0px 16px 24px;
+            color: var(--color-card-title-text);
+        }
+
         > .text {
             padding: 16px 24px 16px 24px;
             color: var(--color-card-title-text);
