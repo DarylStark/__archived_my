@@ -25,12 +25,7 @@
         Password
       </Input>
       <template #actions>
-        <Button>
-          <template #icon>
-            <i class="fas fa-sign-in-alt"></i>
-          </template>
-          Login
-        </Button>
+        <Button icon="fas fa-sign-in-alt">Login</Button>
       </template>
     </Card>
   </Flexbox>

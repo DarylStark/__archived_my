@@ -1,8 +1,8 @@
 <template>
   <button class="button">
     <div>
-      <div class="icon" v-if="!!this.$slots['icon']">
-        <slot name="icon"></slot>
+      <div class="icon" v-if="icon">
+        <i v-bind:class="icon"></i>
       </div>
       <div class="text" v-if="!!this.$slots['default']">
         <slot></slot>
@@ -14,5 +14,8 @@
 <script>
 export default {
   name: 'Button',
+  props: {
+    icon: String,
+  },
 };
 </script>
