@@ -1,6 +1,6 @@
 <template>
   <Flexbox centerv centerh id="app_loginform">
-    <Card title_icon="fas fa-adjust">
+    <Card title_icon="fas fa-user-circle">
       <template #title>Login</template>
       <template #title_actions>
         <CardTitleAction v-on:click="next_theme">
@@ -25,7 +25,12 @@
         Password
       </Input>
       <template #actions>
-        <Button>Login</Button>
+        <Button>
+          <template #icon>
+            <i class="fas fa-sign-in-alt"></i>
+          </template>
+          Login
+        </Button>
       </template>
     </Card>
   </Flexbox>
