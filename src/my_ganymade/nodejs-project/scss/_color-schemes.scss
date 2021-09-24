@@ -21,15 +21,17 @@ $themes: (
             ),
             'input': (
                 'background': #192038,
-                'hover-background': #14152d,
+                'hover-background': #192038,
                 'active-background': #14152d,
                 'text': #ffffff,
                 'label-text': #8f9bb3,
-                'placeholder-text': #8e9cb2
+                'placeholder-text': #8e9cb2,
+                'active-border': #36f
             ),
             'button': (
                 'background': #36f,
                 'hover-background': #598bff,
+                'focus-background': #598bff,
                 'text': #ffffff
             )
         ),
@@ -85,14 +87,17 @@ $themes: (
             ),
             'input': (
                 'background': #f7f9fc,
-                'hover-background': #edf1f7,
+                'hover-background': #f7f9fc,
+                'active-background': #edf1f7,
                 'text': #06080e,
                 'label-text': #8f9bb3,
-                'placeholder-text': #8e9cb2
+                'placeholder-text': #8e9cb2,
+                'active-border': #36f
             ),
             'button': (
                 'background': #36f,
                 'hover-background': #598bff,
+                'focus-background': #598bff,
                 'text': #ffffff
             )
         ),

@@ -8,6 +8,12 @@ button.button {
     border-radius: 4px;
 
     &:hover {
+        outline: none;
         background-color: var(--color-button-hover-background);
+    }
+
+    &:focus {
+        outline: none;
+        background-color: var(--color-button-focus-background);
     }
 }
