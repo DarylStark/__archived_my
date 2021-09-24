@@ -3,12 +3,17 @@
     <label v-if="!!this.$slots['default']" v-bind:for="id">
       <slot></slot>
     </label>
-    <input
-      v-bind:type="password ? 'password' : 'text'"
-      v-bind:id="id"
-      v-bind:name="name"
-      ref="input"
-    />
+    <div class="field">
+      <div class="icon" v-if="icon">
+        <i v-bind:class="icon"></i>
+      </div>
+      <input
+        v-bind:type="password ? 'password' : 'text'"
+        v-bind:id="id"
+        v-bind:name="name"
+        ref="input"
+      />
+    </div>
   </div>
 </template>
 
@@ -22,6 +27,7 @@ export default {
     },
     name: String,
     password: Boolean,
+    icon: String,
   },
   methods: {
     focus() {

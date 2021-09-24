@@ -7,8 +7,10 @@
           <i class="fas fa-adjust"></i>
         </CardTitleAction>
       </template>
-      <Input id="username" ref="username">Username</Input>
-      <Input id="password" password ref="password">Password</Input>
+      <Input id="username" ref="username" icon="fas fa-user">Username</Input>
+      <Input id="password" password ref="password" icon="fas fa-key"
+        >Password</Input
+      >
     </Card>
   </Flexbox>
 </template>
