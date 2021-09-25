@@ -38,6 +38,9 @@ $themes: (
                 'disabled-background': rgba(143, 155, 179, .24),
                 'disabled-text': rgba(143, 155, 179, .48),
                 'text': #ffffff
+            ),
+            'loading': (
+                'half': #00ff00,
             )
         ),
         'borders': (
@@ -109,6 +112,9 @@ $themes: (
                 'disabled-background': rgba(143, 155, 179, .24),
                 'disabled-text': rgba(143, 155, 179, .48),
                 'text': #ffffff,
+            ),
+            'loading': (
+                'half': lime
             )
         ),
         'borders': (

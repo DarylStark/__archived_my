@@ -48,6 +48,10 @@ body {
     to {
         transform:rotate(360deg);
     }
+
+    50% {
+        color: var(--color-loading-half);
+    }
 }
 
 // Import apps
