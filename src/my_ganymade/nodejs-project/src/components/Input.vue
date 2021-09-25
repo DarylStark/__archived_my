@@ -12,7 +12,7 @@
         v-bind:id="id"
         v-bind:name="name"
         v-bind:placeholder="placeholder"
-        v-bind:value="value"
+        v-bind:value="modelValue"
         ref="input"
         v-on:input="update_value"
         v-bind:disabled="disabled"
