@@ -27,7 +27,9 @@ $themes: (
                 'label-text': #8f9bb3,
                 'placeholder-text': #8e9cb2,
                 'active-border': #36f,
-                'border-error': #ff3d71
+                'border-error': #ff3d71,
+                'disabled-text': rgba(143,155,179,.48),
+                'disabled-border': #101426
             ),
             'button': (
                 'background': #36f,
@@ -96,7 +98,9 @@ $themes: (
                 'label-text': #8f9bb3,
                 'placeholder-text': #8e9cb2,
                 'active-border': #36f,
-                'border-error': #ff3d71
+                'border-error': #ff3d71,
+                'disabled-text': rgba(143,155,179,.48),
+                'disabled-border': #e4e9f2
             ),
             'button': (
                 'background': #36f,

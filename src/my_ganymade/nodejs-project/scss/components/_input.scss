@@ -25,6 +25,15 @@ div.input {
             padding: 8px;
         }
 
+        &.disabled {
+            color: var(--color-input-disabled-text);
+            border-color: var(--color-input-disabled-border);
+
+            >input, >input::placeholder {
+                color: var(--color-input-disabled-text);
+            }
+        }
+
         >input {
             font-family: var(--font-text-family);
             font-size: 15px;

@@ -3,7 +3,9 @@
     <label v-if="!!this.$slots['default']" v-bind:for="id">
       <slot></slot>
     </label>
-    <div v-bind:class="['field', { error: is_error }]">
+    <div
+      v-bind:class="['field', { error: is_error }, { disabled: !is_enabled }]"
+    >
       <div class="icon" v-if="icon">
         <i v-bind:class="icon"></i>
       </div>
