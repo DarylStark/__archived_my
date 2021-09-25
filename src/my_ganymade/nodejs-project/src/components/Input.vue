@@ -3,9 +3,7 @@
     <label v-if="!!this.$slots['default']" v-bind:for="id">
       <slot></slot>
     </label>
-    <div
-      v-bind:class="['field', { error: is_error }, { disabled: !is_enabled }]"
-    >
+    <div v-bind:class="['field', { error: error }, { disabled: disabled }]">
       <div class="icon" v-if="icon">
         <i v-bind:class="icon"></i>
       </div>
@@ -17,7 +15,7 @@
         v-bind:value="value"
         ref="input"
         v-on:input="update_value"
-        v-bind:disabled="!is_enabled"
+        v-bind:disabled="disabled"
       />
     </div>
   </div>
@@ -40,23 +38,12 @@ export default {
       type: Boolean,
       default: false,
     },
-    enabled: {
+    disabled: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
-  data: function () {
-    return {
-      is_error: false,
-      is_enabled: true,
-    };
-  },
   emits: ['update:modelValue'],
-  mounted() {
-    // Set the properties to data values
-    this.is_error = this.error;
-    this.is_enabled = this.enabled;
-  },
   methods: {
     focus() {
       this.$refs.input.focus();
@@ -67,12 +54,6 @@ export default {
 
       // Send a event so the parent knows the value is changed
       this.$emit('update:modelValue', event.target.value);
-    },
-    set_error(error) {
-      this.is_error = error;
-    },
-    set_enabled(enabled) {
-      this.is_enabled = enabled;
     },
   },
 };

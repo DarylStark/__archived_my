@@ -14,6 +14,7 @@
           icon="fas fa-user"
           placeholder="Username"
           v-model="username"
+          v-bind:disabled="loading"
         >
           Username
         </Input>
@@ -24,11 +25,18 @@
           icon="fas fa-key"
           placeholder="Password"
           v-model="password"
+          v-bind:disabled="loading"
         >
           Password
         </Input>
         <template #actions>
-          <Button icon="fas fa-sign-in-alt" type="submit" ref="submit">
+          <Button
+            icon="fas fa-sign-in-alt"
+            type="submit"
+            ref="submit"
+            v-bind:loading="loading"
+            v-bind:disabled="loading"
+          >
             Login
           </Button>
         </template>
@@ -62,6 +70,7 @@ export default {
       theme_index: UI.get_current_theme_index(),
       username: '',
       password: '',
+      loading: false,
     };
   },
   methods: {
@@ -76,9 +85,8 @@ export default {
       // Prevent the default handler
       event.preventDefault();
 
-      this.$refs.submit.set_enabled(false);
-      this.$refs.username.set_enabled(false);
-      this.$refs.password.set_enabled(false);
+      // Set state to loading
+      this.loading = true;
 
       // Send the command to login
       console.log(this.username);

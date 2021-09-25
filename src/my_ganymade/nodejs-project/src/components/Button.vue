@@ -1,8 +1,9 @@
 <template>
-  <button class="button" v-bind:type="type" v-bind:disabled="!is_enabled">
+  <button class="button" v-bind:type="type" v-bind:disabled="disabled">
     <div>
       <div class="icon" v-if="icon">
-        <i v-bind:class="icon"></i>
+        <i v-bind:class="icon" v-if="!loading"></i>
+        <i class="fas fa-spinner spin" v-if="loading"></i>
       </div>
       <div class="text" v-if="!!this.$slots['default']">
         <slot></slot>
@@ -20,23 +21,13 @@ export default {
       type: String,
       default: 'button',
     },
-    enabled: {
+    disabled: {
       type: Boolean,
-      default: true,
+      default: false,
     },
-  },
-  data: function () {
-    return {
-      is_enabled: true,
-    };
-  },
-  mounted() {
-    // Set the properties to data values
-    this.is_enabled = this.enabled;
-  },
-  methods: {
-    set_enabled(enabled) {
-      this.is_enabled = enabled;
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
 };
