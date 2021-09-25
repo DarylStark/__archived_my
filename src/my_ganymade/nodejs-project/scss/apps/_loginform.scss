@@ -6,5 +6,27 @@ div#app_loginform {
     
     div.card {
         width: 100%;
+        overflow: hidden;
+
+        div.pages {
+            display: flex;
+            width: 200%;
+            transition-property: margin-left;
+            transition-duration: 250ms;
+            transition-timing-function: ease-in-out;
+            margin-left: 0%;
+
+            > div {
+                width: 100%;
+                padding: 16px 24px 16px 24px;
+            }
+
+            &.show_second_factor {
+                transition-property: margin-left;
+                transition-duration: 250ms;
+                transition-timing-function: ease-in-out;
+                margin-left: -100%;
+            }
+        }
     }
 }

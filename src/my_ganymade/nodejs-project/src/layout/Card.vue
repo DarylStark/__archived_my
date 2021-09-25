@@ -6,7 +6,10 @@
         <slot name="title_actions"></slot>
       </template>
     </CardTitle>
-    <div class="content" v-if="!!this.$slots['default']">
+    <div
+      v-if="!!this.$slots['default']"
+      v-bind:class="[content_class ? content_class : 'content']"
+    >
       <slot></slot>
     </div>
     <div class="actions">
@@ -25,6 +28,7 @@ export default {
   },
   props: {
     title_icon: String,
+    content_class: String,
   },
 };
 </script>
