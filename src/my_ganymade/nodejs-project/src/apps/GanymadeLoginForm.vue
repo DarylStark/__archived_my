@@ -74,6 +74,9 @@ export default {
       // Prevent the default handler
       event.preventDefault();
 
+      this.$refs.username.set_error(true);
+      this.$refs.password.set_error(true);
+
       // Send the command to login
       console.log(this.username);
       console.log(this.password);
