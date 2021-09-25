@@ -78,7 +78,9 @@
                 "cwd": "${workspaceFolder}/src/my_ganymade/nodejs-project"
             },
             "group": "test",
-            "problemMatcher": []
+            "problemMatcher": [
+                "$node-sass"
+            ]
         },
         {
             "label": "My Ganymade - Compile - SCSS files",
