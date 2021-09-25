@@ -29,4 +29,10 @@ button.button {
         outline: none;
         background-color: var(--color-button-focus-background);
     }
+
+    &:disabled {
+        background-color: var(--color-button-disabled-background);
+        color: var(--color-button-disabled-text);
+        cursor: auto;
+    }
 }

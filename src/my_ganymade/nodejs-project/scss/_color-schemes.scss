@@ -26,12 +26,15 @@ $themes: (
                 'text': #ffffff,
                 'label-text': #8f9bb3,
                 'placeholder-text': #8e9cb2,
-                'active-border': #36f
+                'active-border': #36f,
+                'border-error': #ff3d71
             ),
             'button': (
                 'background': #36f,
                 'hover-background': #598bff,
                 'focus-background': #598bff,
+                'disabled-background': rgba(143, 155, 179, .24),
+                'disabled-text': rgba(143, 155, 179, .48),
                 'text': #ffffff
             )
         ),
@@ -89,16 +92,19 @@ $themes: (
                 'background': #f7f9fc,
                 'hover-background': #f7f9fc,
                 'active-background': #edf1f7,
-                'text': #06080e,
+                'text': #222b45,
                 'label-text': #8f9bb3,
                 'placeholder-text': #8e9cb2,
-                'active-border': #36f
+                'active-border': #36f,
+                'border-error': #ff3d71
             ),
             'button': (
                 'background': #36f,
                 'hover-background': #598bff,
                 'focus-background': #598bff,
-                'text': #ffffff
+                'disabled-background': rgba(143, 155, 179, .24),
+                'disabled-text': rgba(143, 155, 179, .48),
+                'text': #ffffff,
             )
         ),
         'borders': (
@@ -110,7 +116,7 @@ $themes: (
             'input': (
                 'color': #e4e9f2,
                 'width': 1px,
-                'style': solid
+                'style': solid,
             )
         ),
         'fonts': (
