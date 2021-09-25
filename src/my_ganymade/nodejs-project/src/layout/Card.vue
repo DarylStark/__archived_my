@@ -12,7 +12,7 @@
     >
       <slot></slot>
     </div>
-    <div class="actions">
+    <div class="actions" v-if="!!this.$slots['actions']">
       <slot name="actions"></slot>
     </div>
   </div>
