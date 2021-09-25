@@ -3,7 +3,7 @@
     <div>
       <div class="icon" v-if="icon">
         <i v-bind:class="icon" v-if="!loading"></i>
-        <i class="fas fa-spinner spin" v-if="loading"></i>
+        <i class="fas fa-circle-notch spin" v-if="loading"></i>
       </div>
       <div class="text" v-if="!!this.$slots['default']">
         <slot></slot>
