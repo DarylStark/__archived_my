@@ -15,6 +15,7 @@
         v-bind:value="value"
         ref="input"
         v-on:input="update_value"
+        v-bind:disabled="!is_enabled"
       />
     </div>
   </div>
@@ -37,16 +38,22 @@ export default {
       type: Boolean,
       default: false,
     },
+    enabled: {
+      type: Boolean,
+      default: true,
+    },
   },
   data: function () {
     return {
       is_error: false,
+      is_enabled: true,
     };
   },
   emits: ['update:modelValue'],
   mounted() {
-    // Set the error value
+    // Set the properties to data values
     this.is_error = this.error;
+    this.is_enabled = this.enabled;
   },
   methods: {
     focus() {
@@ -61,6 +68,9 @@ export default {
     },
     set_error(error) {
       this.is_error = error;
+    },
+    set_enabled(enabled) {
+      this.is_enabled = enabled;
     },
   },
 };

@@ -77,6 +77,8 @@ export default {
       this.$refs.username.set_error(true);
       this.$refs.password.set_error(true);
 
+      this.$refs.username.set_enabled(false);
+
       // Send the command to login
       console.log(this.username);
       console.log(this.password);
