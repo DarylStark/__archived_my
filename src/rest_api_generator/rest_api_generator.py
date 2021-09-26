@@ -233,7 +233,7 @@ class RESTAPIGenerator:
                                methods=self.accepted_http_methods)
         @ self.blueprint.route('/<path:path>',
                                methods=self.accepted_http_methods)
-        def execute_url(path: str) -> Optional[Union[str, Response]]:
+        def execute_url(path: str) -> Optional[Union[str, FlaskResponse]]:
             """ Method that gets run as soon as a REST API Endpoint
                 gets requested.
 
