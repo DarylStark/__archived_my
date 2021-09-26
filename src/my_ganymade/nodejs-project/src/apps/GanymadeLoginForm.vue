@@ -17,6 +17,8 @@
             placeholder="Username"
             v-model="username"
             v-bind:disabled="loading"
+            v-bind:error="invalid_username"
+            validate_re="^[A-Za-z0-9_\.\-]+$"
           >
             Username
           </Input>
@@ -28,6 +30,8 @@
             placeholder="Password"
             v-model="password"
             v-bind:disabled="loading"
+            v-bind:error="invalid_password"
+            validate_re="^.+$"
           >
             Password
           </Input>
@@ -39,8 +43,10 @@
             ref="second_factor"
             icon="fas fa-user"
             placeholder="Second factor"
-            v-model="username"
+            v-model="second_factor"
             v-bind:disabled="loading"
+            validate_re="^\d{6}$"
+            v-bind:error="invalid_second_factor"
           >
             Two factor authentication code
           </Input>
@@ -87,6 +93,10 @@ export default {
       theme_index: UI.get_current_theme_index(),
       username: '',
       password: '',
+      second_factor: '',
+      invalid_username: false,
+      invalid_password: false,
+      invalid_second_factor: false,
       loading: false,
       state: 'credentials',
     };
@@ -114,8 +124,12 @@ export default {
       // Prevent the default handler
       event.preventDefault();
 
+      this.invalid_username = !this.$refs.username.is_valid();
+      this.invalid_password = !this.$refs.password.is_valid();
+      this.invalid_second_factor = !this.$refs.second_factor.is_valid();
+
       // Set state to loading
-      this.loading = true;
+      //this.loading = true;
 
       // TODO: Validate the given data
 

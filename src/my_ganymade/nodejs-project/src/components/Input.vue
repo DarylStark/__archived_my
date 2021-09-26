@@ -42,6 +42,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    validate_re: {
+      type: String,
+    },
   },
   emits: ['update:modelValue'],
   methods: {
@@ -54,6 +57,17 @@ export default {
 
       // Send a event so the parent knows the value is changed
       this.$emit('update:modelValue', event.target.value);
+    },
+    is_valid() {
+      // Check if a regex is given
+      if (this.validate_re) {
+        // Validate the regex
+        let regex = new RegExp(this.validate_re);
+        return regex.test(this.modelValue);
+      }
+
+      // No regex given; all values are considered correct
+      return true;
     },
   },
 };
