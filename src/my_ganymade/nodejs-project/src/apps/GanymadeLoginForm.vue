@@ -75,6 +75,7 @@ import Card from '../layout/Card.vue';
 import CardTitleAction from '../layout/CardTitleAction.vue';
 import Input from '../components/Input.vue';
 import Button from '../components/Button.vue';
+import axios from 'axios';
 
 export default {
   name: 'GanymadeLogin',
@@ -129,26 +130,82 @@ export default {
       this.invalid_second_factor = !this.$refs.second_factor.is_valid();
 
       // Set state to loading
-      //this.loading = true;
+      this.loading = true;
 
-      // TODO: Validate the given data
+      // Set a new 'this' to use in the callbacks for Axios
+      let vue_this = this;
 
-      // TODO: Validate credentials with backend
+      // Validate the given data
+      let valid = false;
+      if (this.state == 'credentials') {
+        valid =
+          this.$refs.username.is_valid() && this.$refs.password.is_valid();
+      } else {
+        valid = this.$refs.second_factor.is_valid();
+      }
 
-      // TODO: If the backend tells us to retrieve the second factor,
-      //       redirect the user to the second factor. We can do this
-      //       by setting the 'state' to 'second_factor'.
-      // this.state = 'second_factor';
+      // Create a data object to send to the backend
+      let second_factor = this.second_factor === '' ? null : this.second_factor;
 
-      // TODO: If the backend tells us the credentials are corret, we
-      //       redirect the user to the correct URL.
+      let data_object = {
+        username: this.username,
+        password: this.password,
+        second_factor: second_factor,
+      };
 
-      // TODO: If the backend tells us the credentials were not corret,
-      //       we abort and set every INPUT to error.
+      // Validate credentials with backend
+      if (valid) {
+        axios
+          .post('/data/aaa/login', data_object)
+          .then((response) => {
+            // We received data back
+            let success = response.data.success;
 
-      // Send the command to login
-      console.log(this.username);
-      console.log(this.password);
+            if (!success) {
+              // The data indicated that the credentials were not
+              // correct. We need to check what went wrong
+              if (response.data.reason == 'second_factor_needed') {
+                // We didn't specify any second factor but the backend
+                // tells us we need them. Redirect user to 'second
+                // factor' page
+                vue_this.invalid_second_factor = false;
+                vue_this.second_factor = '';
+                vue_this.state = 'second_factor';
+
+                // TODO: Focus the 'second_factor' field. Harder then
+                //       you think.
+              } else {
+                // Credentials are wrong. Make sure the user is on the
+                // credentials page and set the 'invalid_' fields to
+                // true.
+                vue_this.state = 'credentials';
+                vue_this.password = '';
+                vue_this.second_factor = '';
+                vue_this.invalid_username = true;
+                vue_this.invalid_password = true;
+
+                // TODO: Focus the 'usernamae' field. Harder then you
+                //       think.
+              }
+
+              // Done, stop the loading
+              vue_this.loading = false;
+            } else {
+              // TODO: Redirect the user to the dashboardpage
+              console.log('Logged in!');
+            }
+          })
+          .catch((error) => {
+            // TODO: display error (toast?)
+            console.error('ERROR: ' + error);
+
+            // Done with the request, not loading anymore :-)
+            vue_this.loading = false;
+          });
+      } else {
+        this.loading = false;
+        this.$refs.username.focus(true);
+      }
     },
   },
 };
