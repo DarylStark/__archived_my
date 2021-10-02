@@ -176,11 +176,12 @@ export default {
       axios
         .post('/data/aaa/login', this.credentials)
         .then((response) => {
+          console.log(response.data);
           if (!response.data.success) {
-            if (response.data.reason == 'second_factor_needed') {
+            if (response.data.error_code == 1) {
               // User has to provide a second factor code
               this.set_state('second_factor');
-            } else {
+            } else if (response.data.error_code == 2) {
               // Credentials were wrong
               this.set_state('credentials');
 

@@ -4,7 +4,9 @@
 """
 
 from flask.blueprints import Blueprint
-from flask import Response, request
+from flask.globals import request
+from my_ganymade.response import Response
+from my_ganymade.data_endpoint import data_endpoint
 from json import dumps
 
 # Create the Blueprint
@@ -19,30 +21,26 @@ blueprint_data_aaa = Blueprint(
     '/login',
     methods=['POST']
 )
+@data_endpoint(allowed_users=None)
 def login() -> Response:
     """ Method to log a user in. Should receive the username and
-        password for the user. """
+        password for the user and (if applicable) the 'second factor'
+        code. Return 'success = True' when the credentials match. """
 
     # Get the given data
     data = request.json
 
     # Create a data object to return
-    return_object = {
-        'success': False,
-        'reason': 'unknown'
-    }
+    return_object = Response()
 
     if data['second_factor'] is None:
-        return_object['reason'] = 'second_factor_needed'
+        # Second factor should be given
+        return_object.error_code = 1
     else:
         if data['username'] == 'a' and data['password'] == 'b':
-            return_object['success'] = True
-            return_object['reason'] = None
+            return_object.success = True
         else:
-            return_object['reason'] = 'credentials_invalid'
+            return_object.success = False
+            return_object.error_code = 2
 
-    return Response(
-        response=dumps(return_object),
-        status=200,
-        mimetype='application/json'
-    )
+    return return_object
