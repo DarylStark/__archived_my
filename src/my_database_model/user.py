@@ -45,7 +45,7 @@ class User(Database.base_class):
     role = Column(Enum(UserRole), nullable=False)
     password = Column(String(512), nullable=False)
     password_date = Column(DateTime, nullable=False)
-    second_factor = Column(String(512), nullable=True)
+    second_factor = Column(String(64), nullable=True)
 
     # Fields that need to be hidden from the API
     api_hide_fields = ['password']
@@ -63,6 +63,11 @@ class User(Database.base_class):
         cascade='all, delete, save-update')
     tags = relationship(
         'Tag',
+        lazy='subquery',
+        back_populates='user',
+        cascade='all, delete, save-update')
+    user_sessions = relationship(
+        'UserSession',
         lazy='subquery',
         back_populates='user',
         cascade='all, delete, save-update')

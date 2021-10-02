@@ -2,13 +2,14 @@
     their credentials. """
 
 from typing import List, Optional
+import sqlalchemy
 from my_database.field import Field
 from database import DatabaseSession
 from my_database import validate_input
-from my_database_model import User
+from my_database_model import User, UserSession
 from my_database import logger
 from my_database.exceptions import (AuthUserRequiresSecondFactorError,
-                                    AuthCredentialsError)
+                                    AuthCredentialsError, IntegrityError)
 
 # Define the fields for validation
 validation_fields = {
@@ -23,7 +24,11 @@ validation_fields = {
     'second_factor': Field(
         'second_factor',
         str,
-        str_regex_validator=r'^\d{6}$')
+        str_regex_validator=r'^\d{6}$'),
+    'host': Field(
+        'host',
+        str,
+        str_regex_validator=r'^[a-f0-9\.\;]+$')
 }
 
 
@@ -110,3 +115,94 @@ def validate_credentials(**kwargs: dict) -> Optional[User]:
 
     # Credentials are correct! We return the user object
     return user
+
+
+def create_user_session(req_user: User, **kwargs: dict) -> Optional[UserSession]:
+    """" Method to create a user session
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        **kwargs : dict
+            A dict containing the fields for the authorization
+            validation.
+
+        Returns
+        -------
+        UserSession
+            The created user session object.
+
+        None
+            The user session was not created.
+    """
+
+    # Set the needed fields
+    required_fields = {
+        'host': validation_fields['host']
+    }
+
+    # Set the optional fields
+    optional_fields = None
+
+    # Validate the user input
+    validate_input(
+        input_values=kwargs,
+        required_fields=required_fields,
+        optional_fields=optional_fields)
+
+    logger.debug('create_user_session: all arguments are validated')
+
+    # Combine the arguments
+    all_fields: dict = dict()
+    if required_fields:
+        all_fields.update(required_fields)
+    if optional_fields:
+        all_fields.update(optional_fields)
+
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=False
+        ) as session:
+            # Create the resource
+            new_resource = UserSession()
+
+            # Set the fields
+            for field in kwargs.keys():
+                if field in all_fields.keys():
+                    if hasattr(new_resource, all_fields[field].object_field):
+                        setattr(
+                            new_resource,
+                            all_fields[field].object_field,
+                            kwargs[field])
+                    else:
+                        raise AttributeError(
+                            f"'{type(new_resource)}' has no attribute " +
+                            f"'{all_fields[field].object_field}'"
+                        )
+                else:
+                    raise FilterNotValidError(
+                        f'Field {field} is not a valid field')
+
+            # Set the User ID
+            new_resource.user = req_user
+
+            # Set a secret
+            new_resource.set_random_secret()
+
+            logger.debug('create_user_session: adding user session')
+
+            # Add the resource
+            session.add(new_resource)
+
+            # Return the created resource
+            return new_resource
+    except sqlalchemy.exc.IntegrityError as e:
+        logger.error(f'create_user_session: IntegrityError: {str(e)}')
+        # Add a custom text to the exception
+        raise IntegrityError('UserSession already exists')
+
+    return None

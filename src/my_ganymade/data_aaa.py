@@ -4,13 +4,14 @@
 """
 
 from flask.blueprints import Blueprint
-from flask.globals import request
+from flask.globals import request, session
 from my_database.exceptions import (AuthUserRequiresSecondFactorError,
                                     AuthCredentialsError)
+from my_database_model import User
 from my_ganymade.exceptions import InvalidInputError
 from my_ganymade.response import Response
 from my_ganymade.data_endpoint import data_endpoint
-from my_database.auth import validate_credentials
+from my_database.auth import validate_credentials, create_user_session
 from json import dumps
 
 # Create the Blueprint
@@ -71,8 +72,25 @@ def login() -> Response:
         return_object.success = False
         return_object.error_code = 2
     else:
-        # Credentials were correct!
-        return_object.success = True
-        return_object.error_code = None
+        if type(user_object) is User:
+            # Credentials were correct. We update the return dict
+            return_object.success = True
+            return_object.error_code = None
+
+            # Create a User Session object
+            user_session = create_user_session(
+                req_user=user_object,
+                host=request.remote_addr)
+
+            # Then we create a Flask Session; this session will contain the
+            # ID of the session and the secret for the session. We will
+            # verify these with the database when the user tries to
+            # retrieve a protected page.
+            session['sid'] = user_session.id
+            session['secret'] = user_session.secret
+        else:
+            # Something weird is going on
+            return_object.success = False
+            return_object.error_code = 3
 
     return return_object

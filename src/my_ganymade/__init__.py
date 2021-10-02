@@ -31,6 +31,9 @@ logger = logging.getLogger('MyGanymade')
 logger.debug('Creating Flask object')
 flask_app = Flask(__name__)
 
+# Set the Flask secret. This is used for session later on
+flask_app.secret_key = ConfigLoader.config['flask']['secret']
+
 # Register the blueprints for the data. This is basically the backend
 # for the application.
 flask_app.register_blueprint(blueprint_data_aaa)
