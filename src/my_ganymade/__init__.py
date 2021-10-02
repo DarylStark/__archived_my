@@ -7,7 +7,7 @@ from config_loader import ConfigLoader
 from flask import Flask
 from rich.logging import RichHandler
 from my_ganymade.exceptions import ConfigNotLoadedError
-from my_ganymade.data import blueprint_data
+from my_ganymade.data_aaa import blueprint_data_aaa
 from my_ganymade.static import blueprint_static
 from my_ganymade.ui import blueprint_ui
 
@@ -31,8 +31,11 @@ logger = logging.getLogger('MyGanymade')
 logger.debug('Creating Flask object')
 flask_app = Flask(__name__)
 
-# Register the blueprints for the data (the backend), the static files
-# like the CSS, JavaScript and images and one for the real UI.
-flask_app.register_blueprint(blueprint_data)
+# Register the blueprints for the data. This is basically the backend
+# for the application.
+flask_app.register_blueprint(blueprint_data_aaa)
+
+# Register the blueprints for the static files like the CSS, Javascript
+# and images and one for the real UI.
 flask_app.register_blueprint(blueprint_static)
 flask_app.register_blueprint(blueprint_ui)

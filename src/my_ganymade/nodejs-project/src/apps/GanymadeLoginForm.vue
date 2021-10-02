@@ -131,6 +131,7 @@ export default {
         });
       } else if (state == 'credentials') {
         this.state = 'credentials';
+        this.second_factor = null;
         this.$nextTick(function () {
           this.$refs.username.focus(true);
         });
@@ -181,8 +182,9 @@ export default {
               this.set_state('second_factor');
             } else {
               // Credentials were wrong
-              console.log('Wrong credentials!');
               this.set_state('credentials');
+
+              // TODO: Give an error
             }
           } else {
             console.log('Logged in!');
@@ -190,8 +192,7 @@ export default {
           }
         })
         .catch((error) => {
-          console.log('Error: ');
-          console.log(error);
+          // TODO: Give an error
           this.loading = false;
         });
     },
