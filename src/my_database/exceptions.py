@@ -38,3 +38,16 @@ class FieldNotValidatedError(MyDatabaseError):
     """ Exception that happens when a user tries to use a value that is
         not aloud """
     pass
+
+
+class AuthUserRequiresSecondFactorError(MyDatabaseError):
+    """ Exception that happens when a user is trying to authenticate
+        without a second factor, while it is configured to require a
+        second factor """
+    pass
+
+
+class AuthCredentialsError(MyDatabaseError):
+    """ Exception that happens when a user provides the wrong
+        credentials. """
+    pass

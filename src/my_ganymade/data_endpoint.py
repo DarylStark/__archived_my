@@ -7,6 +7,7 @@ from flask.app import Response as FlaskResponse
 from my_ganymade.response import Response
 from my_ganymade.json_encoder import GanymedeJSONEncoder
 from json import dumps
+from my_ganymade.exceptions import InvalidInputError
 
 
 def data_endpoint(allowed_users: Optional[list] = None):
@@ -25,12 +26,17 @@ def data_endpoint(allowed_users: Optional[list] = None):
             # Default values
             status_code: int = 200
 
+            # Empty response
+            response: Optional[Response] = Response(
+                success=False
+            )
+
             # Get the response from the function
             try:
-                response: Response = func()
-            except:
+                response = func()
+            except InvalidInputError:
                 # Generic error; we don't know what went wrong
-                status_code = 500
+                status_code = 400
 
             # Return the Flask Response
             return FlaskResponse(

@@ -27,4 +27,4 @@ class Response:
     data: Optional[Dict] = None
 
     # Error data
-    error_code: int = 0
+    error_code: Optional[int] = None

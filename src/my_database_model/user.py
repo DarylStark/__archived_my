@@ -5,6 +5,7 @@ import datetime
 import enum
 import random
 import string
+from typing import Optional
 from sqlalchemy.orm import backref, relationship
 from database import Database
 from passlib.hash import argon2
@@ -42,6 +43,7 @@ class User(Database.base_class):
     role = Column(Enum(UserRole), nullable=False)
     password = Column(String(512), nullable=False)
     password_date = Column(DateTime, nullable=False)
+    second_factor = Column(String(512), nullable=True)
 
     # Fields that need to be hidden from the API
     api_hide_fields = ['password']
@@ -120,8 +122,8 @@ class User(Database.base_class):
 
     def verify_password(self, password: str) -> bool:
         """ Checks the password and returns True if the given password
-
             is correct
+
             Parameters
             ----------
             password : str
@@ -134,3 +136,32 @@ class User(Database.base_class):
                 is not correct
         """
         return argon2.verify(password, self.password)
+
+    def verify_credentials(
+            self,
+            password: str,
+            second_factor: Optional[str] = None) -> bool:
+        """ Check if the password and second factor for this user are
+            correct. Can be used to verify login attempts.
+
+            Parameters
+            ----------
+            password : str
+                The password to verify
+
+            second_factor : str
+                The 'second factor' value to verify
+
+            Returns
+            -------
+            bool
+                True if the password and second factore are correct,
+                False if one of these is not correct.
+        """
+
+        # Verify the given data
+        password_correct = self.verify_password(password)
+        second_factor_correct = True    # TODO: make this real
+
+        # Return the values
+        return password_correct and second_factor_correct
