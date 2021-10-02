@@ -178,7 +178,6 @@ export default {
       axios
         .post('/data/aaa/login', this.credentials)
         .then((response) => {
-          console.log(response.data);
           if (!response.data.success) {
             if (response.data.error_code == 1) {
               // User has to provide a second factor code
