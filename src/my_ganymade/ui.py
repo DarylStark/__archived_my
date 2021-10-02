@@ -2,8 +2,10 @@
     application, like the login form and the dashboard page. """
 
 from flask.blueprints import Blueprint
-from typing import Optional
+from flask import redirect, Response
+from typing import Optional, Union
 import jinja2
+from my_ganymade.authentication import logged_in_user
 
 # Create a Jinja2 environment that the application can use to retrieve
 # and parse templates
@@ -32,6 +34,14 @@ def dashboard(path: Optional[str]) -> str:
         that doesn't have a route in this blueprint gets redirected to
         this. The VueJS router will decide what to display. """
 
+    # Get the logged in user
+    user_object = logged_in_user()
+
+    # Check if there is a logged on user
+    if user_object is None:
+        # Abort the request
+        return redirect('/ui/login')
+
     # Open the correct template file
     template = templateEnv.get_template('dashboard.html')
 
@@ -49,8 +59,17 @@ def dashboard(path: Optional[str]) -> str:
     '/login',
     methods=['GET']
 )
-def login() -> str:
+def login() -> Union[str, Response]:
     """ Function for the Login form of the application. """
+
+    # Get the logged in user
+    user_object = logged_in_user()
+
+    # Check if there is not logged on user. If there is, we redirect
+    # the user to the dashboard
+    if user_object is not None:
+        # Abort the request
+        return redirect('/ui/')
 
     # Open the correct template file
     template = templateEnv.get_template('login.html')

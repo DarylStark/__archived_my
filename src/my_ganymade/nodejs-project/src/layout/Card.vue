@@ -1,15 +1,34 @@
 <template>
   <div class="card">
-    <div v-if="title">{{ title }}</div>
-    <div>Card content comes here</div>
+    <CardTitle v-bind:icon="title_icon">
+      <slot name="title"></slot>
+      <template #actions v-if="!!this.$slots['title_actions']">
+        <slot name="title_actions"></slot>
+      </template>
+    </CardTitle>
+    <div
+      v-if="!!this.$slots['default']"
+      v-bind:class="[content_class ? content_class : 'content']"
+    >
+      <slot></slot>
+    </div>
+    <div class="actions" v-if="!!this.$slots['actions']">
+      <slot name="actions"></slot>
+    </div>
   </div>
 </template>
 
 <script>
+import CardTitle from './CardTitle.vue';
+
 export default {
-  name: "Card",
+  name: 'Card',
+  components: {
+    CardTitle,
+  },
   props: {
-    title: String,
+    title_icon: String,
+    content_class: String,
   },
 };
 </script>

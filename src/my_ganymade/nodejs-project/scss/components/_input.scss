@@ -1,0 +1,68 @@
+div.input {
+    margin-bottom: 16px;
+
+    >label {
+        color: var(--color-input-label-text);
+        font-weight: 700;
+        font-size: 12px;
+        margin-bottom: 8px;
+        display: inline-block;
+    }
+
+    div.field {
+        display: flex;
+        font-size: 15px;
+        border: 1px solid var(--border-input-color);
+        background-color: var(--color-input-background);
+        border-radius: 4px;
+
+        &.error, &.error:focus-within {
+            border-color: var(--color-input-border-error);
+        }
+
+        >.icon {
+            flex-grow: 0;
+            padding: 8px;
+        }
+
+        &.disabled {
+            color: var(--color-input-disabled-text);
+            border-color: var(--color-input-disabled-border);
+
+            >input, >input::placeholder {
+                color: var(--color-input-disabled-text);
+            }
+        }
+
+        >input {
+            font-family: var(--font-text-family);
+            font-size: 15px;
+            font-weight: var(--font-text-weight);
+            font-style: var(--font-text-style);
+            text-decoration: var(--font-text-decoration);
+            border: 0px;            
+            color: var(--color-input-text);
+            padding: 8px;
+            flex-grow: 1;
+            background-color: transparent;
+
+            &::placeholder {
+                color: var(--color-input-placeholder-text);
+                opacity: 1;
+            }
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        &:hover {
+            background-color: var(--color-input-hover-background);
+        }
+
+        &:focus-within {
+            background-color: var(--color-input-active-background);
+            border: 1px solid var(--color-input-active-border);
+        }
+    }
+}

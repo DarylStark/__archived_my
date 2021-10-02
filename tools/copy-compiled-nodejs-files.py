@@ -5,7 +5,7 @@ import logging
 import sys
 import glob
 import shutil
-from os.path import isdir
+from os.path import isdir, isfile
 from rich.logging import RichHandler
 
 nodejs_path = './src/my_ganymade/nodejs-project'
@@ -34,8 +34,9 @@ if __name__ == '__main__':
             # Get all files in the source directory
             files = glob.glob(f'{source}/*')
             for file in files:
-                logger.info(f'Copying file "{file}" to "{destination}"')
-                shutil.copy(file, destination)
+                if isfile(file):
+                    logger.info(f'Copying file "{file}" to "{destination}"')
+                    shutil.copy(file, destination)
     else:
         logger.error(f'Path "{nodejs_path}" does not exist')
         sys.exit(1)

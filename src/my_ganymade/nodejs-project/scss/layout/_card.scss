@@ -4,7 +4,59 @@ div.card {
     border-color: var(--border-card-color);
     border-width: var(--border-card-width);
     border-style: var(--border-card-style);
-    width: 500px;
-    max-width: 100%;
-    padding: 20px;
+    border-radius: var(--border-card-radius);
+
+    > div.title {
+        background-color: var(--color-card-title-background);
+        border-bottom: var(--border-card-width) var(--border-card-style) var(--border-card-color);
+        display: flex;
+
+        > .icon {
+            padding: 16px 0px 16px 24px;
+            color: var(--color-card-title-text);
+        }
+
+        > .text {
+            padding: 16px 24px 16px 24px;
+            color: var(--color-card-title-text);
+            flex-grow: 2;
+            font-family: var(--font-card-title-family);
+            font-size: var(--font-card-title-size);
+            font-weight: var(--font-card-title-weight);
+            font-style: var(--font-card-title-style);
+        }
+
+        > .actions {
+            flex-grow: 0;
+            text-align: center;
+            color: var(--color-card-title-text);
+
+            > div {
+                cursor: pointer;
+                background-color: var(--color-card-title-action-background);
+                color: var(--color-card-title-action-text);
+                padding: 16px;
+                border-left: var(--border-card-width) var(--border-card-style) var(--border-card-color);
+
+                &:hover {
+                    background-color: var(--color-card-title-action-hover-background);
+                }
+            }
+        }
+    }
+
+    > div.content {
+        padding: 16px 24px 16px 24px;
+
+        p {
+            margin-top: 0px;
+        }
+    }
+
+    > div.actions {
+        background-color: var(--color-card-background);
+        border-top: var(--border-card-width) var(--border-card-style) var(--border-card-color);
+        padding: 16px;
+        text-align: right;
+    }
 }

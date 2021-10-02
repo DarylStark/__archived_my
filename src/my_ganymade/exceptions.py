@@ -9,3 +9,9 @@ class MyGanymadeError(Exception):
 class ConfigNotLoadedError(MyGanymadeError):
     """ Exception when the configuration couldn't be loaded. """
     pass
+
+
+class InvalidInputError(MyGanymadeError):
+    """ Exception that occurs when the user gives invalid input. Sould
+        be handled as HTTP 400 error. """
+    pass

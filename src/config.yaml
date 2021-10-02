@@ -19,6 +19,8 @@ default:
       pool_size: 5
       pool_overflow: 10
       create_tables: false
+    flask:
+      secret: "${env:FLASK_SECRET}"
 
 development:
   sql_alchemy:

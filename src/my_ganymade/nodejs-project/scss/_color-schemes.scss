@@ -3,34 +3,72 @@ $themes: (
     'theme-dark': (
         'colors': (
             'default': (
-                'background': #1c1e2d,
-                'text': #7e818f
+                'background': #14152d,
+                'text': #8f9bb3
             ),
             'card': (
-                'background': #ffffff,
-                'text': #000000
+                'background': #222b45,
+                'text': #8f9bb3
+            ),
+            'card-title': (
+                'background': #222b45,
+                'text': #ffffff
+            ),
+            'card-title-action': (
+                'background': #222b45,
+                'hover-background': #598bff,
+                'text': #ffffff
+            ),
+            'input': (
+                'background': #192038,
+                'hover-background': #192038,
+                'active-background': #14152d,
+                'text': #ffffff,
+                'label-text': #8f9bb3,
+                'placeholder-text': #8e9cb2,
+                'active-border': #36f,
+                'border-error': #ff3d71,
+                'disabled-text': rgba(143,155,179,.48),
+                'disabled-border': #101426
+            ),
+            'button': (
+                'background': #36f,
+                'hover-background': #598bff,
+                'focus-background': #598bff,
+                'disabled-background': rgba(143, 155, 179, .24),
+                'disabled-text': rgba(143, 155, 179, .48),
+                'text': #ffffff
+            ),
+            'loading': (
+                'half': #00ff00,
             )
         ),
         'borders': (
             'card': (
-                // TODO: Style this better for Dark Theme
-                'color': #000000,
+                'color': #161d38,
                 'width': 1px,
-                'style': solid
+                'style': solid,
+                'radius': 0px
+            ),
+            'input': (
+                'color': #101426,
+                'width': 1px,
+                'style': solid,
+                'radius': 0px
             )
         ),
         'fonts': (
-            'title': (
-                'family': 'Times New Roman',
-                'size': 16pt,
-                'weight': 800,
+            'text': (
+                'family': 'Open Sans',
+                'size': 15px,
+                'weight': 400,
                 'style': normal,
                 'decoration': none
             ),
-            'text': (
-                'family': 'Roboto',
-                'size': 14px,
-                'weight': 400,
+            'card-title': (
+                'family': 'Open Sans',
+                'size': 15px,
+                'weight': 600,
                 'style': normal,
                 'decoration': none
             )
@@ -39,33 +77,70 @@ $themes: (
     'theme-light': (
         'colors': (
             'default': (
-                'background': #f6f6f8,
-                'text': #000000
+                'background': #eaeef6,
+                'text': #222b45
             ),
             'card': (
                 'background': #ffffff,
-                'text': #000000
+                'text': #222b45
+            ),
+            'card-title': (
+                'background': #ffffff,
+                'text': #000
+            ),
+            'card-title-action': (
+                'background': #ffffff,
+                'hover-background': #598bff,
+                'text': #000
+            ),
+            'input': (
+                'background': #f7f9fc,
+                'hover-background': #f7f9fc,
+                'active-background': #edf1f7,
+                'text': #222b45,
+                'label-text': #8f9bb3,
+                'placeholder-text': #8e9cb2,
+                'active-border': #36f,
+                'border-error': #ff3d71,
+                'disabled-text': rgba(143,155,179,.48),
+                'disabled-border': #e4e9f2
+            ),
+            'button': (
+                'background': #36f,
+                'hover-background': #598bff,
+                'focus-background': #598bff,
+                'disabled-background': rgba(143, 155, 179, .24),
+                'disabled-text': rgba(143, 155, 179, .48),
+                'text': #ffffff,
+            ),
+            'loading': (
+                'half': lime
             )
         ),
         'borders': (
             'card': (
-                'color': #cccccc,
+                'color': #eef1f0,
                 'width': 1px,
                 'style': solid
+            ),
+            'input': (
+                'color': #e4e9f2,
+                'width': 1px,
+                'style': solid,
             )
         ),
         'fonts': (
-            'title': (
-                'family': 'Times New Roman',
-                'size': 16px,
+            'text': (
+                'family': 'Open Sans',
+                'size': 15px,
                 'weight': 400,
                 'style': normal,
                 'decoration': none
             ),
-            'text': (
-                'family': 'Roboto',
-                'size': 14px,
-                'weight': 400,
+            'card-title': (
+                'family': 'Open Sans',
+                'size': 15px,
+                'weight': 600,
                 'style': normal,
                 'decoration': none
             )
@@ -91,6 +166,7 @@ $themes: (
             --border-#{$name}-color: #{map-get($border_options, 'color')};
             --border-#{$name}-width: #{map-get($border_options, 'width')};
             --border-#{$name}-style: #{map-get($border_options, 'style')};
+            --border-#{$name}-radius: #{map-get($border_options, 'radius')};
         }
 
         // Set variables for the fonts
@@ -103,4 +179,4 @@ $themes: (
             --font-#{$name}-decoration: #{map-get($font_options, 'decoration')};
         }
     }
-};
+} ;

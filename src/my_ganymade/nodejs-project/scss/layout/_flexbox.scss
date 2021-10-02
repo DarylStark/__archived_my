@@ -1,0 +1,14 @@
+div.flexbox {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    min-height: 100%;
+
+    &.center-v {
+        align-items: center;
+    }
+
+    &.center-h {
+        justify-content: center;
+    }
+}

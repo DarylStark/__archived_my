@@ -5,9 +5,11 @@ import datetime
 import enum
 import random
 import string
+from typing import Optional
 from sqlalchemy.orm import backref, relationship
 from database import Database
 from passlib.hash import argon2
+from pyotp import TOTP, random_base32
 from sqlalchemy import (Column, DateTime, Enum, Integer, String,
                         UniqueConstraint)
 
@@ -29,7 +31,8 @@ class User(Database.base_class):
     # Set constrains for this table
     __table_args__ = (
         UniqueConstraint('username'),
-        UniqueConstraint('email')
+        UniqueConstraint('email'),
+        UniqueConstraint('second_factor')
     )
 
     # Database columns for this table
@@ -42,6 +45,7 @@ class User(Database.base_class):
     role = Column(Enum(UserRole), nullable=False)
     password = Column(String(512), nullable=False)
     password_date = Column(DateTime, nullable=False)
+    second_factor = Column(String(64), nullable=True)
 
     # Fields that need to be hidden from the API
     api_hide_fields = ['password']
@@ -59,6 +63,11 @@ class User(Database.base_class):
         cascade='all, delete, save-update')
     tags = relationship(
         'Tag',
+        lazy='subquery',
+        back_populates='user',
+        cascade='all, delete, save-update')
+    user_sessions = relationship(
+        'UserSession',
         lazy='subquery',
         back_populates='user',
         cascade='all, delete, save-update')
@@ -118,10 +127,25 @@ class User(Database.base_class):
         self.password = argon2.hash(password)
         self.password_date = datetime.datetime.utcnow()
 
+    def set_random_second_factor(self) -> str:
+        """ Method to set a random second factor for this user
+
+            Parameters
+            ----------
+            None
+
+            Returns
+            -------
+            str
+                The random second factor
+        """
+        self.second_factor = random_base32()
+        return self.second_factor
+
     def verify_password(self, password: str) -> bool:
         """ Checks the password and returns True if the given password
-
             is correct
+
             Parameters
             ----------
             password : str
@@ -134,3 +158,37 @@ class User(Database.base_class):
                 is not correct
         """
         return argon2.verify(password, self.password)
+
+    def verify_credentials(
+            self,
+            password: str,
+            second_factor: Optional[str] = None) -> bool:
+        """ Check if the password and second factor for this user are
+            correct. Can be used to verify login attempts.
+
+            Parameters
+            ----------
+            password : str
+                The password to verify
+
+            second_factor : str
+                The 'second factor' value to verify
+
+            Returns
+            -------
+            bool
+                True if the password and second factore are correct,
+                False if one of these is not correct.
+        """
+
+        # Verify the given data
+        password_correct = self.verify_password(password)
+        second_factor_correct = True
+
+        # Check if a second factor is needed
+        if self.second_factor:
+            totp = TOTP(self.second_factor)
+            second_factor_correct = totp.now() == second_factor
+
+        # Return the values
+        return password_correct and second_factor_correct
