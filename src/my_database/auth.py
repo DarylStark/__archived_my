@@ -1,15 +1,16 @@
 """ Module that contains the functions to authorize users based on
     their credentials. """
 
-from typing import List, Optional
+from typing import List, Optional, Union
 import sqlalchemy
 from my_database.field import Field
 from database import DatabaseSession
 from my_database import validate_input
 from my_database_model import User, UserSession
 from my_database import logger
+from sqlalchemy.orm.query import Query
 from my_database.exceptions import (AuthUserRequiresSecondFactorError,
-                                    AuthCredentialsError, IntegrityError)
+                                    AuthCredentialsError, FilterNotValidError, IntegrityError, NotFoundError)
 
 # Define the fields for validation
 validation_fields = {
@@ -206,3 +207,80 @@ def create_user_session(req_user: User, **kwargs: dict) -> Optional[UserSession]
         raise IntegrityError('UserSession already exists')
 
     return None
+
+
+def get_user_sessions(
+    req_user: Optional[User],
+    flt_id: Optional[int] = None
+) -> Optional[Union[List[UserSession], UserSession]]:
+    """ Method that retrieves all, or a subset of, the userssessions in
+        the database.
+
+        Parameters
+        ----------
+        req_user : Optional[User]
+            The user who is requesting this. Should be used to verify
+            what results the user gets. If this is set to None, we the
+            function retrieves all user sessions.
+
+        flt_id : Optional[int] [default=None]
+            Filter on a specific usersession ID.
+
+        Returns
+        -------
+        List[UserSession]
+            A list with the resulting sessions.
+
+        User
+            The found sessions (if filtered on a uniq value, like
+            flt_id).
+
+        None
+            No sessions are found.
+    """
+
+    # Empty data list
+    data_list: Optional[Query] = None
+    rv: Optional[List[UserSession]] = None
+
+    # Get the resources
+    with DatabaseSession(commit_on_end=False, expire_on_commit=False) \
+            as session:
+        # First, we get all sessions
+        data_list = session.query(UserSession)
+
+        # Then, we filter on the sessions to only show the sessions
+        # that this user is allowed to see. We only do that is a
+        # `req_user` is given
+        if req_user:
+            data_list = data_list.filter(UserSession.user == req_user)
+
+        logger.debug('get_user_sessions: we have the list of users')
+
+        # Apply filter for ID
+        try:
+            if flt_id:
+                flt_id = int(flt_id)
+                data_list = data_list.filter(UserSession.id == flt_id)
+                logger.debug('get_user_sessions: list is filtered')
+        except (ValueError, TypeError):
+            logger.error(
+                f'UserSession id should be of type {int}, not {type(flt_id)}.')
+            raise FilterNotValidError(
+                f'UserSession id should be of type {int}, not {type(flt_id)}.')
+
+        # Get the data
+        if flt_id:
+            rv = data_list.first()
+            if rv is None:
+                raise NotFoundError(
+                    f'User session with ID {flt_id} is not found.')
+        else:
+            rv = data_list.all()
+            if len(rv) == 0:
+                logger.debug('get_user_sessions: no usersessions to return')
+                rv = None
+
+    # Return the data
+    logger.debug('get_user_sessions: returning userssessions')
+    return rv

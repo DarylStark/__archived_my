@@ -189,8 +189,8 @@ export default {
               // TODO: Give an error
             }
           } else {
-            console.log('Logged in!');
-            // TODO: Redirect or something
+            // Logged in! Redirect the user to the dashboard
+            window.location.href = '/ui/';
           }
         })
         .catch((error) => {

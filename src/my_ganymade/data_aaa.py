@@ -10,7 +10,7 @@ from my_database.exceptions import (AuthUserRequiresSecondFactorError,
 from my_database_model import User
 from my_ganymade.exceptions import InvalidInputError
 from my_ganymade.response import Response
-from my_ganymade.data_endpoint import data_endpoint
+from my_ganymade.data_endpoint import data_endpoint, EndpointPermissions
 from my_database.auth import validate_credentials, create_user_session
 from json import dumps
 
@@ -26,7 +26,12 @@ blueprint_data_aaa = Blueprint(
     '/login',
     methods=['POST']
 )
-@data_endpoint(allowed_users=None)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=True,
+        normal_users=False,
+        admin_users=False,
+        root_users=False))
 def login() -> Response:
     """ Method to log a user in. Should receive the username and
         password for the user and (if applicable) the 'second factor'
