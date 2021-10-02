@@ -48,8 +48,11 @@ export default {
   },
   emits: ['update:modelValue'],
   methods: {
-    focus() {
+    focus(select = false) {
       this.$refs.input.focus();
+      if (select) {
+        this.$refs.input.select();
+      }
     },
     update_value(event) {
       // Update the local data

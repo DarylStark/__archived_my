@@ -39,14 +39,18 @@ def login() -> Response:
         'reason': 'unknown'
     }
 
-    if data['second_factor'] is None:
-        return_object['reason'] = 'second_factor_needed'
-    else:
-        if data['username'] == 'a' and data['password'] == 'b':
-            return_object['success'] = True
-            return_object['reason'] = None
+    if False:
+
+        if data['second_factor'] is None:
+            return_object['reason'] = 'second_factor_needed'
         else:
-            return_object['reason'] = 'credentials_invalid'
+            if data['username'] == 'a' and data['password'] == 'b':
+                return_object['success'] = True
+                return_object['reason'] = None
+            else:
+                return_object['reason'] = 'credentials_invalid'
+
+    return_object['reason'] == 'credentials_invalid'
 
     return Response(
         response=dumps(return_object),

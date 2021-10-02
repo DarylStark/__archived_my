@@ -1,7 +1,7 @@
 <template>
   <Flexbox centerv centerh id="app_loginform">
     <form v-on:submit="submit_form">
-      <Card title_icon="fas fa-user-circle" v-bind:content_class="card_class">
+      <Card title_icon="fas fa-user-circle">
         <template #title>Login</template>
         <template #title_actions>
           <CardTitleAction v-on:click="next_theme">
@@ -9,7 +9,7 @@
           </CardTitleAction>
         </template>
 
-        <div>
+        <div v-if="state == 'credentials'">
           <Input
             id="username"
             ref="username"
@@ -37,7 +37,7 @@
           </Input>
         </div>
 
-        <div>
+        <div v-if="state == 'second_factor'">
           <Input
             id="second_factor"
             ref="second_factor"
@@ -92,26 +92,20 @@ export default {
   data: () => {
     return {
       theme_index: UI.get_current_theme_index(),
-      username: '',
-      password: '',
-      second_factor: '',
+      username: null,
+      password: null,
+      second_factor: null,
       invalid_username: false,
       invalid_password: false,
       invalid_second_factor: false,
       loading: false,
       state: 'credentials',
+      credentials: {
+        username: null,
+        password: null,
+        second_factor: null,
+      },
     };
-  },
-  computed: {
-    card_class: function () {
-      // Computed data to calculate the value for the classname of the
-      // content DIV for the Card.
-      let card_class = 'pages';
-      if (this.state == 'second_factor') {
-        card_class += ' show_second_factor';
-      }
-      return card_class;
-    },
   },
   methods: {
     next_theme() {
@@ -121,91 +115,85 @@ export default {
       // Update the index
       this.theme_index = UI.get_current_theme_index();
     },
+    set_state(state) {
+      // Set the state for the loginform. Can either be 'credentials'
+      // or 'second_factor'. If it is 'credentials', the form for the
+      // credentials is shown; otherwise, the form for the second
+      // factor is shown.
+
+      // Stop the loading
+      this.loading = false;
+
+      if (state == 'second_factor') {
+        this.state = 'second_factor';
+        this.$nextTick(function () {
+          this.$refs.second_factor.focus(true);
+        });
+      } else if (state == 'credentials') {
+        this.state = 'credentials';
+        this.$nextTick(function () {
+          this.$refs.username.focus(true);
+        });
+      }
+    },
     submit_form(event) {
       // Prevent the default handler
       event.preventDefault();
 
-      this.invalid_username = !this.$refs.username.is_valid();
-      this.invalid_password = !this.$refs.password.is_valid();
-      this.invalid_second_factor = !this.$refs.second_factor.is_valid();
-
-      // Set state to loading
+      // Set loading
       this.loading = true;
+
+      // Validate the input
+      if (this.state == 'credentials') {
+        this.invalid_username = !this.$refs.username.is_valid();
+        this.invalid_password = !this.$refs.password.is_valid();
+
+        if (this.invalid_username || this.invalid_password) {
+          this.$refs.username.focus(true);
+          return;
+        }
+      } else if (this.state == 'second_factor') {
+        this.invalid_second_factor = !this.$refs.second_factor.is_valid();
+
+        if (this.invalid_second_factor) {
+          this.$refs.second_factor.focus(true);
+          return;
+        }
+      }
+
+      // Fill the object
+      this.credentials.username = this.username;
+      this.credentials.password = this.password;
+      this.credentials.second_factor = null;
+      if (this.state == 'second_factor') {
+        this.credentials.second_factor = this.second_factor;
+      }
 
       // Set a new 'this' to use in the callbacks for Axios
       let vue_this = this;
 
-      // Validate the given data
-      let valid = false;
-      if (this.state == 'credentials') {
-        valid =
-          this.$refs.username.is_valid() && this.$refs.password.is_valid();
-      } else {
-        valid = this.$refs.second_factor.is_valid();
-      }
-
-      // Create a data object to send to the backend
-      let second_factor = this.second_factor === '' ? null : this.second_factor;
-
-      let data_object = {
-        username: this.username,
-        password: this.password,
-        second_factor: second_factor,
-      };
-
-      // Validate credentials with backend
-      if (valid) {
-        axios
-          .post('/data/aaa/login', data_object)
-          .then((response) => {
-            // We received data back
-            let success = response.data.success;
-
-            if (!success) {
-              // The data indicated that the credentials were not
-              // correct. We need to check what went wrong
-              if (response.data.reason == 'second_factor_needed') {
-                // We didn't specify any second factor but the backend
-                // tells us we need them. Redirect user to 'second
-                // factor' page
-                vue_this.invalid_second_factor = false;
-                vue_this.second_factor = '';
-                vue_this.state = 'second_factor';
-
-                // TODO: Focus the 'second_factor' field. Harder then
-                //       you think.
-              } else {
-                // Credentials are wrong. Make sure the user is on the
-                // credentials page and set the 'invalid_' fields to
-                // true.
-                vue_this.state = 'credentials';
-                vue_this.password = '';
-                vue_this.second_factor = '';
-                vue_this.invalid_username = true;
-                vue_this.invalid_password = true;
-
-                // TODO: Focus the 'usernamae' field. Harder then you
-                //       think.
-              }
-
-              // Done, stop the loading
-              vue_this.loading = false;
+      axios
+        .post('/data/aaa/login', this.credentials)
+        .then((response) => {
+          if (!response.data.success) {
+            if (response.data.reason == 'second_factor_needed') {
+              // User has to provide a second factor code
+              this.set_state('second_factor');
             } else {
-              // TODO: Redirect the user to the dashboardpage
-              console.log('Logged in!');
+              // Credentials were wrong
+              console.log('Wrong credentials!');
+              this.set_state('credentials');
             }
-          })
-          .catch((error) => {
-            // TODO: display error (toast?)
-            console.error('ERROR: ' + error);
-
-            // Done with the request, not loading anymore :-)
-            vue_this.loading = false;
-          });
-      } else {
-        this.loading = false;
-        this.$refs.username.focus(true);
-      }
+          } else {
+            console.log('Logged in!');
+            // TODO: Redirect or something
+          }
+        })
+        .catch((error) => {
+          console.log('Error: ');
+          console.log(error);
+          this.loading = false;
+        });
     },
   },
 };
