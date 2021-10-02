@@ -150,6 +150,7 @@ export default {
         this.invalid_password = !this.$refs.password.is_valid();
 
         if (this.invalid_username || this.invalid_password) {
+          this.loading = false;
           this.$refs.username.focus(true);
           return;
         }
@@ -157,6 +158,7 @@ export default {
         this.invalid_second_factor = !this.$refs.second_factor.is_valid();
 
         if (this.invalid_second_factor) {
+          this.loading = false;
           this.$refs.second_factor.focus(true);
           return;
         }

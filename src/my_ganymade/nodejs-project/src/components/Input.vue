@@ -64,9 +64,12 @@ export default {
     is_valid() {
       // Check if a regex is given
       if (this.validate_re) {
-        // Validate the regex
-        let regex = new RegExp(this.validate_re);
-        return regex.test(this.modelValue);
+        if (this.modelValue != null) {
+          // Validate the regex
+          let regex = new RegExp(this.validate_re);
+          return regex.test(this.modelValue);
+        }
+        return false;
       }
 
       // No regex given; all values are considered correct
