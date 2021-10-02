@@ -17,9 +17,10 @@ jinja2==3.0.1
 sqlalchemy==1.4.15
 pymysql==1.0.2
 # ---------------------------------------------------------------------
-# Passwords
+# Passwords and other user verification libraries
 passlib==1.7.2
 argon2-cffi==19.2.0
+pyotp==2.6.0
 # ---------------------------------------------------------------------
 # Console output
 rich==10.2.0

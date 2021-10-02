@@ -61,7 +61,7 @@ if __name__ == '__main__':
             # Set the variable
             os.environ[variable_name] = variable_value
 
-            logger.info(f'Setted variable {variable_name}')
+            logger.info(f'Set variable {variable_name}')
         except ValueError:
             # The error was not correctly defined
             logger.warning(f'Line not compliant:\n> {line}')
@@ -138,6 +138,7 @@ if __name__ == '__main__':
                 email='daryl@dstark.nl',
                 role=UserRole.user,
                 password='test',
+                second_factor='3RCUMBK2KJY7YFPX453MWZHAOL4G74OP',
                 tags=[
                     Tag(title='Daryl - Testtag1'),
                     Tag(title='Daryl - Testtag2')

@@ -9,6 +9,7 @@ from typing import Optional
 from sqlalchemy.orm import backref, relationship
 from database import Database
 from passlib.hash import argon2
+from pyotp import TOTP
 from sqlalchemy import (Column, DateTime, Enum, Integer, String,
                         UniqueConstraint)
 
@@ -161,7 +162,12 @@ class User(Database.base_class):
 
         # Verify the given data
         password_correct = self.verify_password(password)
-        second_factor_correct = True    # TODO: make this real
+        second_factor_correct = True
+
+        # Check if a second factor is needed
+        if self.second_factor:
+            totp = TOTP(self.second_factor)
+            second_factor_correct = totp.now() == second_factor
 
         # Return the values
         return password_correct and second_factor_correct
