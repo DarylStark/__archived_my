@@ -9,7 +9,7 @@ from typing import Optional
 from sqlalchemy.orm import backref, relationship
 from database import Database
 from passlib.hash import argon2
-from pyotp import TOTP
+from pyotp import TOTP, random_base32
 from sqlalchemy import (Column, DateTime, Enum, Integer, String,
                         UniqueConstraint)
 
@@ -31,7 +31,8 @@ class User(Database.base_class):
     # Set constrains for this table
     __table_args__ = (
         UniqueConstraint('username'),
-        UniqueConstraint('email')
+        UniqueConstraint('email'),
+        UniqueConstraint('second_factor')
     )
 
     # Database columns for this table
@@ -120,6 +121,21 @@ class User(Database.base_class):
         """
         self.password = argon2.hash(password)
         self.password_date = datetime.datetime.utcnow()
+
+    def set_random_second_factor(self) -> str:
+        """ Method to set a random second factor for this user
+
+            Parameters
+            ----------
+            None
+
+            Returns
+            -------
+            str
+                The random second factor
+        """
+        self.second_factor = random_base32()
+        return self.second_factor
 
     def verify_password(self, password: str) -> bool:
         """ Checks the password and returns True if the given password
