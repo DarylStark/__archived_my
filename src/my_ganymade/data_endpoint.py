@@ -20,6 +20,8 @@ def data_endpoint(allowed_users: Optional[list] = None):
             """ The function that will be used instead of the normal
                 function. """
 
+            # TODO: Check the 'allowed_users' lists
+
             # Default values
             status_code: int = 200
 
