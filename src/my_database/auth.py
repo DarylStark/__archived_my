@@ -29,7 +29,7 @@ validation_fields = {
     'host': Field(
         'host',
         str,
-        str_regex_validator=r'^[a-f0-9\.\;]+$')
+        str_regex_validator=r'^[a-f0-9\.\:]+$')
 }
 
 
