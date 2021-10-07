@@ -1,13 +1,21 @@
 <template>
-  <div>
-    <p>Dashboard will be here</p>
+  <div id="dashboard">
+    <Header></Header>
+    <div class="content_nav">
+      <Navigation></Navigation>
+      <Content></Content>
+    </div>
   </div>
 </template>
 
 <script>
 import UI from '../mgm/ui';
+import Header from '../layout/Header.vue';
+import Navigation from '../layout/Navigation.vue';
+import Content from '../layout/Content.vue';
 
 export default {
   name: 'GanymedeDashboard',
+  components: { Header, Navigation, Content },
 };
 </script>

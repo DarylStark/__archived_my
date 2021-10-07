@@ -41,7 +41,11 @@ $themes: (
             ),
             'loading': (
                 'half': #00ff00,
-            )
+            ),
+            'header': (
+                'background': #222b45,
+                'text': #ffffff
+            ),
         ),
         'borders': (
             'card': (
@@ -115,7 +119,11 @@ $themes: (
             ),
             'loading': (
                 'half': lime
-            )
+            ),
+            'header': (
+                'background': #ffffff,
+                'text': #000
+            ),
         ),
         'borders': (
             'card': (
