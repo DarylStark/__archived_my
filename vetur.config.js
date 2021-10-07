@@ -2,7 +2,7 @@
 module.exports = {
     projects: [
         {
-            root: './src/my_ganymade/nodejs-project/',
+            root: './src/my_ganymede/nodejs-project/',
             package: './',
             jsconfig: './jsconfig.json'
         }

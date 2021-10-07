@@ -6,7 +6,7 @@ from enum import Enum
 from json import JSONEncoder
 from typing import Any, Dict, Union
 from database.database import Database
-from my_ganymade.response import Response
+from my_ganymede.response import Response
 
 
 class GanymedeJSONEncoder(JSONEncoder):

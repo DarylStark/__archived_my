@@ -8,15 +8,15 @@ from flask.globals import request, session
 from my_database.exceptions import (AuthUserRequiresSecondFactorError,
                                     AuthCredentialsError)
 from my_database_model import User
-from my_ganymade.exceptions import InvalidInputError
-from my_ganymade.response import Response
-from my_ganymade.data_endpoint import data_endpoint, EndpointPermissions
+from my_ganymede.exceptions import InvalidInputError
+from my_ganymede.response import Response
+from my_ganymede.data_endpoint import data_endpoint, EndpointPermissions
 from my_database.auth import validate_credentials, create_user_session
 from json import dumps
 
 # Create the Blueprint
 blueprint_data_aaa = Blueprint(
-    name='my_ganymade_data_aaa',
+    name='my_ganymede_data_aaa',
     import_name=__name__,
     url_prefix='/data/aaa/'
 )

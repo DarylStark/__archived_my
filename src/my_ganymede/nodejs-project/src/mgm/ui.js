@@ -1,5 +1,5 @@
 /*
- * Module that contains default functions for 'My Ganymade'
+ * Module that contains default functions for 'My Ganymede'
  */
 
 import Cookies from 'js-cookie';

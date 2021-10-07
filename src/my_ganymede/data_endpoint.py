@@ -5,11 +5,11 @@
 from typing import Callable, Optional
 from flask.app import Response as FlaskResponse
 from my_database_model.user import UserRole
-from my_ganymade.response import Response
-from my_ganymade.json_encoder import GanymedeJSONEncoder
+from my_ganymede.response import Response
+from my_ganymede.json_encoder import GanymedeJSONEncoder
 from json import dumps
-from my_ganymade.exceptions import InvalidInputError
-from my_ganymade.authentication import logged_in_user
+from my_ganymede.exceptions import InvalidInputError
+from my_ganymede.authentication import logged_in_user
 from dataclasses import dataclass
 
 

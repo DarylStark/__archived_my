@@ -8,6 +8,6 @@
 import UI from '../mgm/ui';
 
 export default {
-  name: 'GanymadeDashboard',
+  name: 'GanymedeDashboard',
 };
 </script>

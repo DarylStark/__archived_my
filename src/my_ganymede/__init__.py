@@ -1,4 +1,4 @@
-""" The my_ganymade package is the frontend for the application. It is
+""" The my_ganymede package is the frontend for the application. It is
     a VueJS application that is served using a Python Flask Application.
     This package contains the Flask application and the NodeJS files to
     create the VueJS frontend """
@@ -6,10 +6,10 @@ import logging
 from config_loader import ConfigLoader
 from flask import Flask
 from rich.logging import RichHandler
-from my_ganymade.exceptions import ConfigNotLoadedError
-from my_ganymade.data_aaa import blueprint_data_aaa
-from my_ganymade.static import blueprint_static
-from my_ganymade.ui import blueprint_ui
+from my_ganymede.exceptions import ConfigNotLoadedError
+from my_ganymede.data_aaa import blueprint_data_aaa
+from my_ganymede.static import blueprint_static
+from my_ganymede.ui import blueprint_ui
 
 # Load the settings
 if not ConfigLoader.load_settings():
@@ -24,8 +24,8 @@ logging.basicConfig(
     handlers=[RichHandler()]
 )
 
-# Create a logger for the My Ganymade package
-logger = logging.getLogger('MyGanymade')
+# Create a logger for the My Ganymede package
+logger = logging.getLogger('MyGanymede')
 
 # Create a Flask object
 logger.debug('Creating Flask object')

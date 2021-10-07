@@ -5,16 +5,16 @@ from flask.blueprints import Blueprint
 from flask import redirect, Response
 from typing import Optional, Union
 import jinja2
-from my_ganymade.authentication import logged_in_user
+from my_ganymede.authentication import logged_in_user
 
 # Create a Jinja2 environment that the application can use to retrieve
 # and parse templates
-templateLoader = jinja2.FileSystemLoader(searchpath='my_ganymade/templates')
+templateLoader = jinja2.FileSystemLoader(searchpath='my_ganymede/templates')
 templateEnv = jinja2.Environment(loader=templateLoader)
 
 # Create the blueprint for the UI pages
 blueprint_ui = Blueprint(
-    name='my_ganymade_ui',
+    name='my_ganymede_ui',
     import_name=__name__,
     url_prefix='/ui/'
 )

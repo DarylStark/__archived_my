@@ -78,7 +78,7 @@ import Button from '../components/Button.vue';
 import axios from 'axios';
 
 export default {
-  name: 'GanymadeLogin',
+  name: 'GanymedeLogin',
   components: {
     Flexbox,
     Card,
