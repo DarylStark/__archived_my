@@ -1,20 +1,8 @@
 // Import Vue
 import { createApp } from 'vue'
-import { createStore } from 'vuex'
 
-// Create a store for central state management
-const store = createStore({
-    state() {
-        return {
-            navigation_visible: true
-        }
-    },
-    mutations: {
-        navigation_visible_toggle(state) {
-            state.navigation_visible = !state.navigation_visible;
-        }
-    }
-});
+// Import the store
+import store from './store'
 
 // Import the Dashboard Application
 import GanymedeDashboard from './apps/GanymedeDashboard.vue'
