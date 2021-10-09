@@ -1,0 +1,19 @@
+.menutoggle {
+    padding: 12px 0px 12px 24px;
+    font-size: 20px;
+    height: 27px;
+
+    >i:hover {
+        cursor: pointer;
+        color: white;
+    }
+
+    >i {
+        transition: transform 250ms ease-in-out;
+    }
+
+    >i.hidden {
+        transform: rotate(-180deg);
+    }
+}
+

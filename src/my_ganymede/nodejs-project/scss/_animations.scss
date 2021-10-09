@@ -6,6 +6,7 @@
     animation-timing-function: ease-in-out;
 }
 
+// Keyframes for animations
 @keyframes spin {
     from {
         transform:rotate(0deg);
@@ -16,5 +17,23 @@
 
     50% {
         color: var(--color-loading-half);
+    }
+}
+
+@keyframes turn_around_cw {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(180deg);
+    }
+}
+
+@keyframes turn_around_ccw {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(-180deg);
     }
 }

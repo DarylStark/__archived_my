@@ -2,4 +2,11 @@
     background-color: var(--color-header-background);
     width: 256px;
     flex-grow: 0;
+    overflow: hidden;
+    transition: width 250ms ease-in-out;
+
+    &.hide {
+        width: 0px;
+        transition: width 250ms ease-in-out;
+    }
 }
