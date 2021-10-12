@@ -8,7 +8,6 @@ import UI from './ui.js';
 class Ganymede {
     constructor() {
         // Initialize the modules of the application.
-        console.log('UI is started');
         this.ui = new UI();
     }
 }
