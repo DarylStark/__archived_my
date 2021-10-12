@@ -35,21 +35,21 @@ body {
 }
 
 // Import apps
-@import 'apps/loginform';
 @import 'apps/dashboard';
+@import 'apps/loginform';
 
 // Import layout elements
 @import 'layout/card';
+@import 'layout/content';
 @import 'layout/flexbox';
 @import 'layout/header';
 @import 'layout/navigation';
-@import 'layout/content';
 
 // Import components
 @import 'components/button';
 @import 'components/input';
 @import 'components/menutoggle';
-
+@import 'components/spacer';
 
 // Import animations
 @import 'animations';
