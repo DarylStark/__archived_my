@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import Ganymede from '../mgm/ganymede';
+import Ganymede from '../mgm/ganymede.js';
 import Flexbox from '../layout/Flexbox';
 import Card from '../layout/Card.vue';
 import CardTitleAction from '../layout/CardTitleAction.vue';
@@ -110,7 +110,7 @@ export default {
   methods: {
     next_theme() {
       // Set the next theme
-      Ganymede.ui.next_theme();
+      Ganymede.commands.execute('theme.next');
 
       // Update the index
       this.theme_index = Ganymede.ui.get_current_theme_index();

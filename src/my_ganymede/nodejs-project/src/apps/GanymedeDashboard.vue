@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import Ganymede from '../mgm/ganymede';
 import Header from '../layout/Header.vue';
 import Navigation from '../layout/Navigation.vue';
 import Content from '../layout/Content.vue';
