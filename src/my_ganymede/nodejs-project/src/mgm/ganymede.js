@@ -2,13 +2,16 @@
  * Module that contains the main class for the My Ganymede frontend
  */
 
+'use strict';
 
 import UI from './ui.js';
+import Commands from './commands.js'
 
 class Ganymede {
     constructor() {
         // Initialize the modules of the application.
         this.ui = new UI();
+        this.commands = new Commands();
     }
 }
 
