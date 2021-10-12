@@ -1,5 +1,5 @@
 /*
- * Module that contains default functions for 'My Ganymede'
+ * Module that contains the UI class for 'My Ganymede'
  */
 
 import Cookies from 'js-cookie';
@@ -94,4 +94,4 @@ class UI {
  * Export the class
  */
 
-export default new UI();
+export default UI;

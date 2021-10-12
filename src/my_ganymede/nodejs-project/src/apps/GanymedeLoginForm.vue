@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import UI from '../mgm/ui';
+import Ganymede from '../mgm/ganymede';
 import Flexbox from '../layout/Flexbox';
 import Card from '../layout/Card.vue';
 import CardTitleAction from '../layout/CardTitleAction.vue';
@@ -91,7 +91,7 @@ export default {
   },
   data: () => {
     return {
-      theme_index: UI.get_current_theme_index(),
+      theme_index: Ganymede.ui.get_current_theme_index(),
       username: null,
       password: null,
       second_factor: null,
@@ -110,10 +110,10 @@ export default {
   methods: {
     next_theme() {
       // Set the next theme
-      UI.next_theme();
+      Ganymede.ui.next_theme();
 
       // Update the index
-      this.theme_index = UI.get_current_theme_index();
+      this.theme_index = Ganymede.ui.get_current_theme_index();
     },
     set_state(state) {
       // Set the state for the loginform. Can either be 'credentials'
