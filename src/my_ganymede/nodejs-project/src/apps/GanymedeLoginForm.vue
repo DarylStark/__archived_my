@@ -70,6 +70,7 @@
 
 <script>
 import Ganymede from '../mgm/ganymede.js';
+import APICommand from '../mgm/api_command.js';
 import Flexbox from '../layout/Flexbox';
 import Card from '../layout/Card.vue';
 import CardTitleAction from '../layout/CardTitleAction.vue';
@@ -168,31 +169,32 @@ export default {
         this.credentials.second_factor = this.second_factor;
       }
 
-      // Set a new 'this' to use in the callbacks for Axios
+      // Set a new 'this' to use in the callbacks
       let vue_this = this;
 
-      axios
-        .post('/data/aaa/login', this.credentials)
-        .then((response) => {
-          if (!response.data.success) {
-            if (response.data.error_code == 1) {
+      Ganymede.api.execute(
+        new APICommand(
+          'aaa',
+          'login',
+          'POST',
+          this.credentials,
+          function (data) {
+            // Logged in! Redirect the user to the dashboard
+            window.location.href = '/ui/';
+          },
+          function (error) {
+            if (error.error_code == 1) {
               // User has to provide a second factor code
-              this.set_state('second_factor');
-            } else if (response.data.error_code == 2) {
+              vue_this.set_state('second_factor');
+            } else {
               // Credentials were wrong
-              this.set_state('credentials');
+              vue_this.set_state('credentials');
 
               // TODO: Give an error
             }
-          } else {
-            // Logged in! Redirect the user to the dashboard
-            window.location.href = '/ui/';
           }
-        })
-        .catch((error) => {
-          // TODO: Give an error
-          this.loading = false;
-        });
+        )
+      );
     },
   },
 };

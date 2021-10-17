@@ -7,13 +7,15 @@
 import UI from './ui.js';
 import Commands from './commands.js'
 import Command from './command.js';
-import axios from 'axios';
+import API from './api.js';
+import APICommand from './api_command.js';
 
 class Ganymede {
     constructor() {
         // Initialize the modules of the application.
         this.ui = new UI();
         this.commands = new Commands();
+        this.api = new API();
     }
 
     register_commands(app) {
@@ -31,20 +33,23 @@ class Ganymede {
         if (app === 'dashboard') {
             this.commands.register(new Command('User session', 'logout', 'userssion.logout', 'callback', () => {
                 // Send the command to logout the user
-                axios
-                    .get('/data/aaa/logout', this.credentials)
-                    .then((response) => {
-                        if (response.data.success) {
+                this.api.execute(
+                    new APICommand(
+                        'aaa',
+                        'logout',
+                        'GET',
+                        null,
+                        function () {
                             // Logged out; redirect the user to the
                             // login screen
                             window.location.href = '/ui/login';
-                        } else {
+                        },
+                        function () {
                             // TODO: Give an error
+                            console.log('Error while logging out');
                         }
-                    })
-                    .catch((error) => {
-                        // TODO: Give an error
-                    });
+                    )
+                );
             }));
         }
     }
