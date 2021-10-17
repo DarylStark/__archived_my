@@ -4,7 +4,7 @@
     height: 51px;
     width: 100%;
     flex-grow: 0;
-    box-shadow: 0 0.5rem 1rem 0 #1a1f33;
+    box-shadow: 0 0.5rem 1rem 0 var(--color-header-shadow);
     z-index: 5;
     display: flex;
     flex-wrap: nowrap;
