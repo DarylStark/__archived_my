@@ -91,7 +91,6 @@ export default {
   },
   data: () => {
     return {
-      theme_index: Ganymede.ui.get_current_theme_index(),
       username: null,
       password: null,
       second_factor: null,
@@ -111,9 +110,6 @@ export default {
     next_theme() {
       // Set the next theme
       Ganymede.commands.execute('theme.next');
-
-      // Update the index
-      this.theme_index = Ganymede.ui.get_current_theme_index();
     },
     set_state(state) {
       // Set the state for the loginform. Can either be 'credentials'
