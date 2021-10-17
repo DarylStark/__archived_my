@@ -10,7 +10,9 @@
         >Next theme</UserMenuItem
       >
       <UserMenuItem icon="fa-edit">Rename session</UserMenuItem>
-      <UserMenuItem icon="fa-sign-out-alt">Logout</UserMenuItem>
+      <UserMenuItem icon="fa-sign-out-alt" v-on:click="logout"
+        >Logout</UserMenuItem
+      >
     </div>
   </div>
 </template>
@@ -30,6 +32,9 @@ export default {
   methods: {
     next_theme: () => {
       Ganymede.commands.execute('theme.next');
+    },
+    logout: () => {
+      Ganymede.commands.execute('userssion.logout');
     },
   },
 };

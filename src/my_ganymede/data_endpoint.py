@@ -9,7 +9,7 @@ from my_ganymede.response import Response
 from my_ganymede.json_encoder import GanymedeJSONEncoder
 from json import dumps
 from my_ganymede.exceptions import InvalidInputError
-from my_ganymede.authentication import logged_in_user
+from my_ganymede.authentication import get_active_user_session
 from dataclasses import dataclass
 
 
@@ -52,7 +52,10 @@ def data_endpoint(allowed_users: EndpointPermissions):
                 function. """
 
             # Get the logged in user
-            user_object = logged_in_user()
+            user_session = get_active_user_session()
+            user_object = None
+            if user_session is not None:
+                user_object = user_session.user
 
             # For logged out users
             verified = False
@@ -83,7 +86,7 @@ def data_endpoint(allowed_users: EndpointPermissions):
             else:
                 # Get the response from the function
                 try:
-                    response = func()
+                    response = func(user_session)
                 except InvalidInputError:
                     # User supplied invalid input
                     status_code = 400
@@ -97,7 +100,9 @@ def data_endpoint(allowed_users: EndpointPermissions):
                 mimetype='application/json'
             )
 
-        # Return the function
+        # Return the function. Before we do that, we update the name of
+        # the method so Flask can use mulitple of it.
+        endpoint.__name__ = func.__name__
         return endpoint
 
     # Return the decorator

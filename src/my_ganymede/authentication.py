@@ -3,14 +3,15 @@
 
 from my_database.auth import get_user_sessions
 from my_database.exceptions import NotFoundError
-from my_database_model import User
+from my_database_model import UserSession
 from typing import Optional
 from flask.globals import session
 
 
-def logged_in_user() -> Optional[User]:
+def get_active_user_session() -> Optional[UserSession]:
     """ Method to check if the Flask Session contains valid information
-        for a user session and returns the User Object for the session.
+        for a user session and returns the UserSession Object for the
+        session.
 
         Parameters
         ----------
@@ -18,8 +19,8 @@ def logged_in_user() -> Optional[User]:
 
         Returns
         -------
-        User
-            The User object for the session.
+        UserSession
+            The UserSession object for the session.
 
         None
             There is no (valid) user session found in the Flask
@@ -46,7 +47,7 @@ def logged_in_user() -> Optional[User]:
         # Everything looks fine; the session exists and has the same
         # secret as the user in it's Flask Session. Return the User
         # object for this session
-        return session_object.user
+        return session_object
 
     # The session was not valid; clear the session and return None
     session.clear()

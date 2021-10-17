@@ -7,6 +7,7 @@
 import UI from './ui.js';
 import Commands from './commands.js'
 import Command from './command.js';
+import axios from 'axios';
 
 class Ganymede {
     constructor() {
@@ -25,6 +26,27 @@ class Ganymede {
             // Set the next theme
             this.ui.next_theme();
         }));
+
+        // Commands for 'dashboard'
+        if (app === 'dashboard') {
+            this.commands.register(new Command('User session', 'logout', 'userssion.logout', 'callback', () => {
+                // Send the command to logout the user
+                axios
+                    .get('/data/aaa/logout', this.credentials)
+                    .then((response) => {
+                        if (response.data.success) {
+                            // Logged out; redirect the user to the
+                            // login screen
+                            window.location.href = '/ui/login';
+                        } else {
+                            // TODO: Give an error
+                        }
+                    })
+                    .catch((error) => {
+                        // TODO: Give an error
+                    });
+            }));
+        }
     }
 }
 

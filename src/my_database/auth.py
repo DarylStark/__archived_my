@@ -284,3 +284,50 @@ def get_user_sessions(
     # Return the data
     logger.debug('get_user_sessions: returning userssessions')
     return rv
+
+
+def delete_user_sessions(
+    req_user: User,
+    session_id: int
+) -> bool:
+    """ Method to delete a user session.
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        session_id : int
+            The ID for the session to delete.
+
+        Returns
+        -------
+        bool
+            True on success.
+    """
+
+    # Get the user session
+    resource = get_user_sessions(req_user=req_user, flt_id=session_id)
+
+    logger.debug('delete_user_sessions: we have the resource')
+
+    # Create a database session
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            # Delete the resource
+            logger.debug('delete_user_sessions: deleting the resource')
+            session.delete(resource)
+    except sqlalchemy.exc.IntegrityError as e:
+        logger.error(
+            f'delete_user_sessions: sqlalchemy.exc.IntegrityError: {str(e)}')
+        raise IntegrityError(
+            'Session couldn\'t be deleted because it still has resources ' +
+            'connected to it')
+    else:
+        logger.debug(
+            'delete_user_sessions: return True because it was a success')
+        return True

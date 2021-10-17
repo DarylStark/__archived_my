@@ -5,7 +5,7 @@ from flask.blueprints import Blueprint
 from flask import redirect, Response
 from typing import Optional, Union
 import jinja2
-from my_ganymede.authentication import logged_in_user
+from my_ganymede.authentication import get_active_user_session
 
 # Create a Jinja2 environment that the application can use to retrieve
 # and parse templates
@@ -35,7 +35,11 @@ def dashboard(path: Optional[str]) -> str:
         this. The VueJS router will decide what to display. """
 
     # Get the logged in user
-    user_object = logged_in_user()
+    user_session = get_active_user_session()
+    user_object = None
+
+    if user_session is not None:
+        user_object = user_session.user
 
     # Check if there is a logged on user
     if user_object is None:
@@ -63,7 +67,11 @@ def login() -> Union[str, Response]:
     """ Function for the Login form of the application. """
 
     # Get the logged in user
-    user_object = logged_in_user()
+    user_session = get_active_user_session()
+    user_object = None
+
+    if user_session is not None:
+        user_object = user_session.user
 
     # Check if there is not logged on user. If there is, we redirect
     # the user to the dashboard

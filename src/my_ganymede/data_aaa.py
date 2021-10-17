@@ -3,15 +3,18 @@
     logout.
 """
 
+from typing import Optional
 from flask.blueprints import Blueprint
 from flask.globals import request, session
 from my_database.exceptions import (AuthUserRequiresSecondFactorError,
                                     AuthCredentialsError)
 from my_database_model import User
+from my_database_model.user_session import UserSession
 from my_ganymede.exceptions import InvalidInputError
 from my_ganymede.response import Response
 from my_ganymede.data_endpoint import data_endpoint, EndpointPermissions
-from my_database.auth import validate_credentials, create_user_session
+from my_database.auth import (validate_credentials, create_user_session,
+                              delete_user_sessions)
 from json import dumps
 
 # Create the Blueprint
@@ -32,7 +35,7 @@ blueprint_data_aaa = Blueprint(
         normal_users=False,
         admin_users=False,
         root_users=False))
-def login() -> Response:
+def login(user_session: Optional[UserSession]) -> Response:
     """ Method to log a user in. Should receive the username and
         password for the user and (if applicable) the 'second factor'
         code. Return 'success = True' when the credentials match. """
@@ -98,4 +101,36 @@ def login() -> Response:
             return_object.success = False
             return_object.error_code = 3
 
+    return return_object
+
+
+@blueprint_data_aaa.route(
+    '/logout',
+    methods=['GET']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def logout(user_session: Optional[UserSession]) -> Response:
+    """ Method to log a user out. This will delete the UserSession from
+        the database and remove the Flask Session cookie """
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    if user_session is not None:
+        # Delete the UserSession
+        delete_user_sessions(req_user=user_session.user,
+                             session_id=user_session.id)
+
+        # Remote the Flask Session
+        session.clear()
+
+        # Set the return value to True
+        return_object.success = True
+
+    # Return the created object
     return return_object
