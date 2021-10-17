@@ -44,7 +44,15 @@ $themes: (
             ),
             'header': (
                 'background': #222b45,
-                'text': #ffffff
+                'text': #8f9bb3,
+                'text-hover': #fff,
+                'borders': #14152d
+            ),
+            'usermenu': (
+                'background': #222b45,
+                'text': #8f9bb3,
+                'text-hover': #fff,
+                'borders': #14152d
             ),
         ),
         'borders': (
@@ -122,8 +130,16 @@ $themes: (
             ),
             'header': (
                 'background': #ffffff,
-                'text': #000
+                'text': #222b45,
+                'text-hover': #000,
+                'borders': #eaeef6
             ),
+            'usermenu': (
+                'background': #ffffff,
+                'text': #222b45,
+                'text-hover': #000,
+                'borders': #eaeef6
+            )
         ),
         'borders': (
             'card': (

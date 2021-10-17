@@ -5,7 +5,8 @@ import { createStore } from 'vuex'
 export default createStore({
     state() {
         return {
-            navigation_visible: true
+            navigation_visible: true,
+            user_fullname: '<user fullname>' // TODO: has to be filled with real users fullname
         }
     },
     mutations: {

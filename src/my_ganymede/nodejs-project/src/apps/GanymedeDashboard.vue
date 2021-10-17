@@ -16,5 +16,8 @@ import Content from '../layout/Content.vue';
 export default {
   name: 'GanymedeDashboard',
   components: { Header, Navigation, Content },
+  created: () => {
+    // TODO: Retrieve user details
+  },
 };
 </script>
