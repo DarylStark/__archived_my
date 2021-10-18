@@ -8,6 +8,7 @@ from flask import Flask
 from rich.logging import RichHandler
 from my_ganymede.exceptions import ConfigNotLoadedError
 from my_ganymede.data_aaa import blueprint_data_aaa
+from my_ganymede.data_usersession import blueprint_data_user_sessions
 from my_ganymede.static import blueprint_static
 from my_ganymede.ui import blueprint_ui
 
@@ -37,6 +38,7 @@ flask_app.secret_key = ConfigLoader.config['flask']['secret']
 # Register the blueprints for the data. This is basically the backend
 # for the application.
 flask_app.register_blueprint(blueprint_data_aaa)
+flask_app.register_blueprint(blueprint_data_user_sessions)
 
 # Register the blueprints for the static files like the CSS, Javascript
 # and images and one for the real UI.

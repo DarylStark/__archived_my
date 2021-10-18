@@ -26,7 +26,7 @@ export default {
   components: { UserMenuItem },
   computed: {
     user_fullname() {
-      return this.$store.state.user_fullname;
+      return this.$store.state.session.account.fullname;
     },
   },
   methods: {
