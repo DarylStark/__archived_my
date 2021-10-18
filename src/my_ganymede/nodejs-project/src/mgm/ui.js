@@ -5,6 +5,7 @@
 'use strict';
 
 import Cookies from 'js-cookie';
+import store from '../store.js';
 class UI {
     constructor() {
         // The constructor does:
@@ -31,6 +32,15 @@ class UI {
 
         // Set the theme
         this.set_theme('from_cookie');
+
+        // Set the device type
+        this.set_device_type();
+
+        // Add a handler to the 'resize' event for the window. In this
+        // handler, we can make sure the device type gets set again
+        window.onresize = () => {
+            this.set_device_type();
+        }
     }
 
     get_theme_from_cookie() {
@@ -89,6 +99,24 @@ class UI {
 
         // Set the theme
         this.set_theme(theme_names[new_index]);
+    }
+
+    set_device_type() {
+        // Method that sets the device type
+        let max_width_tablet = 1024;
+        let max_width_phone = 799;
+
+        // Determine the device type by it's window size
+        let device_type = 'pc';
+        let window_width = document.body.clientWidth;
+        if (window_width <= max_width_phone) {
+            device_type = 'phone';
+        } else if (window_width <= max_width_tablet) {
+            device_type = 'tablet';
+        }
+
+        // Update the central store
+        store.commit('set_device_type', device_type);
     }
 }
 
