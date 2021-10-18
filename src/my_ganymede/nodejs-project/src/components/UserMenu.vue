@@ -1,7 +1,9 @@
 <template>
   <div class="usermenu">
     <div class="button">
-      <div v-if="user_fullname">{{ user_fullname }}</div>
+      <div v-if="$store.state.session.account.fullname">
+        {{ $store.state.session.account.fullname }}
+      </div>
       <i class="fas fa-user-circle"></i>
     </div>
     <div class="menu">
@@ -24,11 +26,6 @@ import UserMenuItem from './UserMenuItem.vue';
 export default {
   name: 'UserMenu',
   components: { UserMenuItem },
-  computed: {
-    user_fullname() {
-      return this.$store.state.session.account.fullname;
-    },
-  },
   methods: {
     next_theme: () => {
       Ganymede.commands.execute('theme.next');
