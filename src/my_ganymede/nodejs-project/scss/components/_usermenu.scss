@@ -30,9 +30,9 @@ div.usermenu {
     }
 
     >.menu {
-        position: relative;
+        position: absolute;
         right: 0px;
-        min-width: 100%;
+        min-width: 200px;
         display: none;
         border: 1px solid var(--color-usermenu-borders);
         background-color: var(--color-usermenu-background);
