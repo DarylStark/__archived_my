@@ -1,7 +1,12 @@
 <template>
   <div class="usermenu">
     <div class="button">
-      <div v-if="$store.state.session.account.fullname">
+      <div
+        v-if="
+          $store.state.session.account.fullname &&
+          $store.state.device_type != 'phone'
+        "
+      >
         {{ $store.state.session.account.fullname }}
       </div>
       <i class="fas fa-user-circle"></i>
