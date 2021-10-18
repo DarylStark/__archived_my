@@ -1,7 +1,7 @@
 <template>
   <div class="usermenu">
     <div class="button">
-      <div>{{ user_fullname }}</div>
+      <div v-if="user_fullname">{{ user_fullname }}</div>
       <i class="fas fa-user-circle"></i>
     </div>
     <div class="menu">
