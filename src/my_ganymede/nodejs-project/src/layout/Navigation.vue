@@ -9,7 +9,7 @@ export default {
   name: 'Navigation',
   computed: {
     visible() {
-      return this.$store.state.navigation_visible;
+      return this.$store.state.ui.navigation_visible;
     },
   },
 };

@@ -3,11 +3,11 @@
     <div class="button">
       <div
         v-if="
-          $store.state.session.account.fullname &&
-          $store.state.device_type != 'phone'
+          $store.state.user_session.session.account.fullname &&
+          $store.state.ui.device_type != 'phone'
         "
       >
-        {{ $store.state.session.account.fullname }}
+        {{ $store.state.user_session.session.account.fullname }}
       </div>
       <i class="fas fa-user-circle"></i>
     </div>
