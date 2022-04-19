@@ -1,13 +1,17 @@
 <template>
     <div v-bind:class="['navigation', { hide: !visible }]">
         <NavigationSection title="First section" hide_title>
-            <NavigationItem>Item 1</NavigationItem>
-            <NavigationItem>Item 2</NavigationItem>
+            <NavigationItem>Dashboard</NavigationItem>
+            <NavigationItem>Tags</NavigationItem>
+            <NavigationItem>Notes</NavigationItem>
         </NavigationSection>
-        <NavigationSection title="Second section">
-            <NavigationItem>Item 3</NavigationItem>
-            <NavigationItem>Item 4</NavigationItem>
-            <NavigationItem>Item 5</NavigationItem>
+        <NavigationSection title="Personal">
+            <NavigationItem>Social</NavigationItem>
+            <NavigationItem>Music</NavigationItem>
+        </NavigationSection>
+        <NavigationSection title="Personal Development">
+            <NavigationItem>Certifications</NavigationItem>
+            <NavigationItem>Courses</NavigationItem>
         </NavigationSection>
     </div>
 </template>
