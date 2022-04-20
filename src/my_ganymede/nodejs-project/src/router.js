@@ -6,6 +6,9 @@ import Dashboard from './pages/Dashboard'
 import Tags from './pages/Tags'
 import Notes from './pages/Notes'
 
+// Error page
+import Error404 from './pages/errors/Error-404'
+
 // Create a store for central state management
 export default createRouter({
     history: createWebHistory('/ui/'),
@@ -23,5 +26,9 @@ export default createRouter({
             path: '/notes',
             component: Notes
         },
+        {
+            path: '/:pathMatch(.+)',
+            component: Error404
+        }
     ]
 });

@@ -10,19 +10,27 @@
             >
         </NavigationSection>
         <NavigationSection title="Personal">
-            <NavigationItem icon="fa-user-group">Social</NavigationItem>
-            <NavigationItem icon="fa-music">Music</NavigationItem>
-            <NavigationItem icon="fa-chart-line">Finances</NavigationItem>
+            <NavigationItem icon="fa-user-group" href="/social"
+                >Social</NavigationItem
+            >
+            <NavigationItem icon="fa-music" href="/music">Music</NavigationItem>
+            <NavigationItem icon="fa-chart-line" href="/finances"
+                >Finances</NavigationItem
+            >
             <i class="fa-solid"></i>
         </NavigationSection>
         <NavigationSection title="Personal Development">
-            <NavigationItem icon="fa-graduation-cap"
+            <NavigationItem icon="fa-graduation-cap" href="/certifications"
                 >Certifications</NavigationItem
             >
-            <NavigationItem icon="fa-school">Courses</NavigationItem>
+            <NavigationItem icon="fa-school" href="/courses"
+                >Courses</NavigationItem
+            >
         </NavigationSection>
         <NavigationSection title="Professional">
-            <NavigationItem icon="fa-building">Jobs</NavigationItem>
+            <NavigationItem icon="fa-building" href="/jobs"
+                >Jobs</NavigationItem
+            >
         </NavigationSection>
     </div>
 </template>
