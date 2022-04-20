@@ -1,9 +1,13 @@
 <template>
     <div v-bind:class="['navigation', { hide: !visible }]">
         <NavigationSection title="My" hide_title>
-            <NavigationItem icon="fa-list">Dashboard</NavigationItem>
-            <NavigationItem icon="fa-tags">Tags</NavigationItem>
-            <NavigationItem icon="fa-book-open">Notes</NavigationItem>
+            <NavigationItem icon="fa-list" href="/dashboard"
+                >Dashboard</NavigationItem
+            >
+            <NavigationItem icon="fa-tags" href="/tags">Tags</NavigationItem>
+            <NavigationItem icon="fa-book-open" href="/notes"
+                >Notes</NavigationItem
+            >
         </NavigationSection>
         <NavigationSection title="Personal">
             <NavigationItem icon="fa-user-group">Social</NavigationItem>
