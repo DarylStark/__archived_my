@@ -14,19 +14,27 @@ export default createRouter({
     history: createWebHistory('/ui/'),
     routes: [
         {
+            // The homepage is a redirect to the dashboard
             path: '/',
-            alias: '/dashboard',
+            redirect: '/dashboard',
+        },
+        {
+            path: '/dashboard',
+            name: 'dashboard',
             component: Dashboard
         },
         {
             path: '/tags',
+            name: 'tags',
             component: Tags
         },
         {
             path: '/notes',
+            name: 'notes',
             component: Notes
         },
         {
+            // Error page
             path: '/:pathMatch(.+)',
             component: Error404
         }

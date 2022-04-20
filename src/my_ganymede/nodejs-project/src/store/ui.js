@@ -3,7 +3,9 @@ export default {
     state() {
         return {
             navigation_visible: true,
-            device_type: 'pc'
+            device_type: 'pc',
+            app_title: 'My',
+            page_title: ''
         }
     },
     mutations: {
@@ -20,6 +22,19 @@ export default {
             // updated as soon as the screensize changes
             state.device_type = device_type;
             console.log('Updated!');
+        },
+        update_title(state, page_title = '') {
+            // Set the page title
+            state.page_title = page_title;
+
+            // Create the title for the window
+            let window_title = state.app_title;
+            if (state.page_title != '') {
+                window_title += ' | ' + state.page_title;
+            }
+
+            // Set the window title
+            document.title = window_title;
         }
     }
 };
