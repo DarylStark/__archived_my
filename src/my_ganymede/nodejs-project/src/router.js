@@ -8,10 +8,11 @@ import Notes from './pages/Notes'
 
 // Create a store for central state management
 export default createRouter({
-    history: createWebHistory(process.env.BASE_URL),
+    history: createWebHistory('/ui/'),
     routes: [
         {
-            path: '/dashboard',
+            path: '/',
+            alias: '/dashboard',
             component: Dashboard
         },
         {
