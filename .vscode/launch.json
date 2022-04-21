@@ -60,7 +60,9 @@
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/tools/install-ganymede-static-files.py",
             "console": "integratedTerminal",
-            "envFile": "${workspaceFolder}/.environment/development.env"
+            "args": [
+                "${workspaceFolder}/.environment/development.env"
+            ]
         },
     ]
 }
