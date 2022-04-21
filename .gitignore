@@ -17,12 +17,4 @@ env*
 
 # Exclude 'rope' configuration and cache
 .vscode/.ropeproject
-
-# Exclude all NodeJS modules and compiled files in the 'NodeJS' project
-src/my_ganymede/nodejs-project/node_modules
-src/my_ganymede/nodejs-project/dist
-src/my_ganymede/nodejs-project/public/css
-src/my_ganymede/static/js/*.js
-src/my_ganymede/static/js/*.js.map
-src/my_ganymede/static/css/*.css
 #------------------------------------------------------------------------------
