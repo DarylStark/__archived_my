@@ -53,7 +53,7 @@ if __name__ == '__main__':
             # Get all files in the source directory
             files = glob.glob(f'{source}/*')
             for file in files:
-                if isfile(file):
+                if isfile(file) and not '.map' in file:
                     logger.info(f'Copying file "{file}" to "{destination}"')
                     shutil.copy(file, destination)
     else:
