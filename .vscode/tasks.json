@@ -47,5 +47,15 @@
             ],
             "problemMatcher": []
         },
+        {
+            "label": "Install - Ganymede - Ganymede static files",
+            "type": "shell",
+            "command": "${workspaceFolder}/env/bin/python",
+            "args": [
+                "tools/install-ganymede-static-files.py",
+                "${workspaceFolder}/.environment/development.env"
+            ],
+            "problemMatcher": []
+        },
     ]
 }

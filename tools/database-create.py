@@ -1,13 +1,14 @@
 """
     Script to create the missing tables from the database
 """
-import sys
-import os
 import argparse
 import logging
+import os
+import sys
 import pymysql
 import sqlalchemy
 from rich.logging import RichHandler
+from set_environment import set_environment
 
 # Add include path. We need to do this because we are not in the
 # original path
@@ -18,7 +19,6 @@ sys.path.append(
 from database import Database, DatabaseSession
 from database.exceptions import DatabaseConnectionError
 from my_database_model import *
-
 
 if __name__ == '__main__':
     # Parse the arguments for the script
@@ -41,30 +41,8 @@ if __name__ == '__main__':
                         datefmt="[%X]", handlers=[RichHandler()])
     logger = logging.getLogger(name='database-create')
 
-    # Open the file
-    logger.info('Setting environment variables')
-    try:
-        with open(file=args.environment_file) as env_file:
-            # Get all the lines and strip off the whitespace
-            lines = [line.strip() for line in env_file.readlines()]
-    except FileNotFoundError:
-        logging.error(f'File "{args.environment_file}" not found')
-        sys.exit(1)
-
-    # Loop through the lines and retrieve the variable name and the
-    # value
-    for line in lines:
-        try:
-            # Retrieve the values
-            variable_name, variable_value = line.split('=')
-
-            # Set the variable
-            os.environ[variable_name] = variable_value
-
-            logger.info(f'Set variable {variable_name}')
-        except ValueError:
-            # The error was not correctly defined
-            logger.warning(f'Line not compliant:\n> {line}')
+    # Set the environment
+    set_environment(args.environment_file, logger)
 
     # Get the database credentials
     username = os.environ["DB_USERNAME"]

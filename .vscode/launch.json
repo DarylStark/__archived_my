@@ -54,12 +54,13 @@
             "envFile": "${workspaceFolder}/.environment/development.env"
         },
         {
-            "name": "Debug - Tools - Install - Copy compiled NdeJS files",
+            "name": "Debug - Tools - Install - Ganymede static files",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/tools/copy-compiled-nodejs-files.py",
-            "console": "integratedTerminal"
+            "program": "${workspaceFolder}/tools/install-ganymede-static-files.py",
+            "console": "integratedTerminal",
+            "envFile": "${workspaceFolder}/.environment/development.env"
         },
     ]
 }
