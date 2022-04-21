@@ -61,17 +61,5 @@
             "program": "${workspaceFolder}/tools/copy-compiled-nodejs-files.py",
             "console": "integratedTerminal"
         },
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "Debug - Develop - VueJS project",
-            "url": "http://localhost:8080/login.html",
-            "webRoot": "${workspaceFolder}/src/my_ganymede/nodejs-project/src",
-            "breakOnLoad": true,
-            "sourceMapPathOverrides": {
-                "webpack:///./src/*": "${webRoot}/*",
-                "webpack:///src/*": "${webRoot}/*"
-            }
-        },
     ]
 }

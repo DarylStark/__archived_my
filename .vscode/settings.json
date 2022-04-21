@@ -27,11 +27,4 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
-    // HTML formatter
-    "html.format.wrapLineLength": 80,
-    "html.format.wrapAttributes": "aligned-multiple",
-    "[html]": {
-        "editor.detectIndentation": false,
-        "editor.tabSize": 4
-    }
 }
