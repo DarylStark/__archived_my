@@ -126,8 +126,8 @@ if __name__ == '__main__':
                         expires=None,
                         user_id=2,
                         enabled=True,
-                        app_name='Thunder Client',
-                        app_publisher='Ranga Vadhineni',
+                        app_name='RESTbook',
+                        app_publisher='Tanha Kabir',
                         token='abcdefgh1234567890',
                         tokens=[
                             api_token_objects[0]
