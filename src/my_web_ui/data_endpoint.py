@@ -5,11 +5,11 @@
 from typing import Callable, Optional
 from flask.app import Response as FlaskResponse
 from my_database_model.user import UserRole
-from my_ganymede.response import Response
-from my_ganymede.json_encoder import GanymedeJSONEncoder
+from my_web_ui.response import Response
+from my_web_ui.json_encoder import WebUIJSONEncoder
 from json import dumps
-from my_ganymede.exceptions import InvalidInputError
-from my_ganymede.authentication import get_active_user_session
+from my_web_ui.exceptions import InvalidInputError
+from my_web_ui.authentication import get_active_user_session
 from dataclasses import dataclass
 
 
@@ -95,7 +95,7 @@ def data_endpoint(allowed_users: EndpointPermissions):
             return FlaskResponse(
                 response=dumps(
                     response,
-                    cls=GanymedeJSONEncoder),
+                    cls=WebUIJSONEncoder),
                 status=status_code,
                 mimetype='application/json'
             )

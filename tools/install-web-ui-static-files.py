@@ -1,5 +1,5 @@
-""" Script to copy the files in the NodeJS project to the my_ganymede
-    static folder. """
+""" Script to copy the files in the NodeJS project to the my_web_ui static
+    folder. """
 
 import argparse
 import glob
@@ -34,7 +34,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     nodejs_path = os.environ['NODEJS_DIST_FOLDER']
-    my_ganymede_path = './src/my_ganymede/static'
+    my_web_ui_path = './src/my_web_ui/static'
 
     # Find the 'nodejs-project' folder
     if isdir(nodejs_path):
@@ -43,9 +43,9 @@ if __name__ == '__main__':
         # This list of tuples contains the source and destination
         # directories for everything that should be copied
         copy = [
-            (f'{nodejs_path}/css', f'{my_ganymede_path}/css'),
-            (f'{nodejs_path}/js', f'{my_ganymede_path}/js'),
-            (f'{nodejs_path}/static/fonts', f'{my_ganymede_path}/fonts')
+            (f'{nodejs_path}/css', f'{my_web_ui_path}/css'),
+            (f'{nodejs_path}/js', f'{my_web_ui_path}/js'),
+            (f'{nodejs_path}/static/fonts', f'{my_web_ui_path}/fonts')
         ]
 
         # Copy the files

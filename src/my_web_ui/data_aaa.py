@@ -1,5 +1,5 @@
 """ Module that creates the Flask Blueprint for the aaa data of the
-    My Ganymede service. This Blueprint can be used to login and
+    My Web UI service. This Blueprint can be used to login and
     logout.
 """
 
@@ -10,16 +10,16 @@ from my_database.exceptions import (AuthUserRequiresSecondFactorError,
                                     AuthCredentialsError)
 from my_database_model import User
 from my_database_model.user_session import UserSession
-from my_ganymede.exceptions import InvalidInputError
-from my_ganymede.response import Response
-from my_ganymede.data_endpoint import data_endpoint, EndpointPermissions
+from my_web_ui.exceptions import InvalidInputError
+from my_web_ui.response import Response
+from my_web_ui.data_endpoint import data_endpoint, EndpointPermissions
 from my_database.auth import (validate_credentials, create_user_session,
                               delete_user_sessions)
 from json import dumps
 
 # Create the Blueprint
 blueprint_data_aaa = Blueprint(
-    name='my_ganymede_data_aaa',
+    name='my_web_ui_data_aaa',
     import_name=__name__,
     url_prefix='/data/aaa/'
 )

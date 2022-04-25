@@ -16,7 +16,18 @@
             ]
         },
         {
-            "name": "Debug - Services - REST API v1",
+            "name": "Debug - Tools - Install - My Web UI static files",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/tools/install-web-ui-static-files.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${workspaceFolder}/.environment/development.env"
+            ]
+        },
+        {
+            "name": "Debug - Services - My REST API v1",
             "type": "python",
             "request": "launch",
             "module": "flask",
@@ -35,13 +46,13 @@
             "envFile": "${workspaceFolder}/.environment/development.env"
         },
         {
-            "name": "Debug - Services - Ganymede",
+            "name": "Debug - Services - My Web UI",
             "type": "python",
             "request": "launch",
             "module": "flask",
             "cwd": "${workspaceFolder}/src",
             "env": {
-                "FLASK_APP": "my_ganymede:flask_app",
+                "FLASK_APP": "my_web_ui:flask_app",
                 "FLASK_ENV": "development"
             },
             "args": [
@@ -52,17 +63,6 @@
             "jinja": false,
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.environment/development.env"
-        },
-        {
-            "name": "Debug - Tools - Install - Ganymede static files",
-            "type": "python",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/tools/install-ganymede-static-files.py",
-            "console": "integratedTerminal",
-            "args": [
-                "${workspaceFolder}/.environment/development.env"
-            ]
         },
     ]
 }

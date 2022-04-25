@@ -1,4 +1,4 @@
-""" Module that keeps the GanymedeJSONEncoder class, which seriales
+""" Module that keeps the WebUIJSONEncoder class, which seriales
     a Response to a JSON serializable object. """
 
 from datetime import datetime
@@ -6,10 +6,10 @@ from enum import Enum
 from json import JSONEncoder
 from typing import Any, Dict, Union
 from database.database import Database
-from my_ganymede.response import Response
+from my_web_ui.response import Response
 
 
-class GanymedeJSONEncoder(JSONEncoder):
+class WebUIJSONEncoder(JSONEncoder):
     """ Class that can be used to serialize Response objects """
 
     def default(self, object: Any) -> Union[Dict, int, str]:

@@ -48,11 +48,11 @@
             "problemMatcher": []
         },
         {
-            "label": "Install - Ganymede - Ganymede static files",
+            "label": "Install - My Web UI - Static files",
             "type": "shell",
             "command": "${workspaceFolder}/env/bin/python",
             "args": [
-                "tools/install-ganymede-static-files.py",
+                "tools/install-web-ui-static-files.py",
                 "${workspaceFolder}/.environment/development.env"
             ],
             "problemMatcher": []
