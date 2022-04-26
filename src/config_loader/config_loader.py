@@ -2,6 +2,7 @@
     class with only class-methods. """
 
 import collections
+from collections.abc import Mapping
 import os
 import re
 from logging import getLogger
@@ -173,7 +174,7 @@ class ConfigLoader:
         for key in environment.keys():
             if key in config \
                     and isinstance(config[key], dict) \
-                    and isinstance(environment[key], collections.Mapping):
+                    and isinstance(environment[key], Mapping):
                 # Recursivly merge
                 cls.merge_environment(config[key], environment[key])
             else:
