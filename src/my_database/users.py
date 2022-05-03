@@ -297,16 +297,14 @@ def update_user(
     # Authorize this request; check if the user requesting this is
     # allowed to change the role of the user
     if 'role' in kwargs.keys():
-        if req_user.role == UserRole.user and kwargs['role'] != UserRole.user:
+        if req_user.role == UserRole.user and resource != req_user:
             raise PermissionDeniedError(
-                'A user with role "user" cannot change the role of users')
+                'A user with role "user" can only change his own useraccount')
         elif req_user.role == UserRole.admin:
             if kwargs['role'] == UserRole.root:
                 raise PermissionDeniedError(
                     'A user with role "admin" cannot elevate users to the ' +
                     'role of "root"')
-
-    # TODO: make sure admins can only change admins and users
 
     # Update the resource
     for field in kwargs.keys():
