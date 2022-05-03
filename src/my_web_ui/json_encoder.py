@@ -97,6 +97,12 @@ class WebUIJSONEncoder(JSONEncoder):
         except AttributeError:
             fields_to_hide = list()
 
+        # Get the fields that we just have to set to True if they are set
+        try:
+            fields_to_mask = object.api_mask_fields
+        except AttributeError:
+            fields_to_mask = list()
+
         # Get the columns
         columns = [column.name for column in type(object).__table__.columns]
 
@@ -106,6 +112,11 @@ class WebUIJSONEncoder(JSONEncoder):
             for key, value in object.__dict__.items()
             if key in columns and key not in fields_to_hide
         }
+
+        # Then, we mask all the fields that should be maskes
+        for field in fields_to_mask:
+            if field in column_dict.keys():
+                column_dict[field] = column_dict[field] != None
 
         # Add fields that are in the 'api_extra_fields' list
         try:

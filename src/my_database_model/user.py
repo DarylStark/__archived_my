@@ -50,6 +50,9 @@ class User(Database.base_class):
     # Fields that need to be hidden from the API
     api_hide_fields = ['password']
 
+    # Fields that should be masked for the API
+    api_mask_fields = ['second_factor']
+
     # Many-to-one relationships
     clients = relationship(
         'APIClient',
