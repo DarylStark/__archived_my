@@ -15,7 +15,7 @@ from my_database.exceptions import (AuthCredentialsError,
                                     AuthUserRequiresSecondFactorError,
                                     FieldNotValidatedError, IntegrityError)
 from my_database.field import Field
-from my_database.users import update_user, update_user_2fa_secret, update_user_password, validation_fields
+from my_database.users import update_user, update_user_2fa_secret, update_user_disable_2fa, update_user_password, validation_fields
 from my_database_model import User
 from my_database_model.user_session import UserSession
 from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint
@@ -256,6 +256,46 @@ def verify_2fa_code(user_session: Optional[UserSession]) -> Response:
                 return_object.success = True
         else:
             raise PermissionDeniedError('TOTP code is not correct')
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_user_account.route(
+    '/disable_2fa',
+    methods=['GET']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def disable_2fa(user_session: Optional[UserSession]) -> Response:
+    """ Method to disable 2FA on a account """
+
+    # Check if the user already has a 2FA code
+    if not user_session.user.second_factor:
+        raise PermissionDeniedError(
+            'This user already has two factor authentication disabled')
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    if user_session is not None:
+        return_object.success = False
+        try:
+            changed_resource = update_user_disable_2fa(
+                req_user=user_session.user,
+                user_id=user_session.user_id
+            )
+        except IntegrityError:
+            # Set the return value to False
+            return_object.error_code = 1
+            return_object.success = False
+        else:
+            # Set the return value to True
+            return_object.success = True
 
     # Return the created object
     return return_object

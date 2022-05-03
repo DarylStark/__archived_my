@@ -453,7 +453,7 @@ def update_user_2fa_secret(
     user_id: int,
     **kwargs: dict
 ) -> Optional[User]:
-    """ Method to update the password of a user.
+    """ Method to update the 2FA for a user.
 
         Parameters
         ----------
@@ -512,9 +512,75 @@ def update_user_2fa_secret(
 
     logger.debug('update_user_2fa_secret: user is authorized')
 
-    # Update the password
+    # Update the secret
     logger.debug('update_user_2fa_secret :: setting secret')
     resource.set_second_factor(kwargs['secret'])
+
+    # Save the fields
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            logger.debug(
+                'update_user_2fa_secret: merging resource into session')
+
+            # Add the changed resource to the session
+            session.merge(resource)
+
+        # Done! Return the resource
+        if isinstance(resource, User):
+            logger.debug('update_user_2fa_secret: updating was a success!')
+            return resource
+    except sqlalchemy.exc.IntegrityError as e:
+        # Add a custom text to the exception
+        logger.error(
+            f'update_user_2fa_secret: sqlalchemy.exc.IntegrityError: {str(e)}')
+        raise IntegrityError('User already exists')
+
+    return None
+
+
+def update_user_disable_2fa(
+    req_user: User,
+    user_id: int
+) -> Optional[User]:
+    """ Method to disable 2FA for a user.
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        user_id : int
+            The ID for the user to change
+
+        Returns
+        -------
+        User
+            The updated user object.
+
+        None
+            No user updated.
+    """
+
+    # Get the resource object
+    resource: Optional[Union[List[User], User]] = \
+        get_users(req_user, flt_id=user_id)
+
+    logger.debug('update_user_disable_2fa: we have the resource')
+
+    # It is only allowed to set the secret for your own account
+    if req_user.id != resource.id:
+        raise PermissionDeniedError(
+            'You can only disable 2FA for your own account')
+
+    logger.debug('update_user_disable_2fa: user is authorized')
+
+    # Update the password
+    logger.debug('update_user_2fa_secret :: setting secret')
+    resource.disable_second_factor()
 
     # Save the fields
     try:

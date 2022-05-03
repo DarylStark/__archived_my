@@ -177,6 +177,19 @@ class User(Database.base_class):
         self.second_factor = second_factor
         return second_factor
 
+    def disable_second_factor(self) -> None:
+        """ Method to disable a second factor secret for this user
+
+            Parameters
+            ----------
+            None
+
+            Returns
+            -------
+            None
+        """
+        self.second_factor = None
+
     def verify_password(self, password: str) -> bool:
         """ Checks the password and returns True if the given password
             is correct
