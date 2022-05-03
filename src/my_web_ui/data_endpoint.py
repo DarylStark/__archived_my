@@ -8,7 +8,7 @@ from my_database_model.user import UserRole
 from my_web_ui.response import Response
 from my_web_ui.json_encoder import WebUIJSONEncoder
 from json import dumps
-from my_web_ui.exceptions import InvalidInputError
+from my_web_ui.exceptions import InvalidInputError, PermissionDeniedError
 from my_web_ui.authentication import get_active_user_session
 from dataclasses import dataclass
 
@@ -90,6 +90,9 @@ def data_endpoint(allowed_users: EndpointPermissions):
                 except InvalidInputError:
                     # User supplied invalid input
                     status_code = 400
+                except PermissionDeniedError:
+                    # User did something without permissions
+                    status_code = 401
 
             # Return the Flask Response
             return FlaskResponse(

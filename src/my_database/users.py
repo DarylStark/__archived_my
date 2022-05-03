@@ -27,7 +27,8 @@ validation_fields = {
         'email',
         str,
         str_regex_validator=r'[a-z0-9_\-.]+@[a-z.-]+\.[a-z.]+'),
-    'role': Field('role', UserRole)
+    'role': Field('role', UserRole),
+    'password': Field('password', str)
 }
 
 
@@ -305,6 +306,8 @@ def update_user(
                     'A user with role "admin" cannot elevate users to the ' +
                     'role of "root"')
 
+    # TODO: make sure admins can only change admins and users
+
     # Update the resource
     for field in kwargs.keys():
         if field in all_fields.keys():
@@ -346,6 +349,106 @@ def update_user(
     return None
 
 
+def update_user_password(
+    req_user: User,
+    user_id: int,
+    **kwargs: dict
+) -> Optional[User]:
+    """ Method to update the password of a user.
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        user_id : int
+            The ID for the user to change
+
+        **kwargs : dict
+            A dict containing the fields for the user.
+
+        Returns
+        -------
+        User
+            The updated user object.
+
+        None
+            No user updated.
+    """
+
+    # Get the resource object
+    resource: Optional[Union[List[User], User]] = \
+        get_users(req_user, flt_id=user_id)
+
+    logger.debug('update_user_password: we have the resource')
+
+    # Set the needed fields
+    required_fields = {
+        'password': validation_fields['password']
+    }
+
+    # Set the optional fields
+    optional_fields = None
+
+    # Validate the user input
+    validate_input(
+        input_values=kwargs,
+        required_fields=required_fields,
+        optional_fields=optional_fields)
+
+    logger.debug('update_user_password: all arguments are validated')
+
+    # Combine the arguments
+    all_fields: dict = dict()
+    if required_fields:
+        all_fields.update(required_fields)
+    if optional_fields:
+        all_fields.update(optional_fields)
+
+    # Authorize this request; a 'normal' user can change the password of his
+    # own account. A admin can change the password of every 'normal' account
+    # and the root user can change all passwords
+    if req_user.role == UserRole.user and req_user != resource:
+        raise PermissionDeniedError(
+            'A user with role "user" can only change his own password')
+    elif (req_user.role == UserRole.admin and
+            (resource.role != UserRole.user or
+             resource.role != UserRole.admin)
+          ):
+        raise PermissionDeniedError(
+            'A user with role "admin" can only change the password for normal users and admins')
+
+    logger.debug('create_user: user is authorized')
+
+    # Update the password
+    logger.debug('update_user_password :: setting password')
+    resource.set_password(kwargs['password'])
+
+    # Save the fields
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            logger.debug('update_user_password: merging resource into session')
+
+            # Add the changed resource to the session
+            session.merge(resource)
+
+        # Done! Return the resource
+        if isinstance(resource, User):
+            logger.debug('update_user_password: updating was a success!')
+            return resource
+    except sqlalchemy.exc.IntegrityError as e:
+        # Add a custom text to the exception
+        logger.error(
+            f'update_user_password: sqlalchemy.exc.IntegrityError: {str(e)}')
+        raise IntegrityError('User already exists')
+
+    return None
+
+
 def delete_user(
     req_user: User,
     user_id: int
@@ -371,6 +474,8 @@ def delete_user(
     if req_user.role == UserRole.user:
         raise PermissionDeniedError(
             'A user with role "user" cannot delete users')
+
+    # TODO: make sure admins can only remove admins and users
 
     # Get the user
     resource = get_users(req_user=req_user, flt_id=user_id)
