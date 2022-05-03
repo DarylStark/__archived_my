@@ -473,8 +473,6 @@ def delete_user(
         raise PermissionDeniedError(
             'A user with role "user" cannot delete users')
 
-    # TODO: make sure admins can only remove admins and users
-
     # Get the user
     resource = get_users(req_user=req_user, flt_id=user_id)
 
@@ -484,6 +482,9 @@ def delete_user(
     if req_user.id == user_id:
         raise PermissionDeniedError(
             'You cannot remove your own user account')
+    elif (req_user.role == UserRole.admin and resource.role == UserRole.root):
+        raise PermissionDeniedError(
+            'A admin cannot remove root users')
 
     # Create a database session
     try:
