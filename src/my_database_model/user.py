@@ -130,6 +130,22 @@ class User(Database.base_class):
         self.password = argon2.hash(password)
         self.password_date = datetime.datetime.utcnow()
 
+    @staticmethod
+    def get_random_second_factor() -> str:
+        """ Method to get a random second factor for this user. Made static
+            since it can be used without an object.
+
+            Parameters
+            ----------
+            None
+
+            Returns
+            -------
+            str
+                The random second factor
+        """
+        return random_base32()
+
     def set_random_second_factor(self) -> str:
         """ Method to set a random second factor for this user
 
@@ -142,8 +158,24 @@ class User(Database.base_class):
             str
                 The random second factor
         """
-        self.second_factor = random_base32()
+        self.second_factor = self.get_random_second_factor()
         return self.second_factor
+
+    def set_second_factor(self, second_factor: str) -> str:
+        """ Method to set a second factor secret for this user
+
+            Parameters
+            ----------
+            second_factor : str
+                The second factor secret to set
+
+            Returns
+            -------
+            str
+                The second factor
+        """
+        self.second_factor = second_factor
+        return second_factor
 
     def verify_password(self, password: str) -> bool:
         """ Checks the password and returns True if the given password

@@ -7,6 +7,7 @@ from json import dumps
 from typing import Optional
 from flask.blueprints import Blueprint
 from flask.globals import request, session
+from pyotp import TOTP
 from my_database import validate_input
 from my_database.auth import (create_user_session, delete_user_sessions,
                               validate_credentials)
@@ -14,7 +15,7 @@ from my_database.exceptions import (AuthCredentialsError,
                                     AuthUserRequiresSecondFactorError,
                                     FieldNotValidatedError, IntegrityError)
 from my_database.field import Field
-from my_database.users import update_user, update_user_password, validation_fields
+from my_database.users import update_user, update_user_2fa_secret, update_user_password, validation_fields
 from my_database_model import User
 from my_database_model.user_session import UserSession
 from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint
@@ -27,6 +28,9 @@ blueprint_data_user_account = Blueprint(
     import_name=__name__,
     url_prefix='/data/user_account/'
 )
+
+# Dict with temporary 2FA codes
+tfa_codes = dict()
 
 
 @blueprint_data_user_account.route(
@@ -142,6 +146,116 @@ def update_password(user_session: Optional[UserSession]) -> Response:
         else:
             # Set the return value to True
             return_object.success = True
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_user_account.route(
+    '/get_2fa_code',
+    methods=['GET']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def get_2fa_code(user_session: Optional[UserSession]) -> Response:
+    """ Method to retrieve a temporary 2FA code """
+
+    # Check if the user already has a 2FA code
+    if user_session.user.second_factor:
+        raise PermissionDeniedError('This user already has a second factor')
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    if user_session is not None:
+        # Generate a new 2FA code and add it to the global list of temporary
+        # 2FA codes
+        username = user_session.user.username
+        tfa_codes[username] = user_session.user.get_random_second_factor()
+
+        # Set the code in the object that we return
+        return_object.data = {'code': tfa_codes[user_session.user.username]}
+
+        # Set the object to a success
+        return_object.success = True
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_user_account.route(
+    '/verify_2fa_code',
+    methods=['POST']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def verify_2fa_code(user_session: Optional[UserSession]) -> Response:
+    """ Method to verify a temporary 2FA code """
+
+    # Check if the user already has a 2FA code
+    if user_session.user.second_factor:
+        raise PermissionDeniedError('This user already has a second factor')
+
+    # Check if the user has a temporary code
+    if user_session.user.username not in tfa_codes.keys():
+        raise PermissionDeniedError(
+            'A temporary code should be generated first by using the `get_2fa_code` endpoint')
+
+    # Get the given data
+    post_data = request.json
+
+    # Validate the given fields
+    required_fields = {
+        'code': Field('code', str, '[0-9]{6}')
+    }
+
+    # Set the optional fields
+    optional_fields = None
+
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    if user_session is not None:
+        # Check if the given code is correct
+        username = user_session.user.username
+        secret = tfa_codes[username]
+
+        # Verify
+        return_object.success = False
+        if TOTP(secret).now() == post_data['code']:
+            # Set the code in the userobject
+            try:
+                changed_resource = update_user_2fa_secret(
+                    req_user=user_session.user,
+                    user_id=user_session.user_id,
+                    secret=secret
+                )
+            except IntegrityError:
+                # Set the return value to False
+                return_object.error_code = 1
+                return_object.success = False
+            else:
+                # Set the return value to True
+                return_object.success = True
+        else:
+            raise PermissionDeniedError('TOTP code is not correct')
 
     # Return the created object
     return return_object

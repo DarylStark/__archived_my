@@ -28,7 +28,8 @@ validation_fields = {
         str,
         str_regex_validator=r'[a-z0-9_\-.]+@[a-z.-]+\.[a-z.]+'),
     'role': Field('role', UserRole),
-    'password': Field('password', str)
+    'password': Field('password', str),
+    'secret': Field('secret', str)
 }
 
 
@@ -442,6 +443,99 @@ def update_user_password(
         # Add a custom text to the exception
         logger.error(
             f'update_user_password: sqlalchemy.exc.IntegrityError: {str(e)}')
+        raise IntegrityError('User already exists')
+
+    return None
+
+
+def update_user_2fa_secret(
+    req_user: User,
+    user_id: int,
+    **kwargs: dict
+) -> Optional[User]:
+    """ Method to update the password of a user.
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        user_id : int
+            The ID for the user to change
+
+        **kwargs : dict
+            A dict containing the fields for the user.
+
+        Returns
+        -------
+        User
+            The updated user object.
+
+        None
+            No user updated.
+    """
+
+    # Get the resource object
+    resource: Optional[Union[List[User], User]] = \
+        get_users(req_user, flt_id=user_id)
+
+    logger.debug('update_user_2fa_secret: we have the resource')
+
+    # Set the needed fields
+    required_fields = {
+        'secret': validation_fields['secret']
+    }
+
+    # Set the optional fields
+    optional_fields = None
+
+    # Validate the user input
+    validate_input(
+        input_values=kwargs,
+        required_fields=required_fields,
+        optional_fields=optional_fields)
+
+    logger.debug('update_user_2fa_secret: all arguments are validated')
+
+    # Combine the arguments
+    all_fields: dict = dict()
+    if required_fields:
+        all_fields.update(required_fields)
+    if optional_fields:
+        all_fields.update(optional_fields)
+
+    # It is only allowed to set the secret for your own account
+    if req_user.id != resource.id:
+        raise PermissionDeniedError(
+            'You can only set the secret for your own account')
+
+    logger.debug('update_user_2fa_secret: user is authorized')
+
+    # Update the password
+    logger.debug('update_user_2fa_secret :: setting secret')
+    resource.set_second_factor(kwargs['secret'])
+
+    # Save the fields
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            logger.debug(
+                'update_user_2fa_secret: merging resource into session')
+
+            # Add the changed resource to the session
+            session.merge(resource)
+
+        # Done! Return the resource
+        if isinstance(resource, User):
+            logger.debug('update_user_2fa_secret: updating was a success!')
+            return resource
+    except sqlalchemy.exc.IntegrityError as e:
+        # Add a custom text to the exception
+        logger.error(
+            f'update_user_2fa_secret: sqlalchemy.exc.IntegrityError: {str(e)}')
         raise IntegrityError('User already exists')
 
     return None
