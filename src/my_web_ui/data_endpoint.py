@@ -8,7 +8,7 @@ from my_database_model.user import UserRole
 from my_web_ui.response import Response
 from my_web_ui.json_encoder import WebUIJSONEncoder
 from json import dumps
-from my_web_ui.exceptions import InvalidInputError, PermissionDeniedError
+from my_web_ui.exceptions import InvalidInputError, PermissionDeniedError, ServerError
 from my_web_ui.authentication import get_active_user_session
 from dataclasses import dataclass
 
@@ -93,6 +93,9 @@ def data_endpoint(allowed_users: EndpointPermissions):
                 except PermissionDeniedError:
                     # User did something without permissions
                     status_code = 401
+                except ServerError:
+                    # Something went wrong on the server
+                    status_code = 500
 
             # Return the Flask Response
             return FlaskResponse(

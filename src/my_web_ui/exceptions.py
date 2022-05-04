@@ -21,3 +21,9 @@ class PermissionDeniedError(MyWebUIError):
     """ Exception that occurs when the user gives invalid input. Sould
         be handled as HTTP 400 error. """
     pass
+
+
+class ServerError(MyWebUIError):
+    """ Exception that occurs when something goes wrong on the server. Should
+        be handled as HTTP 500 error. """
+    pass

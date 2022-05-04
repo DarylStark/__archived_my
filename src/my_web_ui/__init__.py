@@ -10,6 +10,7 @@ from my_web_ui.exceptions import ConfigNotLoadedError
 from my_web_ui.data_aaa import blueprint_data_aaa
 from my_web_ui.data_user_session import blueprint_data_user_sessions
 from my_web_ui.data_user_account import blueprint_data_user_account
+from my_web_ui.data_web_ui_settings import blueprint_data_web_ui_settings
 from my_web_ui.static import blueprint_static
 from my_web_ui.ui import blueprint_ui
 
@@ -41,6 +42,7 @@ flask_app.secret_key = ConfigLoader.config['flask']['secret']
 flask_app.register_blueprint(blueprint_data_aaa)
 flask_app.register_blueprint(blueprint_data_user_sessions)
 flask_app.register_blueprint(blueprint_data_user_account)
+flask_app.register_blueprint(blueprint_data_web_ui_settings)
 
 # Register the blueprints for the static files like the CSS, Javascript
 # and images and one for the real UI.

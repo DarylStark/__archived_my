@@ -74,6 +74,11 @@ class User(Database.base_class):
         lazy='subquery',
         back_populates='user',
         cascade='all, delete, save-update')
+    web_ui_settings = relationship(
+        'WebUISetting',
+        lazy='subquery',
+        back_populates='user',
+        cascade='all, delete, save-update')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """

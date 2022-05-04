@@ -8,3 +8,4 @@ from my_database_model.api_token_scope import APITokenScope
 from my_database_model.tag import Tag
 from my_database_model.user import User, UserRole
 from my_database_model.user_session import UserSession
+from my_database_model.web_ui_setting import WebUISetting
