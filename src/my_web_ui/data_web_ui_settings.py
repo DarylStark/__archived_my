@@ -116,10 +116,15 @@ def get_settings(user_session: Optional[UserSession]) -> Response:
 
     if user_session is not None:
         try:
-            # Set the user session in the return object
-            return_object.data = {
-                'settings': {x.setting: x.value for x in get_web_ui_settings(req_user=user_session.user)}
-            }
+            # Default settings is a empty dictionary
+            return_object.data = dict()
+
+            # Get the settings from the database
+            settings = get_web_ui_settings(req_user=user_session.user)
+            if settings:
+                return_object.data = {
+                    'settings': {x.setting: x.value for x in settings}
+                }
         except NotFoundError as err:
             # If no settings are found, we set the 'data' in the return object
             # to a empty list
