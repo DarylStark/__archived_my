@@ -29,7 +29,10 @@ validation_fields = {
     'host': Field(
         'host',
         str,
-        str_regex_validator=r'^[a-f0-9\.\:]+$')
+        str_regex_validator=r'^[a-f0-9\.\:]+$'),
+    'session_ids': Field(
+        'session_ids',
+        list)
 }
 
 
@@ -288,7 +291,7 @@ def get_user_sessions(
 
 def delete_user_sessions(
     req_user: User,
-    session_id: int
+    session_id: Union[List[int], int]
 ) -> bool:
     """ Method to delete a user session.
 
@@ -298,8 +301,8 @@ def delete_user_sessions(
             The user who is requesting this. Should be used to verify
             what the user is allowed to do.
 
-        session_id : int
-            The ID for the session to delete.
+        session_id : Union[List[int], int]
+            A list of sessions to delete or a session ID
 
         Returns
         -------
@@ -307,8 +310,15 @@ def delete_user_sessions(
             True on success.
     """
 
-    # Get the user session
-    resource = get_user_sessions(req_user=req_user, flt_id=session_id)
+    # Get the user sessions
+    resources = None
+    if type(session_id) is list:
+        resources = [
+            get_user_sessions(req_user=req_user, flt_id=r)
+            for r in session_id
+        ]
+    else:
+        resources = [get_user_sessions(req_user=req_user, flt_id=session_id)]
 
     logger.debug('delete_user_sessions: we have the resource')
 
@@ -320,7 +330,8 @@ def delete_user_sessions(
         ) as session:
             # Delete the resource
             logger.debug('delete_user_sessions: deleting the resource')
-            session.delete(resource)
+            for resource in resources:
+                session.delete(resource)
     except sqlalchemy.exc.IntegrityError as e:
         logger.error(
             f'delete_user_sessions: sqlalchemy.exc.IntegrityError: {str(e)}')

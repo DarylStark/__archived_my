@@ -6,9 +6,10 @@
 from typing import Optional
 from flask.blueprints import Blueprint
 from flask.globals import request, session
+from my_database import validate_input
 from my_database.exceptions import (AuthUserRequiresSecondFactorError,
-                                    AuthCredentialsError, NotFoundError)
-from my_database.auth import get_user_sessions
+                                    AuthCredentialsError, FieldNotValidatedError, NotFoundError)
+from my_database.auth import get_user_sessions, validation_fields, delete_user_sessions
 from my_database_model import User
 from my_database_model.user_session import UserSession
 from my_web_ui.exceptions import InvalidInputError, ServerError
@@ -87,6 +88,72 @@ def retrieve_user_sessions(user_session: Optional[UserSession]) -> Response:
             # to a empty list. This should never happen since this endpoint can
             # only be called when a session exists
             return_object.data = []
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+        # Set the return value to True
+        return_object.success = True
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_user_sessions.route(
+    '/remove_user_sessions',
+    methods=['DELETE']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def remove_user_sessions(user_session: Optional[UserSession]) -> Response:
+    """ Method to remove user sessions. Should receive a list of sessions to
+        remove from the user in the POST data """
+
+    # Get the given data
+    post_data = request.json
+
+    # Validate the given fields
+    required_fields = {
+        'session_ids': validation_fields['session_ids'],
+    }
+
+    # Set the optional fields
+    optional_fields = None
+
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    # Create dict to send to the my_database package
+    data_dict = {
+        'req_user': user_session.user,
+        'session_id': post_data['session_ids']
+    }
+
+    # Remove the resources
+    if user_session is not None:
+        try:
+            # Get the user sessions from the database
+            delete_user_sessions(**data_dict)
+
+            # We create a key for the return object that will say that the data
+            # is removed
+            return_object.data = {'deleted': True}
+        except NotFoundError as err:
+            # If no sessions are found, we set the data to False
+            return_object.data = {'deleted': False}
         except Exception as err:
             # Every other error should result in a ServerError.
             raise ServerError(err)
