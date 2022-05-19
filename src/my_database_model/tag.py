@@ -28,6 +28,9 @@ class Tag(Database.base_class):
     title = Column(
         String(32),
         nullable=False)
+    color = Column(
+        String(6),
+        nullable=True)
 
     # One-to-many relationships
     user = relationship(
