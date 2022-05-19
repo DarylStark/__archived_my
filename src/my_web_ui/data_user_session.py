@@ -77,14 +77,14 @@ def retrieve(user_session: Optional[UserSession]) -> Response:
     if user_session is not None:
         try:
             # Get the user sessions from the database
-            user_sessions = get_user_sessions(
+            resources = get_user_sessions(
                 req_user=user_session.user
             )
 
             # Set the user session in the return object
-            return_object.data = user_sessions
+            return_object.data = resources
         except NotFoundError as err:
-            # If no sessions are found, we set the 'data' in the return object
+            # If no resources are found, we set the 'data' in the return object
             # to a empty list. This should never happen since this endpoint can
             # only be called when a session exists
             return_object.data = []
