@@ -430,7 +430,7 @@ def delete_user_sessions(
     else:
         resources = [get_user_sessions(req_user=req_user, flt_id=session_id)]
 
-    logger.debug('delete_user_sessions: we have the resource')
+    logger.debug('delete_user_sessions: we have the resources')
 
     # Create a database session
     try:
@@ -439,7 +439,7 @@ def delete_user_sessions(
             expire_on_commit=True
         ) as session:
             # Delete the resource
-            logger.debug('delete_user_sessions: deleting the resource')
+            logger.debug('delete_user_sessions: deleting the resources')
             for resource in resources:
                 session.delete(resource)
     except sqlalchemy.exc.IntegrityError as e:
