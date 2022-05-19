@@ -20,9 +20,16 @@ validation_fields = {
         'title',
         str,
         str_regex_validator=r'[A-Za-z][A-Za-z0-9\-_. ]+'),
+    'color': Field(
+        'color',
+        str,
+        str_regex_validator=r'[A-Fa-f0-9]{3,6}'),
     'tag_ids': Field(
         'tag_ids',
-        list)
+        list),
+    'tag_id': Field(
+        'tag_id',
+        int)
 }
 
 
@@ -229,12 +236,13 @@ def update_tag(
     logger.debug('update_tag: we have the resource')
 
     # Set the needed fields
-    required_fields = {
-        'title': validation_fields['title']
-    }
+    required_fields = None
 
     # Set the optional fields
-    optional_fields = None
+    optional_fields = {
+        'title': validation_fields['title'],
+        'color': validation_fields['color']
+    }
 
     # Validate the user input
     validate_input(

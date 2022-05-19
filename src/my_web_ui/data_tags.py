@@ -8,7 +8,8 @@ from typing import Optional
 from flask.blueprints import Blueprint
 from flask.globals import request, session
 from my_database import validate_input
-from my_database.tags import (delete_tags, get_tags, validation_fields)
+from my_database.tags import (
+    delete_tags, get_tags, update_tag, validation_fields)
 from my_database.exceptions import (AuthCredentialsError,
                                     AuthUserRequiresSecondFactorError,
                                     FieldNotValidatedError, NotFoundError)
@@ -56,6 +57,78 @@ def retrieve(user_session: Optional[UserSession]) -> Response:
             # If no resource are found, we set the 'data' in the return object
             # to a empty list.
             return_object.data = []
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+        # Set the return value to True
+        return_object.success = True
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_tags.route(
+    '/update',
+    methods=['PATCH']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def update(user_session: Optional[UserSession]) -> Response:
+    """ Method to update tags. Should recieve the session id and the
+        new data """
+
+    # Get the given data
+    post_data = request.json
+
+    # Validate the given fields
+    required_fields = {
+        'tag_id': validation_fields['tag_id'],
+    }
+
+    # Set the optional fields
+    optional_fields = {
+        'title': validation_fields['title'],
+        'color': validation_fields['color']
+    }
+
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
+
+    # Delete `tag_id` from the post_data dict. If we don't do this, we can't
+    # use the `post_data` dict as input for the backend
+    tag_id = post_data['tag_id']
+    post_data.pop('tag_id')
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    # Remove the resources
+    if user_session is not None:
+        try:
+            # Get the user sessions from the database
+            update_tag(
+                req_user=user_session.user,
+                tag_id=tag_id,
+                **post_data
+            )
+
+            # We create a key for the return object that will say that the data
+            # is removed
+            return_object.data = {'update': True}
+        except NotFoundError as err:
+            # If no sessions are found, we set the data to False
+            return_object.data = {'update': False}
         except Exception as err:
             # Every other error should result in a ServerError.
             raise ServerError(err)
