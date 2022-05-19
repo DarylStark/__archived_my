@@ -19,7 +19,10 @@ validation_fields = {
     'title': Field(
         'title',
         str,
-        str_regex_validator=r'[A-Za-z][A-Za-z0-9\-_. ]+')
+        str_regex_validator=r'[A-Za-z][A-Za-z0-9\-_. ]+'),
+    'tag_ids': Field(
+        'tag_ids',
+        list)
 }
 
 
@@ -289,9 +292,9 @@ def update_tag(
     return None
 
 
-def delete_tag(
+def delete_tags(
     req_user: User,
-    tag_id: int
+    tag_id: Union[List[int], int]
 ) -> bool:
     """ Method to delete a tag.
 
@@ -301,8 +304,8 @@ def delete_tag(
             The user who is requesting this. Should be used to verify
             what the user is allowed to do.
 
-        tag_id : int
-            The ID for the tag to delete.
+        tag_id : Union[List[int], int]
+            A list of tags to delete or a tag ID
 
         Returns
         -------
@@ -311,9 +314,16 @@ def delete_tag(
     """
 
     # Get the tag
-    resource = get_tags(req_user=req_user, flt_id=tag_id)
+    resources = None
+    if type(tag_id) is list:
+        resources = [
+            get_tags(req_user=req_user, flt_id=r)
+            for r in tag_id
+        ]
+    else:
+        resources = [get_tags(req_user=req_user, flt_id=tag_id)]
 
-    logger.debug('delete_tag: we have the resource')
+    logger.debug('delete_tag: we have the resources')
 
     # Create a database session
     try:
@@ -322,8 +332,9 @@ def delete_tag(
             expire_on_commit=True
         ) as session:
             # Delete the resource
-            logger.debug('delete_tag: deleting the resource')
-            session.delete(resource)
+            logger.debug('delete_tag: deleting the resources')
+            for resource in resources:
+                session.delete(resource)
     except sqlalchemy.exc.IntegrityError as e:
         logger.error(
             f'delete_tag: sqlalchemy.exc.IntegrityError: {str(e)}')

@@ -9,7 +9,7 @@ from my_database.tags import validation_fields
 from my_database.exceptions import (FieldNotValidatedError, IntegrityError,
                                     MyDatabaseError, NotFoundError,
                                     PermissionDeniedError)
-from my_database.tags import create_tag, delete_tag, get_tags, update_tag
+from my_database.tags import create_tag, delete_tags, get_tags, update_tag
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
 from rest_api_generator.exceptions import (InvalidInputError,
@@ -258,7 +258,7 @@ def tags_update_delete(auth: Optional[Authorization],
     # Delete tag
     if request.method == 'DELETE':
         try:
-            delete_tag(
+            delete_tags(
                 req_user=auth.data.user,
                 tag_id=resource_id
             )
