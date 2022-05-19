@@ -215,7 +215,7 @@ def delete(user_session: Optional[UserSession]) -> Response:
     # Remove the resources
     if user_session is not None:
         try:
-            # Get the user sessions from the database
+            # Remove the user sessions from the database
             delete_user_sessions(**data_dict)
 
             # We create a key for the return object that will say that the data
