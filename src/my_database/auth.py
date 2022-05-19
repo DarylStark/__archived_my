@@ -30,6 +30,13 @@ validation_fields = {
         'host',
         str,
         str_regex_validator=r'^[a-f0-9\.\:]+$'),
+    'session_id': Field(
+        'session_id',
+        int),
+    'title': Field(
+        'title',
+        str,
+        str_regex_validator=r'^[A-Za-z0-9\ \-\._]*$'),
     'session_ids': Field(
         'session_ids',
         list)
@@ -287,6 +294,109 @@ def get_user_sessions(
     # Return the data
     logger.debug('get_user_sessions: returning userssessions')
     return rv
+
+
+def update_user_session(
+    req_user: User,
+    user_session_id: int,
+    **kwargs: dict
+) -> Optional[UserSession]:
+    """ Method to update a user session.
+
+        Parameters
+        ----------
+        req_user : User
+            The user who is requesting this. Should be used to verify
+            what the user is allowed to do.
+
+        user_session_id : int
+            The ID for the user session to change
+
+        **kwargs : dict
+            A dict containing the fields for the session.
+
+        Returns
+        -------
+        UserSession
+            The updated user session object.
+
+        None
+            No user session updated.
+    """
+
+    # Get the resource object
+    resource: Optional[Union[List[UserSession], UserSession]] = \
+        get_user_sessions(req_user, flt_id=user_session_id)
+
+    logger.debug('update_user_session: we have the resource')
+
+    # Set the needed fields
+    required_fields = {
+        'title': validation_fields['title']
+    }
+
+    # Set the optional fields
+    optional_fields = None
+
+    # Validate the user input
+    validate_input(
+        input_values=kwargs,
+        required_fields=required_fields,
+        optional_fields=optional_fields)
+
+    logger.debug('update_user_session: all arguments are validated')
+
+    # Combine the arguments
+    all_fields: dict = dict()
+    if required_fields:
+        all_fields.update(required_fields)
+    if optional_fields:
+        all_fields.update(optional_fields)
+
+    # Set the title to None if it is an empty string. This way, we can make sure
+    # that no real empty strings get saved
+    if kwargs['title'] == '':
+        kwargs['title'] = None
+
+    # Update the resource
+    for field in kwargs.keys():
+        if field in all_fields.keys():
+            if hasattr(resource, all_fields[field].object_field):
+                setattr(
+                    resource,
+                    all_fields[field].object_field,
+                    kwargs[field])
+            else:
+                raise AttributeError(
+                    f"'{type(resource)}' has no attribute " +
+                    f"'{all_fields[field].object_field}'"
+                )
+        else:
+            raise FilterNotValidError(
+                f'Field {field} is not a valid field')
+
+    # Save the fields
+    try:
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=True
+        ) as session:
+            logger.debug('update_user_session: merging resource into session')
+
+            # Add the changed resource to the session
+            session.merge(resource)
+
+        # Done! Return the resource
+        if isinstance(resource, UserSession):
+            logger.debug('update_user_session: updating was a success!')
+            return resource
+    except sqlalchemy.exc.IntegrityError as e:
+        # Add a custom text to the exception
+        logger.error(
+            f'update_user_session: sqlalchemy.exc.IntegrityError: {str(e)}')
+        raise IntegrityError('UserSession already exists')
+
+    return None
 
 
 def delete_user_sessions(
