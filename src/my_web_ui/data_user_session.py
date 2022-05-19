@@ -37,7 +37,7 @@ blueprint_data_user_sessions = Blueprint(
         normal_users=True,
         admin_users=True,
         root_users=True))
-def current_usersession(user_session: Optional[UserSession]) -> Response:
+def current(user_session: Optional[UserSession]) -> Response:
     """ Method that returns the details about the current user session
         and logged on user-account """
 
@@ -59,7 +59,7 @@ def current_usersession(user_session: Optional[UserSession]) -> Response:
 
 
 @blueprint_data_user_sessions.route(
-    '/user_sessions',
+    '/all',
     methods=['GET']
 )
 @data_endpoint(
@@ -68,7 +68,7 @@ def current_usersession(user_session: Optional[UserSession]) -> Response:
         normal_users=True,
         admin_users=True,
         root_users=True))
-def retrieve_user_sessions(user_session: Optional[UserSession]) -> Response:
+def retrieve(user_session: Optional[UserSession]) -> Response:
     """ Method that returns all the user sessions for the logged on user """
 
     # Create a data object to return
@@ -101,7 +101,7 @@ def retrieve_user_sessions(user_session: Optional[UserSession]) -> Response:
 
 @blueprint_data_user_sessions.route(
     '/update',
-    methods=['POST']
+    methods=['PATCH']
 )
 @data_endpoint(
     allowed_users=EndpointPermissions(
@@ -170,7 +170,7 @@ def update(user_session: Optional[UserSession]) -> Response:
 
 
 @blueprint_data_user_sessions.route(
-    '/remove_user_sessions',
+    '/delete',
     methods=['DELETE']
 )
 @data_endpoint(
@@ -179,7 +179,7 @@ def update(user_session: Optional[UserSession]) -> Response:
         normal_users=True,
         admin_users=True,
         root_users=True))
-def remove_user_sessions(user_session: Optional[UserSession]) -> Response:
+def delete(user_session: Optional[UserSession]) -> Response:
     """ Method to remove user sessions. Should receive a list of sessions to
         remove from the user in the POST data """
 
