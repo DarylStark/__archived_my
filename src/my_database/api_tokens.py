@@ -71,7 +71,7 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
     try:
         with DatabaseSession(
             commit_on_end=True,
-            expire_on_commit=True
+            expire_on_commit=False
         ) as session:
             # Create the resource
             new_resource = APIToken(user=req_user)

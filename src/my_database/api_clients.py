@@ -79,7 +79,7 @@ def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
     try:
         with DatabaseSession(
             commit_on_end=True,
-            expire_on_commit=True
+            expire_on_commit=False
         ) as session:
             # Create the resource
             new_resource = APIClient(user=req_user)

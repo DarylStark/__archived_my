@@ -95,7 +95,7 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
     try:
         with DatabaseSession(
             commit_on_end=True,
-            expire_on_commit=True
+            expire_on_commit=False
         ) as session:
             # Create the resource
             new_resource = User()

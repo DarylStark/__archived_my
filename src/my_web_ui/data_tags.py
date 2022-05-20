@@ -9,7 +9,7 @@ from flask.blueprints import Blueprint
 from flask.globals import request, session
 from my_database import validate_input
 from my_database.tags import (
-    delete_tags, get_tags, update_tag, validation_fields)
+    create_tag, delete_tags, get_tags, update_tag, validation_fields)
 from my_database.exceptions import (AuthCredentialsError,
                                     AuthUserRequiresSecondFactorError,
                                     FieldNotValidatedError, NotFoundError)
@@ -26,7 +26,64 @@ blueprint_data_tags = Blueprint(
 )
 
 
-# TODO: ADD
+@blueprint_data_tags.route(
+    '/create',
+    methods=['POST']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def create(user_session: Optional[UserSession]) -> Response:
+    """ Method to create tags. Should recieve the session id and the
+        new data """
+
+    # Get the given data
+    post_data = request.json
+
+    # Validate the given fields
+    required_fields = {
+        'title': validation_fields['title']
+    }
+
+    # Set the optional fields
+    optional_fields = {
+        'color': validation_fields['color']
+    }
+
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    # Remove the resources
+    if user_session is not None:
+        try:
+            # Create the tag
+            new_object = create_tag(
+                req_user=user_session.user,
+                **post_data
+            )
+
+            # Set the tag in the object
+            return_object.data = new_object
+            return_object.success = True
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+    # Return the created object
+    return return_object
+
 
 @blueprint_data_tags.route(
     '/all',
@@ -79,7 +136,7 @@ def retrieve(user_session: Optional[UserSession]) -> Response:
         admin_users=True,
         root_users=True))
 def update(user_session: Optional[UserSession]) -> Response:
-    """ Method to update tags. Should recieve the session id and the
+    """ Method to update tags. Should recieve the tag id and the
         new data """
 
     # Get the given data

@@ -113,7 +113,7 @@ class WebUIJSONEncoder(JSONEncoder):
             if key in columns and key not in fields_to_hide
         }
 
-        # Then, we mask all the fields that should be maskes
+        # Then, we mask all the fields that should be masked
         for field in fields_to_mask:
             if field in column_dict.keys():
                 column_dict[field] = column_dict[field] != None

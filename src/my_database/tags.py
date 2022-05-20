@@ -60,7 +60,9 @@ def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
     }
 
     # Set the optional fields
-    optional_fields = None
+    optional_fields = {
+        'color': validation_fields['color']
+    }
 
     # Validate the user input
     validate_input(
@@ -80,7 +82,7 @@ def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
     try:
         with DatabaseSession(
             commit_on_end=True,
-            expire_on_commit=True
+            expire_on_commit=False
         ) as session:
             # Create the resource
             new_resource = Tag(user=req_user)
