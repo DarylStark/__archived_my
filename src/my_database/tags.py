@@ -19,11 +19,11 @@ validation_fields = {
     'title': Field(
         'title',
         str,
-        str_regex_validator=r'[A-Za-z][A-Za-z0-9\-_. ]+'),
+        str_regex_validator=r'[A-Za-z][A-Za-z0-9\-. ]+'),
     'color': Field(
         'color',
         str,
-        str_regex_validator=r'[A-Fa-f0-9]{3,6}'),
+        str_regex_validator=r'([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})'),
     'tag_ids': Field(
         'tag_ids',
         list),
