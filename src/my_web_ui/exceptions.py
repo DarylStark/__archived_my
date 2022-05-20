@@ -23,6 +23,13 @@ class PermissionDeniedError(MyWebUIError):
     pass
 
 
+class ResourceIntegrityError(MyWebUIError):
+    """ Exception that occurs when the user adds, changes or deletes 
+        something that generates a integrity error. Should be handled
+        as HTTP 409 Error """
+    pass
+
+
 class ServerError(MyWebUIError):
     """ Exception that occurs when something goes wrong on the server. Should
         be handled as HTTP 500 error. """

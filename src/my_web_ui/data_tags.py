@@ -12,10 +12,10 @@ from my_database.tags import (
     create_tag, delete_tags, get_tags, update_tag, validation_fields)
 from my_database.exceptions import (AuthCredentialsError,
                                     AuthUserRequiresSecondFactorError,
-                                    FieldNotValidatedError, NotFoundError)
+                                    FieldNotValidatedError, IntegrityError, NotFoundError)
 from my_database_model import User, UserSession, Tag
 from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint
-from my_web_ui.exceptions import InvalidInputError, ServerError
+from my_web_ui.exceptions import InvalidInputError, ResourceIntegrityError, ServerError
 from my_web_ui.response import Response
 
 # Create the Blueprint
@@ -77,6 +77,10 @@ def create(user_session: Optional[UserSession]) -> Response:
             # Set the tag in the object
             return_object.data = new_object
             return_object.success = True
+        except IntegrityError as err:
+            # Integrity errors happen mostly when the tag already
+            # exists.
+            raise ResourceIntegrityError(err)
         except Exception as err:
             # Every other error should result in a ServerError.
             raise ServerError(err)
@@ -108,7 +112,7 @@ def retrieve(user_session: Optional[UserSession]) -> Response:
                 req_user=user_session.user
             )
 
-            # Set the user session in the return object
+            # Set the tag in the return object
             return_object.data = resources
         except NotFoundError as err:
             # If no resource are found, we set the 'data' in the return object
@@ -159,6 +163,10 @@ def update(user_session: Optional[UserSession]) -> Response:
             input_values=post_data,
             required_fields=required_fields,
             optional_fields=optional_fields)
+    except IntegrityError as err:
+        # Integrity errors happen mostly when the tag already
+        # exists.
+        raise ResourceIntegrityError(err)
     except (TypeError, FieldNotValidatedError) as e:
         raise InvalidInputError(e)
 
@@ -173,7 +181,7 @@ def update(user_session: Optional[UserSession]) -> Response:
     # Remove the resources
     if user_session is not None:
         try:
-            # Get the user sessions from the database
+            # Get the tags from the database
             update_tag(
                 req_user=user_session.user,
                 tag_id=tag_id,
@@ -184,7 +192,7 @@ def update(user_session: Optional[UserSession]) -> Response:
             # is removed
             return_object.data = {'update': True}
         except NotFoundError as err:
-            # If no sessions are found, we set the data to False
+            # If no tags are found, we set the data to False
             return_object.data = {'update': False}
         except Exception as err:
             # Every other error should result in a ServerError.
@@ -228,6 +236,10 @@ def delete(user_session: Optional[UserSession]) -> Response:
             input_values=post_data,
             required_fields=required_fields,
             optional_fields=optional_fields)
+    except IntegrityError as err:
+        # Integrity errors happen mostly when the tag already
+        # exists.
+        raise ResourceIntegrityError(err)
     except (TypeError, FieldNotValidatedError) as e:
         raise InvalidInputError(e)
 
