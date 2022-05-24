@@ -26,7 +26,7 @@ class Tag(Database.base_class):
         ForeignKey("users.id"),
         nullable=False)
     title = Column(
-        String(32),
+        String(128),
         nullable=False)
     color = Column(
         String(6),
