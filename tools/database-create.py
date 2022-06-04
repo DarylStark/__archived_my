@@ -77,7 +77,7 @@ if __name__ == '__main__':
         scopes = [
             'api.ping', 'api.auth', 'users.create', 'users.retrieve', 'users.update',
             'users.delete', 'tags.create', 'tags.retrieve', 'tags.update',
-            'tags.delete', 'date_tags.create', 'date_tags.retrieve'
+            'tags.delete', 'date_tags.create', 'date_tags.retrieve', 'date_tags.delete'
         ]
         api_token_objects = [
             APIToken(

@@ -9,7 +9,8 @@ from my_database.date_tags import delete_date_tags, validation_fields
 from my_database.exceptions import (FieldNotValidatedError, IntegrityError,
                                     MyDatabaseError, NotFoundError,
                                     PermissionDeniedError)
-from my_database.date_tags import create_date_tag, get_date_tags, delete_date_tags
+from my_database.date_tags import (create_date_tag, get_date_tags,
+                                   delete_date_tags)
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
 from rest_api_generator.exceptions import (InvalidInputError,
@@ -169,118 +170,73 @@ def tags_retrieve(auth: Optional[Authorization],
     return return_response
 
 
-# @api_group_date_tags.register_endpoint(
-#     url_suffix=[
-#         r'tag/([0-9]+)'
-#     ],
-#     http_methods=['PATCH', 'DELETE'],
-#     name='tag',
-#     description='Endpoint to edit or delete a tag',
-#     auth_needed=True,
-#     auth_scopes=EndpointScopes(
-#         PATCH=['tags.update'],
-#         DELETE=['tags.delete']
-#     )
-# )
-# def tags_update_delete(auth: Optional[Authorization],
-#                        url_match: re.Match) -> Response:
-#     """
-#         REST API Endpoint '/tags/tag/([0-9]+)'. Edits or deletes a tag.
+@api_group_date_tags.register_endpoint(
+    url_suffix=[
+        r'date_tag/([0-9]+)'
+    ],
+    http_methods=['DELETE'],
+    name='date_tag',
+    description='Endpoint to delete a date tag',
+    auth_needed=True,
+    auth_scopes=EndpointScopes(
+        DELETE=['date_tags.delete']
+    )
+)
+def date_tags_delete(auth: Optional[Authorization],
+                     url_match: re.Match) -> Response:
+    """
+        REST API Endpoint '/date_tags/date_tag/([0-9]+)'. Deletes a date tag.
 
-#         Parameters
-#         ----------
-#         auth : Authorization
-#             A object that contains authorization information.
+        Parameters
+        ----------
+        auth : Authorization
+            A object that contains authorization information.
 
-#         url_match : re.Match
-#             Endpoint that contains the regex match object that was used
-#             to match the URL.
+        url_match : re.Match
+            Endpoint that contains the regex match object that was used
+            to match the URL.
 
-#         Returns
-#         -------
-#         Response
-#             The API response
-#     """
+        Returns
+        -------
+        Response
+            The API response
+    """
 
-#     # Create a Response object
-#     return_response = Response(ResponseType.SINGLE_RESOURCE)
+    # Create a Response object
+    return_response = Response(ResponseType.SINGLE_RESOURCE)
 
-#     # Get the tag ID
-#     resource_id = int(url_match.groups(0)[0])
+    # Get the tag ID
+    resource_id = int(url_match.groups(0)[0])
 
-#     # Update tag
-#     if request.method == 'PATCH':
-#         # Get the data
-#         post_data = request.json
+    # Delete tag
+    if request.method == 'DELETE':
+        try:
+            delete_date_tags(
+                req_user=auth.data.user,
+                date_tag_ids=resource_id
+            )
+        except PermissionDeniedError as err:
+            # Permission denied errors happen when a user tries to
+            # delete a type of resource he is not allowed to delete.
+            raise ResourceForbiddenError(err)
+        except NotFoundError as err:
+            # Resource not found happens when a user tries to delete a
+            # resource that does not exists
+            raise ResourceNotFoundError(err)
+        except IntegrityError as err:
+            # Integrity errors happen mostly when the resource has
+            # connections to other resources that should be deleted
+            # first.
+            raise ResourceIntegrityError(err)
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+        else:
+            # If nothing went wrong, we create a object with the key
+            # 'deleted' that we return to the client.
+            return_response.data = {
+                'deleted': True
+            }
 
-#         # Set the needed fields
-#         required_fields = {
-#             'title': validation_fields['title']
-#         }
-
-#         # Set the optional fields
-#         optional_fields = None
-
-#         try:
-#             # Validate the user input
-#             validate_input(
-#                 input_values=post_data,
-#                 required_fields=required_fields,
-#                 optional_fields=optional_fields)
-#         except (TypeError, FieldNotValidatedError) as e:
-#             raise InvalidInputError(e)
-
-#         # Update the tag
-#         try:
-#             changed_resource = update_tag(
-#                 req_user=auth.data.user,
-#                 tag_id=resource_id,
-#                 **post_data
-#             )
-#         except NotFoundError as err:
-#             # Resource not found happens when a user tries to change a
-#             # tag that does not exists
-#             raise ResourceNotFoundError(err)
-#         except IntegrityError as err:
-#             # Integrity errors happen mostly when the tag already
-#             # exists.
-#             raise ResourceIntegrityError(err)
-#         except Exception as err:
-#             # Every other error should result in a ServerError.
-#             raise ServerError(err)
-
-#         # If nothing went wrong, return the newly created object.
-#         return_response.data = changed_resource
-
-#     # Delete tag
-#     if request.method == 'DELETE':
-#         try:
-#             delete_tags(
-#                 req_user=auth.data.user,
-#                 tag_id=resource_id
-#             )
-#         except PermissionDeniedError as err:
-#             # Permission denied errors happen when a user tries to
-#             # delete a type of resource he is not allowed to delete.
-#             raise ResourceForbiddenError(err)
-#         except NotFoundError as err:
-#             # Resource not found happens when a user tries to delete a
-#             # resource that does not exists
-#             raise ResourceNotFoundError(err)
-#         except IntegrityError as err:
-#             # Integrity errors happen mostly when the resource has
-#             # connections to other resources that should be deleted
-#             # first.
-#             raise ResourceIntegrityError(err)
-#         except Exception as err:
-#             # Every other error should result in a ServerError.
-#             raise ServerError(err)
-#         else:
-#             # If nothing went wrong, we create a object with the key
-#             # 'deleted' that we return to the client.
-#             return_response.data = {
-#                 'deleted': True
-#             }
-
-#     # Return the created Response object
-#     return return_response
+    # Return the created Response object
+    return return_response
