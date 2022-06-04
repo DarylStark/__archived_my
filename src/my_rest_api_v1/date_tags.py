@@ -99,78 +99,74 @@ def date_tags_create(auth: Optional[Authorization],
     return return_response
 
 
-# @api_group_date_tags.register_endpoint(
-#     url_suffix=[
-#         r'tags',
-#         r'tags/',
-#         r'tags/(?P<resource_id>[0-9]+)',
-#         r'tags/(?P<resource_title>[A-Za-z][A-Za-z0-9\-_.\+]+)'
-#     ],
-#     http_methods=['GET'],
-#     name='tags',
-#     description='Endpoint to retrieve all or a subset of the tags',
-#     auth_needed=True,
-#     auth_scopes=EndpointScopes(GET=['tags.retrieve'])
-# )
-# def tags_retrieve(auth: Optional[Authorization],
-#                   url_match: re.Match) -> Response:
-#     """
-#         REST API Endpoint '/tags/tags'. Returns a list with tags.
+@api_group_date_tags.register_endpoint(
+    url_suffix=[
+        r'date_tags',
+        r'date_tags/',
+        r'date_tags/(?P<resource_date>[0-9]{4}-[0-9]{2}-[0-9]{2})',
+        r'date_tags/(?P<resource_id>[0-9]+)'
+    ],
+    http_methods=['GET'],
+    name='date_tags',
+    description='Endpoint to retrieve all or a subset of the date_tags',
+    auth_needed=True,
+    auth_scopes=EndpointScopes(GET=['date_tags.retrieve'])
+)
+def tags_retrieve(auth: Optional[Authorization],
+                  url_match: re.Match) -> Response:
+    """
+        REST API Endpoint '/date_tags/date_tags'. Returns a list with date tags.
 
-#         Parameters
-#         ----------
-#         auth : Authorization
-#             A object that contains authorization information.
+        Parameters
+        ----------
+        auth : Authorization
+            A object that contains authorization information.
 
-#         url_match : re.Match
-#             Endpoint that contains the regex match object that was used
-#             to match the URL.
+        url_match : re.Match
+            Endpoint that contains the regex match object that was used
+            to match the URL.
 
-#         Returns
-#         -------
-#         Response
-#             The API response
-#     """
-#     # Create a Response object
-#     return_response = Response(ResponseType.RESOURCE_SET)
+        Returns
+        -------
+        Response
+            The API response
+    """
+    # Create a Response object
+    return_response = Response(ResponseType.RESOURCE_SET)
 
-#     # Set the data
-#     try:
-#         # Create a dict to send a filter to the database
-#         filters = {
-#             'flt_id': None,
-#             'flt_title': None
-#         }
+    # Set the data
+    try:
+        # Create a dict to send a filter to the database
+        filters = {
+            'flt_id': None,
+            'flt_date': None
+        }
 
-#         # Check if we received a ID
-#         if 'resource_id' in url_match.groupdict().keys():
-#             filters['flt_id'] = int(url_match.group('resource_id'))
-#             return_response.type = ResponseType.SINGLE_RESOURCE
+        # Check if we received a ID
+        if 'resource_id' in url_match.groupdict().keys():
+            filters['flt_id'] = int(url_match.group('resource_id'))
+            return_response.type = ResponseType.SINGLE_RESOURCE
 
-#         # Check if we received a title
-#         if 'resource_title' in url_match.groupdict().keys():
-#             # Replace plus signes with a spaces, so a user can retrieve
-#             # tags like 'my tag' as 'my+tag'
-#             resource_title = url_match.group('resource_title')
-#             resource_title = resource_title.replace('+', ' ')
-#             filters['flt_title'] = resource_title
-#             return_response.type = ResponseType.SINGLE_RESOURCE
+        # Check if we received a title
+        if 'resource_date' in url_match.groupdict().keys():
+            resource_date = url_match.group('resource_date')
+            filters['flt_date'] = resource_date
 
-#         # Get the resources
-#         return_response.data = get_tags(
-#             auth.data.user,
-#             **filters
-#         )
-#     except NotFoundError as err:
-#         # Resource not found happens when a user tries to get a
-#         # tag that does not exists
-#         raise ResourceNotFoundError(err)
-#     except Exception as err:
-#         # Every other error should result in a ServerError.
-#         raise ServerError(err)
+        # Get the resources
+        return_response.data = get_date_tags(
+            auth.data.user,
+            **filters
+        )
+    except NotFoundError as err:
+        # Resource not found happens when a user tries to get a
+        # tag that does not exists
+        raise ResourceNotFoundError(err)
+    except Exception as err:
+        # Every other error should result in a ServerError.
+        raise ServerError(err)
 
-#     # Return the created Response object
-#     return return_response
+    # Return the created Response object
+    return return_response
 
 
 # @api_group_date_tags.register_endpoint(

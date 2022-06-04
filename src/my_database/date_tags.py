@@ -2,6 +2,7 @@
     database. """
 
 from typing import List, Optional, Union
+from pymysql import Date
 import sqlalchemy
 from sqlalchemy.orm.query import Query
 from database import DatabaseSession
@@ -153,13 +154,14 @@ def get_date_tags(
 
     # Empty data list
     data_list: Optional[Query] = None
-    rv: Optional[List[Tag]] = None
+    rv: Optional[List[DateTag]] = None
 
     # Get the resources
     with DatabaseSession(commit_on_end=False, expire_on_commit=False) \
             as session:
-        # First, we get all tags for this user
-        data_list = session.query(DateTag).filter(DateTag.Tag.user == req_user)
+        # First, we get all date tags for this user
+        data_list = session.query(DateTag).filter(
+            DateTag.tag.has(user_id=req_user.id))
 
         logger.debug(
             'get_date_tags: we have the global list of date tags for this user')
@@ -178,7 +180,7 @@ def get_date_tags(
 
         # Apply filter for title
         if flt_date:
-            data_list = data_list.filter(TDateTag.date == flt_date)
+            data_list = data_list.filter(DateTag.date == flt_date)
             logger.debug('get_date_tags: list is filtered on date')
 
         # Get the data
@@ -188,7 +190,7 @@ def get_date_tags(
                 raise NotFoundError(
                     f'DateTag with ID {flt_id} is not found.')
         elif flt_date:
-            rv = data_list.first()
+            rv = data_list.all()
             if rv is None:
                 raise NotFoundError(
                     f'DateTag with date "{flt_date}" is not found.')
