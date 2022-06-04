@@ -30,11 +30,11 @@ class DateTag(Database.base_class):
         nullable=False)
 
     # One-to-many relationships
-    user = relationship(
+    tag = relationship(
         'Tag',
         lazy='subquery',
-        back_populates='dates')
+        back_populates='date_tags')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """
-        return f'<DateTag for "{self.tag}" (id: {self.id}) at {hex(id(self))}>'
+        return f'<DateTag for "{self.tag.title}" (id: {self.id}) at {hex(id(self))}>'

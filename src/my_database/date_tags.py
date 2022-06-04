@@ -20,7 +20,7 @@ validation_fields = {
     'date': Field(
         'date',
         str,
-        str_regex_validator=r'[0-9]{4}-[0-9]{2}-[0-9]{2}+'),
+        str_regex_validator=r'[0-9]{4}-[0-9]{2}-[0-9]{2}'),
     'tag_id': Field(
         'tag_id',
         int)
@@ -74,7 +74,7 @@ def create_date_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
 
     # Search for the tag to see if it is the same user as the user who is
     # requesting this
-    tag = get_tags(req_user, flt_id=all_fields['tag_id'])
+    tag = get_tags(req_user, flt_id=kwargs['tag_id'])
     if tag is None:
         # TODO: RAISE ERROR
         return None
