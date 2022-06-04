@@ -33,10 +33,11 @@ class Tag(Database.base_class):
         nullable=True)
 
     # One-to-many relationships
-    user = relationship(
-        'User',
+    dates = relationship(
+        'DateTag',
         lazy='subquery',
-        back_populates='tags')
+        back_populates='tag',
+        cascade='all, delete, save-update')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """
