@@ -10,6 +10,7 @@ erDiagram
     api_clients ||--o{ api_tokens : ""
     api_tokens ||--o{ api_token_scope : ""
     api_scopes ||--o{ api_token_scope : ""
+    tags ||--o{ date_tags : ""
     users ||--o{ api_clients : ""
     users ||--o{ api_tokens : ""
     users ||--o{ tags : ""
@@ -49,6 +50,12 @@ erDiagram
         integer user_id FK
         boolean enabled
         string token
+    }
+
+    date_tags {
+        integer id PK
+        date date
+        integer tag_id FK
     }
 
     tags {
