@@ -47,7 +47,7 @@ def data_endpoint(allowed_users: EndpointPermissions):
         """ The real decorator returns a function that is used instead
             of the normal function. """
 
-        def endpoint() -> FlaskResponse:
+        def endpoint(**kwargs) -> FlaskResponse:
             """ The function that will be used instead of the normal
                 function. """
 
@@ -86,7 +86,7 @@ def data_endpoint(allowed_users: EndpointPermissions):
             else:
                 # Get the response from the function
                 try:
-                    response = func(user_session)
+                    response = func(user_session, **kwargs)
                 except InvalidInputError:
                     # User supplied invalid input
                     status_code = 400

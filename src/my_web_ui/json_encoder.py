@@ -1,7 +1,7 @@
 """ Module that keeps the WebUIJSONEncoder class, which seriales
     a Response to a JSON serializable object. """
 
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 from json import JSONEncoder
 from typing import Any, Dict, Union
@@ -44,6 +44,8 @@ class WebUIJSONEncoder(JSONEncoder):
             return self.encode_sqlalchemy_object(object=object)
         elif isinstance(object, datetime):
             return object.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(object, date):
+            return object.strftime('%Y-%m-%d')
         elif isinstance(object, Enum):
             return object.value
         else:
