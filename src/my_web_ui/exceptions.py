@@ -30,6 +30,12 @@ class ResourceIntegrityError(MyWebUIError):
     pass
 
 
+class ResourceNotFoundError(MyWebUIError):
+    """ Exception that occurs when the user tries to retrieve a resource
+        that doesn't exist. Should be handled as HTTP 404 error."""
+    pass
+
+
 class ServerError(MyWebUIError):
     """ Exception that occurs when something goes wrong on the server. Should
         be handled as HTTP 500 error. """

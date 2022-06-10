@@ -123,7 +123,8 @@ def create_date_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
 def get_date_tags(
     req_user: User,
     flt_id: Optional[int] = None,
-    flt_date: Optional[str] = None
+    flt_date: Optional[str] = None,
+    flt_tag_id: Optional[int] = None
 ) -> Optional[Union[List[Tag], Tag]]:
     """ Method that retrieves all, or a subset of, the date tags in the
         database.
@@ -139,6 +140,9 @@ def get_date_tags(
 
         flt_date : Optional[str] [default=None]
             Filter on a specific date.
+
+        flt_tag_id : Optional[str] [default=None]
+            Filter on a specific tag ID.
 
         Returns
         -------
@@ -174,14 +178,26 @@ def get_date_tags(
                 logger.debug('get_date_tags: list is filtered on ID')
         except (ValueError, TypeError):
             logger.error(
-                f'Tag id should be of type {int}, not {type(flt_id)}.')
+                f'DateTag id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'Tag id should be of type {int}, not {type(flt_id)}.')
+                f'DateTag id should be of type {int}, not {type(flt_id)}.')
 
         # Apply filter for title
         if flt_date:
             data_list = data_list.filter(DateTag.date == flt_date)
             logger.debug('get_date_tags: list is filtered on date')
+
+        # Apply filter for tag ID
+        try:
+            if flt_tag_id:
+                flt_tag_id = int(flt_tag_id)
+                data_list = data_list.filter(DateTag.tag_id == flt_tag_id)
+                logger.debug('get_date_tags: list is filtered on Tag ID')
+        except (ValueError, TypeError):
+            logger.error(
+                f'Tag id should be of type {int}, not {type(flt_tag_id)}.')
+            raise FilterNotValidError(
+                f'Tag id should be of type {int}, not {type(flt_tag_id)}.')
 
         # Get the data
         if flt_id:
@@ -189,11 +205,6 @@ def get_date_tags(
             if rv is None:
                 raise NotFoundError(
                     f'DateTag with ID {flt_id} is not found.')
-        elif flt_date:
-            rv = data_list.all()
-            if rv is None:
-                raise NotFoundError(
-                    f'DateTag with date "{flt_date}" is not found.')
         else:
             rv = data_list.all()
             if len(rv) == 0:
@@ -201,7 +212,7 @@ def get_date_tags(
                 rv = None
 
     # Return the data
-    logger.debug('get_date_tags: returning users')
+    logger.debug('get_date_tags: returning tags')
     return rv
 
 
