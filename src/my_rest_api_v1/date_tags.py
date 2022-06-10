@@ -209,34 +209,33 @@ def date_tags_delete(auth: Optional[Authorization],
     resource_id = int(url_match.groups(0)[0])
 
     # Delete tag
-    if request.method == 'DELETE':
-        try:
-            delete_date_tags(
-                req_user=auth.data.user,
-                date_tag_ids=resource_id
-            )
-        except PermissionDeniedError as err:
-            # Permission denied errors happen when a user tries to
-            # delete a type of resource he is not allowed to delete.
-            raise ResourceForbiddenError(err)
-        except NotFoundError as err:
-            # Resource not found happens when a user tries to delete a
-            # resource that does not exists
-            raise ResourceNotFoundError(err)
-        except IntegrityError as err:
-            # Integrity errors happen mostly when the resource has
-            # connections to other resources that should be deleted
-            # first.
-            raise ResourceIntegrityError(err)
-        except Exception as err:
-            # Every other error should result in a ServerError.
-            raise ServerError(err)
-        else:
-            # If nothing went wrong, we create a object with the key
-            # 'deleted' that we return to the client.
-            return_response.data = {
-                'deleted': True
-            }
+    try:
+        delete_date_tags(
+            req_user=auth.data.user,
+            date_tag_ids=resource_id
+        )
+    except PermissionDeniedError as err:
+        # Permission denied errors happen when a user tries to
+        # delete a type of resource he is not allowed to delete.
+        raise ResourceForbiddenError(err)
+    except NotFoundError as err:
+        # Resource not found happens when a user tries to delete a
+        # resource that does not exists
+        raise ResourceNotFoundError(err)
+    except IntegrityError as err:
+        # Integrity errors happen mostly when the resource has
+        # connections to other resources that should be deleted
+        # first.
+        raise ResourceIntegrityError(err)
+    except Exception as err:
+        # Every other error should result in a ServerError.
+        raise ServerError(err)
+    else:
+        # If nothing went wrong, we create a object with the key
+        # 'deleted' that we return to the client.
+        return_response.data = {
+            'deleted': True
+        }
 
     # Return the created Response object
     return return_response
