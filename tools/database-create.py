@@ -104,7 +104,7 @@ if __name__ == '__main__':
                 username='root',
                 email='root@dstark.nl',
                 role=UserRole.root,
-                password='test',
+                password='mJZxFt0e65!w#WIkL92u9pc%Rt5VEYJ5yf^^ejeRZ2',
                 tags=[
                     Tag(title='Root - Testtag1'),
                     Tag(title='Root - Testtag2')
@@ -115,7 +115,7 @@ if __name__ == '__main__':
                 username='daryl.stark',
                 email='daryl@dstark.nl',
                 role=UserRole.user,
-                password='test',
+                password='KYx%i5M%O#rqrEaxU3latrO!oo#gRi5862YHvk!394roft',
                 second_factor='3RCUMBK2KJY7YFPX453MWZHAOL4G74OP',
                 tags=[
                     Tag(title='Daryl - Testtag1'),
