@@ -90,3 +90,35 @@ def login() -> Union[str, Response]:
 
     # Render the template and return the value
     return template.render(data)
+
+
+@blueprint_ui.route(
+    '/oauth',
+    methods=['GET']
+)
+def oauth() -> Union[str, Response]:
+    """ Function for the OAuth consent form of the application. """
+
+    # Get the logged in user
+    user_session = get_active_user_session()
+    user_object = None
+
+    if user_session is not None:
+        user_object = user_session.user
+
+    # Check if there is a logged on user
+    if user_object is None:
+        # Abort the request
+        return redirect('/ui/login')
+
+    # Open the correct template file
+    template = templateEnv.get_template('oauth.html')
+
+    # Create a dict with the data for the template
+    data = {
+        'title': 'OAuth Consent',
+        'body_js_files': ['oauth.js']
+    }
+
+    # Render the template and return the value
+    return template.render(data)
