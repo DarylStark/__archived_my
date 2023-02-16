@@ -121,7 +121,8 @@ def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
 
 def get_api_clients(
     req_user: User,
-    flt_id: Optional[int] = None
+    flt_id: Optional[int] = None,
+    flt_token: Optional[str] = None
 ) -> Optional[Union[List[APIClient], APIClient]]:
     """ Method that retrieves all, or a subset of, the API clients in
         the database.
@@ -134,6 +135,9 @@ def get_api_clients(
 
         flt_id : Optional[int] [default=None]
             Filter on a specific client ID.
+
+        flt_id : Optional[int] [default=None]
+            Filter on a specific token ID.
 
         Returns
         -------
@@ -173,12 +177,23 @@ def get_api_clients(
             raise FilterNotValidError(
                 f'API client id should be of type {int}, not {type(flt_id)}.')
 
+        try:
+            if flt_token:
+                flt_token = str(flt_token)
+                data_list = data_list.filter(APIClient.token == flt_token)
+                logger.debug('get_api_clients: list is filtered on token')
+        except (ValueError, TypeError):
+            logger.error(
+                f'API token should be of type {str}, not {type(flt_id)}.')
+            raise FilterNotValidError(
+                f'API token should be of type {str}, not {type(flt_id)}.')
+
         # Get the data
-        if flt_id:
+        if flt_id or flt_token:
             rv = data_list.first()
             if rv is None:
                 raise NotFoundError(
-                    f'API client with ID {flt_id} is not found.')
+                    f'API client is not found.')
         else:
             rv = data_list.all()
             if len(rv) == 0:
