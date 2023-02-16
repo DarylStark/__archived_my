@@ -38,22 +38,57 @@ blueprint_data_api_clients = Blueprint(
         admin_users=True,
         root_users=True))
 def retrieve(user_session: Optional[UserSession]) -> Response:
-    """ Method that returns a specific API client """
+    """ Method that returns the API clients """
 
     # Create a data object to return
     return_object = Response(success=False)
 
-    # Get the given data
-    url_data = request.args
+    if user_session is not None:
+        try:
+            # Get the API client from the database
+            resources = get_api_clients(
+                req_user=user_session.user
+            )
+
+            # Set the tag in the return object
+            return_object.data = resources
+        except NotFoundError as err:
+            # If no resource are found, we set the 'data' in the return object
+            # to a empty list.
+            return_object.data = []
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+        # Set the return value to True
+        return_object.success = True
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_api_clients.route(
+    '/all/<string:token>',
+    methods=['GET']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def retrieve_specific(user_session: Optional[UserSession], token: str) -> Response:
+    """ Method that returns a specific API client """
+
+    # Create a data object to return
+    return_object = Response(success=False)
 
     if user_session is not None:
         try:
             # Get the API client from the database
             resources = get_api_clients(
                 req_user=user_session.user,
-                flt_id=url_data.get('id', None) if url_data.get(
-                    'id', None) is None else int(url_data.get('id', None)),
-                flt_token=url_data.get('token', None)
+                flt_token=token
             )
 
             # Set the tag in the return object
