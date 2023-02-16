@@ -122,7 +122,8 @@ def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
 def get_api_clients(
     req_user: User,
     flt_id: Optional[int] = None,
-    flt_token: Optional[str] = None
+    flt_token: Optional[str] = None,
+    flt_enabled: Optional[bool] = None,
 ) -> Optional[Union[List[APIClient], APIClient]]:
     """ Method that retrieves all, or a subset of, the API clients in
         the database.
@@ -187,6 +188,18 @@ def get_api_clients(
                 f'API token should be of type {str}, not {type(flt_id)}.')
             raise FilterNotValidError(
                 f'API token should be of type {str}, not {type(flt_id)}.')
+
+        try:
+            if flt_enabled is not None:
+                flt_enabled = bool(flt_enabled)
+                data_list = data_list.filter(APIClient.enabled == flt_enabled)
+                logger.debug(
+                    'get_api_clients: list is filtered on enable-status')
+        except (ValueError, TypeError):
+            logger.error(
+                f'API enabled should be of type {bool}, not {type(flt_id)}.')
+            raise FilterNotValidError(
+                f'API enabled should be of type {bool}, not {type(flt_id)}.')
 
         # Get the data
         if flt_id or flt_token:

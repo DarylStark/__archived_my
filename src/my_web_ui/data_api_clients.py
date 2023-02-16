@@ -78,7 +78,8 @@ def retrieve(user_session: Optional[UserSession]) -> Response:
         admin_users=True,
         root_users=True))
 def retrieve_specific(user_session: Optional[UserSession], token: str) -> Response:
-    """ Method that returns a specific API client """
+    """ Method that returns a specific API client. Warning: this
+        method only returns API clients that are enabled. """
 
     # Create a data object to return
     return_object = Response(success=False)
@@ -88,7 +89,8 @@ def retrieve_specific(user_session: Optional[UserSession], token: str) -> Respon
             # Get the API client from the database
             resources = get_api_clients(
                 req_user=user_session.user,
-                flt_token=token
+                flt_token=token,
+                flt_enabled=True
             )
 
             # Set the tag in the return object
