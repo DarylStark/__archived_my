@@ -10,7 +10,7 @@ from flask import Flask
 from rich.logging import RichHandler
 from my_web_ui.exceptions import ConfigNotLoadedError
 from my_web_ui.data_aaa import blueprint_data_aaa
-from my_web_ui.data_api_client import blueprint_data_api_clients
+from my_web_ui.data_api_clients import blueprint_data_api_clients
 from my_web_ui.data_dashboard import blueprint_data_dashboard
 from my_web_ui.data_user_session import blueprint_data_user_sessions
 from my_web_ui.data_user_account import blueprint_data_user_account
