@@ -11,6 +11,7 @@ from rich.logging import RichHandler
 from my_web_ui.exceptions import ConfigNotLoadedError
 from my_web_ui.data_aaa import blueprint_data_aaa
 from my_web_ui.data_api_clients import blueprint_data_api_clients
+from my_web_ui.data_api_tokens import blueprint_data_api_tokens
 from my_web_ui.data_dashboard import blueprint_data_dashboard
 from my_web_ui.data_user_session import blueprint_data_user_sessions
 from my_web_ui.data_user_account import blueprint_data_user_account
@@ -46,6 +47,7 @@ flask_app.secret_key = ConfigLoader.config['flask']['secret']
 # for the application.
 flask_app.register_blueprint(blueprint_data_aaa)
 flask_app.register_blueprint(blueprint_data_api_clients)
+flask_app.register_blueprint(blueprint_data_api_tokens)
 flask_app.register_blueprint(blueprint_data_dashboard)
 flask_app.register_blueprint(blueprint_data_user_sessions)
 flask_app.register_blueprint(blueprint_data_user_account)

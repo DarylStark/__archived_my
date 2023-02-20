@@ -17,7 +17,10 @@ from my_database.exceptions import (FilterNotValidError,
 validation_fields = {
     'client_id': Field('client_id', int),
     'enabled': Field('enabled', bool),
-    'expires': Field('expires', datetime)
+    'expires': Field('expires', datetime),
+    'app_token': Field('app_token', str),
+    'title': Field('title', str),
+    'scopes': Field('scopes', list)
 }
 
 
@@ -50,7 +53,9 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
     # Set the optional fields
     optional_fields = {
         'enabled': validation_fields['enabled'],
-        'expires': validation_fields['expires']
+        'expires': validation_fields['expires'],
+        'title': validation_fields['title'],
+        'scopes': validation_fields['scopes']
     }
 
     # Validate the user input
@@ -75,6 +80,10 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
         ) as session:
             # Create the resource
             new_resource = APIToken(user=req_user)
+
+            # Extract the given scopes
+            all_fields.pop('scopes')
+            kwargs.pop('scopes')
 
             # Set the fields
             for field in kwargs.keys():
