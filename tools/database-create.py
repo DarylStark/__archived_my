@@ -83,6 +83,7 @@ if __name__ == '__main__':
             APIToken(
                 expires=None,
                 enabled=True,
+                title='RESTbook API token',
                 token='poiuytrewq',
                 token_scopes=[
                     APITokenScope(
@@ -108,18 +109,6 @@ if __name__ == '__main__':
                 tags=[
                     Tag(title='Root - Testtag1'),
                     Tag(title='Root - Testtag2')
-                ]
-            ),
-            User(
-                fullname='Daryl Stark',
-                username='daryl.stark',
-                email='daryl@dstark.nl',
-                role=UserRole.user,
-                password='KYx%i5M%O#rqrEaxU3latrO!oo#gRi5862YHvk!394roft',
-                second_factor='3RCUMBK2KJY7YFPX453MWZHAOL4G74OP',
-                tags=[
-                    Tag(title='Daryl - Testtag1'),
-                    Tag(title='Daryl - Testtag2')
                 ],
                 clients=[
                     APIClient(
@@ -136,6 +125,18 @@ if __name__ == '__main__':
                 ],
                 tokens=[
                     api_token_objects[0]
+                ]
+            ),
+            User(
+                fullname='Daryl Stark',
+                username='daryl.stark',
+                email='daryl@dstark.nl',
+                role=UserRole.user,
+                password='KYx%i5M%O#rqrEaxU3latrO!oo#gRi5862YHvk!394roft',
+                second_factor='3RCUMBK2KJY7YFPX453MWZHAOL4G74OP',
+                tags=[
+                    Tag(title='Daryl - Testtag1'),
+                    Tag(title='Daryl - Testtag2')
                 ]
             )
         ]

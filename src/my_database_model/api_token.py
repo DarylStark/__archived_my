@@ -42,6 +42,9 @@ class APIToken(Database.base_class):
         Boolean,
         default=True,
         nullable=False)
+    title = Column(
+        String(64),
+        nullable=True)
     token = Column(
         String(32),
         nullable=False)
