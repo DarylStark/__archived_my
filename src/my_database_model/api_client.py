@@ -49,6 +49,9 @@ class APIClient(Database.base_class):
     token = Column(
         String(32),
         nullable=False)
+    redirect_url = Column(
+        String(1024),
+        nullable=True)
 
     # Many-to-one relationships
     user = relationship(
