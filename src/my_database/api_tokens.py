@@ -6,12 +6,14 @@ from my_database.field import Field
 import sqlalchemy
 from database import DatabaseSession
 from my_database import validate_input
-from my_database_model import APIToken, User
+from my_database_model import APIToken, User, APITokenScope
 from sqlalchemy.orm.query import Query
 from my_database import logger
 from datetime import datetime
 from my_database.exceptions import (FilterNotValidError,
                                     IntegrityError, NotFoundError)
+from my_database.api_scopes import get_scopes
+from my_database_model.api_scope import APIScope
 
 # Define the fields for validation
 validation_fields = {
@@ -74,16 +76,16 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
         all_fields.update(optional_fields)
 
     try:
+        # Extract the given scopes
+        all_fields.pop('scopes')
+        scopes = kwargs.pop('scopes', None)
+
         with DatabaseSession(
             commit_on_end=True,
             expire_on_commit=False
         ) as session:
             # Create the resource
             new_resource = APIToken(user=req_user)
-
-            # Extract the given scopes
-            all_fields.pop('scopes')
-            kwargs.pop('scopes')
 
             # Set the fields
             for field in kwargs.keys():
@@ -110,8 +112,34 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
             # Add the resource
             session.add(new_resource)
 
-            # Return the created resource
-            return new_resource
+        with DatabaseSession(
+            commit_on_end=True,
+            expire_on_commit=False
+        ) as session:
+            # Get all requested scopes
+            if scopes:
+                for scope in scopes:
+                    # Get the scope object
+                    scope_object = get_scopes(
+                        req_user=req_user,
+                        flt_module=scope.split('.')[0],
+                        flt_subject=scope.split('.')[-1]
+                    )
+
+                    # Create a APITokenScope object with the correct values
+                    if scope_object:
+                        logger.debug(
+                            f'create_api_token: adding scope "{scope}" to the token')
+                        new_object = APITokenScope(
+                            token_id=new_resource.id,
+                            scope_id=scope_object[0].id
+                        )
+
+                        # Add the resource
+                        session.add(new_object)
+
+                # Return the created resource
+                return new_resource
     except sqlalchemy.exc.IntegrityError as e:
         logger.error(f'create_api_token: IntegrityError: {str(e)}')
         # Add a custom text to the exception
@@ -245,8 +273,8 @@ def update_api_token(
     """
 
     # Get the resource object
-    resource: Optional[Union[List[APIToken], APIToken]] = \
-        get_api_tokens(req_user, flt_id=api_token_id)
+    resource: Optional[Union[List[APIToken], APIToken]
+                       ] = get_api_tokens(req_user, flt_id=api_token_id)
     logger.debug('update_api_token: we have the resource')
 
     # Set the needed fields
