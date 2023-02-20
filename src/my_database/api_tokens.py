@@ -21,6 +21,7 @@ validation_fields = {
     'enabled': Field('enabled', bool),
     'expires': Field('expires', datetime),
     'app_token': Field('app_token', str),
+    'api_token': Field('token', str),
     'title': Field('title', str),
     'scopes': Field('scopes', list)
 }
@@ -112,12 +113,12 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
             # Add the resource
             session.add(new_resource)
 
-        with DatabaseSession(
-            commit_on_end=True,
-            expire_on_commit=False
-        ) as session:
-            # Get all requested scopes
-            if scopes:
+        if scopes:
+            with DatabaseSession(
+                commit_on_end=True,
+                expire_on_commit=False
+            ) as session:
+                # Get all requested scopes
                 for scope in scopes:
                     # Get the scope object
                     scope_object = get_scopes(
@@ -138,8 +139,8 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
                         # Add the resource
                         session.add(new_object)
 
-                # Return the created resource
-                return new_resource
+        # Return the created resource
+        return new_resource
     except sqlalchemy.exc.IntegrityError as e:
         logger.error(f'create_api_token: IntegrityError: {str(e)}')
         # Add a custom text to the exception
@@ -283,7 +284,9 @@ def update_api_token(
     # Set the optional fields
     optional_fields = {
         'enabled': validation_fields['enabled'],
-        'expires': validation_fields['expires']
+        'expires': validation_fields['expires'],
+        'scopes': validation_fields['scopes'],
+        'api_token': validation_fields['api_token']
     }
 
     # Validate the user input
@@ -300,6 +303,9 @@ def update_api_token(
         all_fields.update(required_fields)
     if optional_fields:
         all_fields.update(optional_fields)
+
+    # Remove the scopes
+    scopes = kwargs.pop('scopes', None)
 
     # Update the resource
     for field in kwargs.keys():
@@ -329,15 +335,52 @@ def update_api_token(
             # Add the changed resource to the session
             session.merge(resource)
 
-        # Done! Return the resource
-        if isinstance(resource, APIToken):
-            logger.debug('update_api_token: updating was a success!')
-            return resource
+            # Done! Return the resource
+            if isinstance(resource, APIToken):
+                logger.debug('update_api_token: updating was a success!')
     except sqlalchemy.exc.IntegrityError as e:
         # Add a custom text to the exception
         logger.error(
             f'update_api_token: sqlalchemy.exc.IntegrityError: {str(e)}')
         raise IntegrityError('API token already exists')
+
+    if scopes:
+        try:
+            with DatabaseSession(
+                commit_on_end=True,
+                expire_on_commit=True
+            ) as session:
+                logger.debug('update_api_token: adding scopes')
+
+                for scope in scopes:
+                    # Get the scope object
+                    scope_object = get_scopes(
+                        req_user=req_user,
+                        flt_module=scope.split('.')[0],
+                        flt_subject=scope.split('.')[-1]
+                    )
+
+                    # Create a APITokenScope object with the correct values
+                    if scope_object:
+                        logger.debug(
+                            f'update_api_token: adding scope "{scope}" to the token')
+                        new_object = APITokenScope(
+                            token_id=resource.id,
+                            scope_id=scope_object[0].id
+                        )
+
+                        # Add the resource
+                        session.add(new_object)
+        except sqlalchemy.exc.IntegrityError as e:
+            # Add a custom text to the exception
+            logger.error(
+                f'update_api_token: sqlalchemy.exc.IntegrityError: {str(e)}')
+            raise IntegrityError('APITokenScope object already exists')
+
+    # Done! Return the resource
+    if isinstance(resource, APIToken):
+        logger.debug('update_api_token: updating was a success!')
+        return resource
 
     return None
 

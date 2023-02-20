@@ -8,7 +8,7 @@ from flask.blueprints import Blueprint
 from flask.globals import request
 from my_database import validate_input
 from my_database.api_clients import get_api_clients
-from my_database.api_tokens import create_api_token, validation_fields
+from my_database.api_tokens import create_api_token, get_api_tokens, update_api_token, validation_fields
 from my_database.exceptions import FieldNotValidatedError, IntegrityError
 from my_database_model import UserSession
 from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint
@@ -80,6 +80,70 @@ def create(user_session: Optional[UserSession]) -> Response:
 
             # Set the token in the object
             return_object.data = new_object
+            return_object.success = True
+        except IntegrityError as err:
+            # Integrity errors happen mostly when the token already
+            # exists.
+            raise ResourceIntegrityError(err)
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_api_tokens.route(
+    '/add_permissions',
+    methods=['PATCH']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def add_permissions(user_session: Optional[UserSession]) -> Response:
+    """ Method to create add permissions to API tokens """
+
+    # Get the given data
+    post_data = request.json
+
+    # Validate the given fields
+    required_fields = {
+        'api_token': validation_fields['api_token'],
+        'scopes': validation_fields['scopes']
+    }
+
+    # Set the optional fields
+    optional_fields = None
+
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    # Remove the resources
+    if user_session is not None:
+        try:
+            # Find the ID of the application
+            api_token = get_api_tokens(req_user=user_session.user,
+                                       flt_token=post_data['api_token'])
+
+            resource = update_api_token(
+                req_user=user_session.user,
+                api_token_id=api_token.id,
+                **post_data)
+
+            # Set the token in the object
+            return_object.data = resource
             return_object.success = True
         except IntegrityError as err:
             # Integrity errors happen mostly when the token already
