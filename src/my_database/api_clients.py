@@ -24,7 +24,10 @@ validation_fields = {
         str,
         str_regex_validator=r'[A-Za-z][A-Za-z0-9\-_. ]+'),
     'enabled': Field('enabled', bool),
-    'expires': Field('expires', datetime)
+    'expires': Field('expires', datetime),
+    'api_client_ids': Field(
+        'tag_ids',
+        list),
 }
 
 
@@ -318,9 +321,9 @@ def update_api_client(
     return None
 
 
-def delete_api_client(
+def delete_api_clients(
     req_user: User,
-    api_client_id: int
+    api_client_id: Union[List[int], int]
 ) -> bool:
     """ Method to delete a API client.
 
@@ -330,8 +333,8 @@ def delete_api_client(
             The user who is requesting this. Should be used to verify
             what the user is allowed to do.
 
-        api_client_id : int
-            The ID for the API client to delete.
+        api_client_id : Union[List[int], int]
+            A list API clients to delete or a API client ID
 
         Returns
         -------
@@ -340,7 +343,14 @@ def delete_api_client(
     """
 
     # Get the API client
-    resource = get_api_clients(req_user=req_user, flt_id=api_client_id)
+    resources = None
+    if type(api_client_id) is list:
+        resources = [
+            get_api_clients(req_user=req_user, flt_id=r)
+            for r in api_client_id
+        ]
+    else:
+        resources = [get_api_clients(req_user=req_user, flt_id=api_client_id)]
 
     logger.debug('delete_api_client: we have the resource')
 
@@ -352,7 +362,8 @@ def delete_api_client(
         ) as session:
             # Delete the resource
             logger.debug('delete_api_client: deleting the resource')
-            session.delete(resource)
+            for resource in resources:
+                session.delete(resource)
     except sqlalchemy.exc.IntegrityError as e:
         logger.error(
             f'delete_api_client: sqlalchemy.exc.IntegrityError: {str(e)}')
