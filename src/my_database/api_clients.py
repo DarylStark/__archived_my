@@ -23,6 +23,7 @@ validation_fields = {
         'app_publisher',
         str,
         str_regex_validator=r'[A-Za-z][A-Za-z0-9\-_. ]+'),
+    'redirect_url': Field('redirect_url', str),
     'enabled': Field('enabled', bool),
     'expires': Field('expires', datetime),
     'api_client_ids': Field(
@@ -61,7 +62,8 @@ def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
     # Set the optional fields
     optional_fields = {
         'enabled': validation_fields['enabled'],
-        'expires': validation_fields['expires']
+        'expires': validation_fields['expires'],
+        'redirect_url': validation_fields['redirect_url']
     }
 
     # Validate the user input

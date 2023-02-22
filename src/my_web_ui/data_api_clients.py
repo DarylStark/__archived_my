@@ -8,7 +8,7 @@ from typing import Optional
 from flask.blueprints import Blueprint
 from flask.globals import request, session
 from my_database import validate_input
-from my_database.api_clients import delete_api_clients, get_api_clients, validation_fields
+from my_database.api_clients import create_api_client, delete_api_clients, get_api_clients, validation_fields
 from my_database.exceptions import (AuthCredentialsError,
                                     AuthUserRequiresSecondFactorError,
                                     FieldNotValidatedError, IntegrityError, NotFoundError)
@@ -23,6 +23,70 @@ blueprint_data_api_clients = Blueprint(
     import_name=__name__,
     url_prefix='/data/api_clients/'
 )
+
+
+@blueprint_data_api_clients.route(
+    '/create',
+    methods=['POST']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def create(user_session: Optional[UserSession]) -> Response:
+    """ Method to create API clients. Should recieve the data for
+        the API client """
+
+    # Get the given data
+    post_data = request.json
+
+    # Validate the given fields
+    required_fields = {
+        'app_name': validation_fields['app_name'],
+        'app_publisher': validation_fields['app_publisher']
+    }
+
+    # Set the optional fields
+    optional_fields = {
+        'redirect_url': validation_fields['redirect_url']
+    }
+
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    # Remove the resources
+    if user_session is not None:
+        try:
+            # Create the tag
+            new_object = create_api_client(
+                req_user=user_session.user,
+                **post_data
+            )
+
+            # Set the API client in the object
+            return_object.data = new_object
+            return_object.success = True
+        except IntegrityError as err:
+            # Integrity errors happen mostly when the tag already
+            # exists.
+            raise ResourceIntegrityError(err)
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+    # Return the created object
+    return return_object
 
 
 @blueprint_data_api_clients.route(
