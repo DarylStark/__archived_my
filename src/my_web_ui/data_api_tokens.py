@@ -9,7 +9,7 @@ from flask.globals import request
 from my_database import validate_input
 from my_database.api_clients import get_api_clients
 from my_database.api_tokens import create_api_token, get_api_tokens, update_api_token, validation_fields
-from my_database.exceptions import FieldNotValidatedError, IntegrityError
+from my_database.exceptions import FieldNotValidatedError, IntegrityError, NotFoundError
 from my_database_model import UserSession
 from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint
 from my_web_ui.exceptions import InvalidInputError, ResourceIntegrityError, ServerError
@@ -88,6 +88,47 @@ def create(user_session: Optional[UserSession]) -> Response:
         except Exception as err:
             # Every other error should result in a ServerError.
             raise ServerError(err)
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_api_tokens.route(
+    '/all/<int:client_id>',
+    methods=['GET']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def retrieve_specific(user_session: Optional[UserSession], client_id: int) -> Response:
+    """ Method that returns a specific API token. """
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    if user_session is not None:
+        try:
+            # Get the API client from the database
+            resources = get_api_tokens(
+                req_user=user_session.user,
+                flt_client_id=client_id
+            )
+
+            # Set the tag in the return object
+            return_object.data = resources
+        except NotFoundError as err:
+            # If no resource are found, we set the 'data' in the return object
+            # to a empty list.
+            return_object.data = []
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+        # Set the return value to True
+        return_object.success = True
 
     # Return the created object
     return return_object

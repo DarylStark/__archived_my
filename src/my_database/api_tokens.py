@@ -152,7 +152,8 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
 def get_api_tokens(
     req_user: Optional[User] = None,
     flt_id: Optional[int] = None,
-    flt_token: Optional[str] = None
+    flt_token: Optional[str] = None,
+    flt_client_id: Optional[int] = None
 ) -> Optional[Union[List[APIToken], APIToken]]:
     """ Method that retrieves all, or a subset of, the API tokens in
         the database.
@@ -169,6 +170,9 @@ def get_api_tokens(
 
         flt_token : Optional[str] [default=None]
             Filter on a specific token.
+
+        flt_client_id : Optional[int] [default=None]
+            Filter on a specific client ID.
 
         Returns
         -------
@@ -227,6 +231,18 @@ def get_api_tokens(
                 f'API token should be of type {str}, not {type(flt_id)}.')
             raise FilterNotValidError(
                 f'API token should be of type {str}, not {type(flt_id)}.')
+
+        try:
+            if flt_client_id:
+                flt_client_id = int(flt_client_id)
+                data_list = data_list.filter(
+                    APIToken.client_id == flt_client_id)
+                logger.debug('get_api_tokens: list is filtered on client ID')
+        except (ValueError, TypeError):
+            logger.error(
+                f'API client ID should be of type {int}, not {type(flt_client_id)}.')
+            raise FilterNotValidError(
+                f'API client ID should be of type {int}, not {type(flt_client_id)}.')
 
         # Get the data
         if flt_id or flt_token:
