@@ -29,6 +29,7 @@ validation_fields = {
     'api_client_ids': Field(
         'tag_ids',
         list),
+    'client_id': Field('client_id', int),
 }
 
 

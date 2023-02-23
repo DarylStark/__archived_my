@@ -8,7 +8,7 @@ from typing import Optional
 from flask.blueprints import Blueprint
 from flask.globals import request, session
 from my_database import validate_input
-from my_database.api_clients import create_api_client, delete_api_clients, get_api_clients, validation_fields
+from my_database.api_clients import create_api_client, delete_api_clients, get_api_clients, update_api_client, validation_fields
 from my_database.exceptions import (AuthCredentialsError,
                                     AuthUserRequiresSecondFactorError,
                                     FieldNotValidatedError, IntegrityError, NotFoundError)
@@ -161,6 +161,83 @@ def retrieve_specific(user_session: Optional[UserSession], token: str) -> Respon
             # If no resource are found, we set the 'data' in the return object
             # to a empty list.
             return_object.data = []
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+        # Set the return value to True
+        return_object.success = True
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_api_clients.route(
+    '/update',
+    methods=['PATCH']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def update(user_session: Optional[UserSession]) -> Response:
+    """ Method to update clients. Should recieve the client id and the
+        new data """
+
+    # Get the given data
+    post_data = request.json
+
+    # Validate the given fields
+    required_fields = {
+        'client_id': validation_fields['client_id'],
+    }
+
+    # Set the optional fields
+    optional_fields = {
+        'app_name': validation_fields['app_name'],
+        'app_publisher': validation_fields['app_publisher'],
+        'redirect_url': validation_fields['redirect_url']
+    }
+
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except IntegrityError as err:
+        # Integrity errors happen mostly when the tag already
+        # exists.
+        raise ResourceIntegrityError(err)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
+
+    # Delete `client_id` from the post_data dict. If we don't do this, we can't
+    # use the `post_data` dict as input for the backend
+    client_id = post_data['client_id']
+    post_data.pop('client_id')
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    # Remove the resources
+    if user_session is not None:
+        try:
+            # Get the tags from the database
+            update_api_client(
+                req_user=user_session.user,
+                api_client_id=client_id,
+                **post_data
+            )
+
+            # We create a key for the return object that will say that the data
+            # is removed
+            return_object.data = {'update': True}
+        except NotFoundError as err:
+            # If no clients are found, we set the data to False
+            return_object.data = {'update': False}
         except Exception as err:
             # Every other error should result in a ServerError.
             raise ServerError(err)
