@@ -264,6 +264,7 @@ def update_api_client(
     optional_fields = {
         'app_name': validation_fields['app_name'],
         'app_publisher': validation_fields['app_publisher'],
+        'redirect_url': validation_fields['redirect_url'],
         'enabled': validation_fields['enabled'],
         'expires': validation_fields['expires']
     }
