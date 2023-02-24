@@ -18,6 +18,7 @@ from my_database_model.api_scope import APIScope
 # Define the fields for validation
 validation_fields = {
     'client_id': Field('client_id', int),
+    'token_id': Field('token_id', int),
     'enabled': Field('enabled', bool),
     'expires': Field('expires', datetime),
     'app_token': Field('app_token', str),
@@ -303,7 +304,8 @@ def update_api_token(
         'enabled': validation_fields['enabled'],
         'expires': validation_fields['expires'],
         'scopes': validation_fields['scopes'],
-        'api_token': validation_fields['api_token']
+        'api_token': validation_fields['api_token'],
+        'title': validation_fields['title']
     }
 
     # Validate the user input

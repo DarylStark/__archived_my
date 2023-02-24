@@ -199,6 +199,81 @@ def add_permissions(user_session: Optional[UserSession]) -> Response:
 
 
 @blueprint_data_api_tokens.route(
+    '/update',
+    methods=['PATCH']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def update(user_session: Optional[UserSession]) -> Response:
+    """ Method to update tokens. Should recieve the token id and the
+        new data """
+
+    # Get the given data
+    post_data = request.json
+
+    # Validate the given fields
+    required_fields = {
+        'token_id': validation_fields['token_id'],
+    }
+
+    # Set the optional fields
+    optional_fields = {
+        'title': validation_fields['title']
+    }
+
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except IntegrityError as err:
+        # Integrity errors happen mostly when the tag already
+        # exists.
+        raise ResourceIntegrityError(err)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
+
+    # Delete `token_id` from the post_data dict. If we don't do this, we can't
+    # use the `post_data` dict as input for the backend
+    token_id = post_data['token_id']
+    post_data.pop('token_id')
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    # Remove the resources
+    if user_session is not None:
+        try:
+            # Get the tags from the database
+            update_api_token(
+                req_user=user_session.user,
+                api_token_id=token_id,
+                **post_data
+            )
+
+            # We create a key for the return object that will say that the data
+            # is removed
+            return_object.data = {'update': True}
+        except NotFoundError as err:
+            # If no clients are found, we set the data to False
+            return_object.data = {'update': False}
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+        # Set the return value to True
+        return_object.success = True
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_api_tokens.route(
     '/delete',
     methods=['DELETE']
 )
