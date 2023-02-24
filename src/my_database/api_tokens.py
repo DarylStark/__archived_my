@@ -23,7 +23,8 @@ validation_fields = {
     'app_token': Field('app_token', str),
     'api_token': Field('token', str),
     'title': Field('title', str),
-    'scopes': Field('scopes', list)
+    'scopes': Field('scopes', list),
+    'api_token_ids': Field('api_token_ids', list)
 }
 
 
@@ -403,7 +404,7 @@ def update_api_token(
 
 def delete_api_token(
     req_user: User,
-    api_token_id: int
+    api_token_ids: Union[List[int], int]
 ) -> bool:
     """ Method to delete a API token.
 
@@ -423,9 +424,16 @@ def delete_api_token(
     """
 
     # Get the API token
-    resource = get_api_tokens(req_user=req_user, flt_id=api_token_id)
+    resources = None
+    if type(api_token_ids) is list:
+        resources = [
+            get_api_tokens(req_user=req_user, flt_id=r)
+            for r in api_token_ids
+        ]
+    else:
+        resources = [get_api_tokens(req_user=req_user, flt_id=api_token_ids)]
 
-    logger.debug('delete_api_token: we have the resource')
+    logger.debug('delete_api_token: we have the resources')
 
     # Create a database session
     try:
@@ -435,7 +443,8 @@ def delete_api_token(
         ) as session:
             # Delete the resource
             logger.debug('delete_api_token: deleting the resource')
-            session.delete(resource)
+            for resource in resources:
+                session.delete(resource)
     except sqlalchemy.exc.IntegrityError as e:
         logger.error(
             f'delete_api_token: sqlalchemy.exc.IntegrityError: {str(e)}')
