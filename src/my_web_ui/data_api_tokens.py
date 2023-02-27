@@ -135,10 +135,58 @@ def retrieve_specific(user_session: Optional[UserSession], client_id: int) -> Re
 
 
 @blueprint_data_api_tokens.route(
-    '/add_permissions',
-    methods=['PATCH']
+    '/get_scopes/<int:token_id>',
+    methods=['GET']
 )
 @data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def retrieve_scopes(user_session: Optional[UserSession], token_id: int) -> Response:
+    """ Method that returns a specific the given scopes for a token. """
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    if user_session is not None:
+        try:
+            # Get the API client from the database
+            resources = get_api_tokens(
+                req_user=user_session.user,
+                flt_id=token_id
+            )
+
+            # Set the tag in the return object
+            return_object.data = [
+                {
+                    'tokenscope_id': tokenscope.id,
+                    'scope': f'{tokenscope.scope.module}.{tokenscope.scope.subject}'
+                }
+                for tokenscope in resources.token_scopes]
+        except NotFoundError as err:
+            # If no resource are found, we set the 'data' in the return object
+            # to a empty list.
+            return_object.data = []
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+        # Set the return value to True
+        return_object.success = True
+
+    # Return the created object
+    return return_object
+
+
+@ blueprint_data_api_tokens.route(
+    '/add_permissions',
+    methods=['PATCH']
+
+
+)
+@ data_endpoint(
     allowed_users=EndpointPermissions(
         logged_out_users=False,
         normal_users=True,
