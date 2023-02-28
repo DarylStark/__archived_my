@@ -66,6 +66,9 @@ class APIToken(Database.base_class):
         back_populates='token',
         cascade='all, delete')
 
+    # Fields that need to be hidden from the API
+    api_hide_fields = ['token']
+
     def __repr__(self) -> str:
         """ Represents objects of this class. """
         return (f'<APIToken for "{self.client_id}" ' +
