@@ -34,7 +34,8 @@
             "cwd": "${workspaceFolder}/src",
             "env": {
                 "FLASK_APP": "my_rest_api_v1:flask_app",
-                "FLASK_ENV": "development"
+                "FLASK_ENV": "development",
+                "FLASK_RUN_PORT": "5001"
             },
             "args": [
                 "run",
@@ -53,7 +54,8 @@
             "cwd": "${workspaceFolder}/src",
             "env": {
                 "FLASK_APP": "my_web_ui:flask_app",
-                "FLASK_ENV": "development"
+                "FLASK_ENV": "development",
+                "FLASK_RUN_PORT": "5000"
             },
             "args": [
                 "run",
