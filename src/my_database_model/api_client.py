@@ -19,7 +19,7 @@ class APIClient(Database.base_class):
 
     # Set constrains for this table
     __table_args__ = (
-        UniqueConstraint('app_name', 'app_publisher'),
+        UniqueConstraint('app_name', 'app_publisher', 'user_id'),
         UniqueConstraint('token')
     )
 
