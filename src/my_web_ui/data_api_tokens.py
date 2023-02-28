@@ -8,6 +8,7 @@ from flask.blueprints import Blueprint
 from flask.globals import request
 from my_database import validate_input
 from my_database.api_clients import get_api_clients
+from my_database.api_token_scope import delete_api_token_scopes
 from my_database.api_tokens import create_api_token, delete_api_token, get_api_tokens, update_api_token, validation_fields
 from my_database.exceptions import FieldNotValidatedError, IntegrityError, NotFoundError
 from my_database_model import UserSession
@@ -161,7 +162,7 @@ def retrieve_scopes(user_session: Optional[UserSession], token_id: int) -> Respo
             # Set the tag in the return object
             return_object.data = [
                 {
-                    'tokenscope_id': tokenscope.id,
+                    'id': tokenscope.id,
                     'scope': f'{tokenscope.scope.module}.{tokenscope.scope.subject}'
                 }
                 for tokenscope in resources.token_scopes]
@@ -373,6 +374,76 @@ def delete(user_session: Optional[UserSession]) -> Response:
         try:
             # Remove the API clients from the database
             delete_api_token(**data_dict)
+
+            # We create a key for the return object that will say that the data
+            # is removed
+            return_object.data = {'deleted': True}
+        except NotFoundError as err:
+            # If no API clients are found, we set the data to False
+            return_object.data = {'deleted': False}
+        except Exception as err:
+            # Every other error should result in a ServerError.
+            raise ServerError(err)
+
+        # Set the return value to True
+        return_object.success = True
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_api_tokens.route(
+    '/revoke_scope',
+    methods=['DELETE']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def revoke_scope(user_session: Optional[UserSession]) -> Response:
+    """ Method to remove API token scopes. Should receive a list of ids to
+        remove from the user in the POST data """
+
+    # Get the given data
+    post_data = request.json
+
+    # Validate the given fields
+    required_fields = {
+        'token_scope_ids': validation_fields['token_scope_ids'],
+    }
+
+    # Set the optional fields
+    optional_fields = None
+
+    try:
+        # Validate the user input
+        validate_input(
+            input_values=post_data,
+            required_fields=required_fields,
+            optional_fields=optional_fields)
+    except IntegrityError as err:
+        # Integrity errors happen mostly when the tag already
+        # exists.
+        raise ResourceIntegrityError(err)
+    except (TypeError, FieldNotValidatedError) as e:
+        raise InvalidInputError(e)
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    # Create dict to send to the my_database package
+    data_dict = {
+        'req_user': user_session.user,
+        'token_scope_ids': post_data['token_scope_ids']
+    }
+
+    # Remove the resources
+    if user_session is not None:
+        try:
+            # Remove the API clients from the database
+            delete_api_token_scopes(**data_dict)
 
             # We create a key for the return object that will say that the data
             # is removed

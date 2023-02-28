@@ -25,7 +25,8 @@ validation_fields = {
     'api_token': Field('token', str),
     'title': Field('title', str),
     'scopes': Field('scopes', list),
-    'api_token_ids': Field('api_token_ids', list)
+    'api_token_ids': Field('api_token_ids', list),
+    'token_scope_ids': Field('token_scope_ids', list)
 }
 
 
