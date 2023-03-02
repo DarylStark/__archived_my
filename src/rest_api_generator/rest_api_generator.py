@@ -464,9 +464,22 @@ class RESTAPIGenerator:
 
                         # Filter the data
                         return_value.data = return_value.data[start:end]
+                else:
+                    # No matching URL found for this HTTP method. We abort the
+                    # request with a 404 error
+                    supported_method_list = ', '.join([
+                        f'"{method}"' for method in selected_endpoint.http_methods])
+                    self.logger.error(
+                        f'Not a valid method for this endpoint! Given method: "{request.method}", supported methods: {supported_method_list}')
+                    error = self.raise_error(
+                        405, f'Not a valid method for this endpoint! Given method: "{request.method}", supported methods: {supported_method_list}')
+                    if error:
+                        return_value = error
+                    else:
+                        return None
+
             else:
-                # No matching URL found for this HTTP method. We abort the
-                # request with a 404 error
+                # No matching URL found
                 self.logger.error(f'Endpoint {path} not found!')
                 error = self.raise_error(404, 'Endpoint not found')
                 if error:
