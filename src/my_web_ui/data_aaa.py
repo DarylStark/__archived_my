@@ -13,8 +13,8 @@ from my_database_model.user_session import UserSession
 from my_web_ui.exceptions import InvalidInputError
 from my_web_ui.response import Response
 from my_web_ui.data_endpoint import data_endpoint, EndpointPermissions
-from my_database.auth import (validate_credentials, create_user_session,
-                              delete_user_sessions)
+from my_database.auth import validate_credentials
+from my_database.user_sessions import create_user_session, delete_user_sessions
 from json import dumps
 
 # Create the Blueprint

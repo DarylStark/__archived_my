@@ -9,8 +9,9 @@ from flask.blueprints import Blueprint
 from flask.globals import request, session
 from pyotp import TOTP
 from my_database import validate_input
-from my_database.auth import (create_user_session, delete_user_sessions,
-                              validate_credentials)
+from my_database.user_sessions import (
+    create_user_session, delete_user_sessions)
+from my_database.auth import validate_credentials
 from my_database.exceptions import (AuthCredentialsError,
                                     AuthUserRequiresSecondFactorError,
                                     FieldNotValidatedError, IntegrityError, NotFoundError)

@@ -8,8 +8,8 @@ from typing import Optional
 from flask.blueprints import Blueprint
 from flask.globals import request, session
 from my_database import validate_input
-from my_database.auth import (delete_user_sessions, get_user_sessions,
-                              update_user_session, validation_fields)
+from my_database.user_sessions import (delete_user_sessions, get_user_sessions,
+                                       update_user_session, validation_fields)
 from my_database.exceptions import (AuthCredentialsError,
                                     AuthUserRequiresSecondFactorError,
                                     FieldNotValidatedError, NotFoundError)
