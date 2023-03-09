@@ -6,6 +6,7 @@ from flask import redirect, Response
 from typing import Optional, Union
 import jinja2
 from my_web_ui.authentication import get_active_user_session
+from werkzeug.exceptions import HTTPException
 
 # Create a Jinja2 environment that the application can use to retrieve
 # and parse templates
@@ -118,6 +119,23 @@ def oauth() -> Union[str, Response]:
     data = {
         'title': 'OAuth Consent',
         'body_js_files': ['oauth.js']
+    }
+
+    # Render the template and return the value
+    return template.render(data)
+
+
+def error_page(error: HTTPException) -> str:
+    """ Function that returns a error page """
+
+    # Open the correct template file
+    template = templateEnv.get_template('error.html')
+
+    # Create a dict with the data for the template
+    data = {
+        'title': f'Error {error.code}',
+        'code': error.code,
+        'description': error.description
     }
 
     # Render the template and return the value

@@ -5,6 +5,7 @@
 import logging
 
 import flask
+import werkzeug.exceptions
 from config_loader import ConfigLoader
 from flask import Flask
 from rich.logging import RichHandler
@@ -18,7 +19,8 @@ from my_web_ui.data_user_account import blueprint_data_user_account
 from my_web_ui.data_web_ui_settings import blueprint_data_web_ui_settings
 from my_web_ui.data_tags import blueprint_data_tags
 from my_web_ui.static import blueprint_static
-from my_web_ui.ui import blueprint_ui
+from my_web_ui.ui import blueprint_ui, error_page
+import jinja2
 
 # Load the settings
 if not ConfigLoader.load_settings():
@@ -39,6 +41,9 @@ logger = logging.getLogger('MyWebUI')
 # Create a Flask object
 logger.debug('Creating Flask object')
 flask_app = Flask(__name__)
+
+# Register error handler
+flask_app.register_error_handler(werkzeug.exceptions.HTTPException, error_page)
 
 # Set the Flask secret. This is used for session later on
 flask_app.secret_key = ConfigLoader.config['flask']['secret']
