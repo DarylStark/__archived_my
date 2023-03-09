@@ -59,8 +59,8 @@ def create(user_session: Optional[UserSession]) -> Response:
             input_values=post_data,
             required_fields=required_fields,
             optional_fields=optional_fields)
-    except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e) from None
+    except (TypeError, FieldNotValidatedError) as error:
+        raise InvalidInputError(error) from None
 
     # Create a data object to return
     return_object = Response(success=False)
@@ -77,13 +77,13 @@ def create(user_session: Optional[UserSession]) -> Response:
             # Set the tag in the object
             return_object.data = new_object
             return_object.success = True
-        except IntegrityError as err:
+        except IntegrityError as error:
             # Integrity errors happen mostly when the tag already
             # exists.
-            raise ResourceIntegrityError(err) from err
-        except Exception as err:
+            raise ResourceIntegrityError(error) from error
+        except Exception as error:
             # Every other error should result in a ServerError.
-            raise ServerError(err) from err
+            raise ServerError(error) from error
 
     # Return the created object
     return return_object
@@ -114,13 +114,13 @@ def retrieve(user_session: Optional[UserSession]) -> Response:
 
             # Set the tag in the return object
             return_object.data = resources
-        except NotFoundError as err:
+        except NotFoundError as error:
             # If no resource are found, we set the 'data' in the return object
             # to a empty list.
             return_object.data = []
-        except Exception as err:
+        except Exception as error:
             # Every other error should result in a ServerError.
-            raise ServerError(err) from err
+            raise ServerError(error) from error
 
         # Set the return value to True
         return_object.success = True
@@ -163,12 +163,12 @@ def update(user_session: Optional[UserSession]) -> Response:
             input_values=post_data,
             required_fields=required_fields,
             optional_fields=optional_fields)
-    except IntegrityError as err:
+    except IntegrityError as error:
         # Integrity errors happen mostly when the tag already
         # exists.
-        raise ResourceIntegrityError(err)
-    except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e) from None
+        raise ResourceIntegrityError(error)
+    except (TypeError, FieldNotValidatedError) as error:
+        raise InvalidInputError(error) from None
 
     # Delete `tag_id` from the post_data dict. If we don't do this, we can't
     # use the `post_data` dict as input for the backend
@@ -191,12 +191,12 @@ def update(user_session: Optional[UserSession]) -> Response:
             # We create a key for the return object that will say that the data
             # is removed
             return_object.data = {'update': True}
-        except NotFoundError as err:
+        except NotFoundError as error:
             # If no tags are found, we set the data to False
             return_object.data = {'update': False}
-        except Exception as err:
+        except Exception as error:
             # Every other error should result in a ServerError.
-            raise ServerError(err) from err
+            raise ServerError(error) from error
 
         # Set the return value to True
         return_object.success = True
@@ -236,12 +236,12 @@ def delete(user_session: Optional[UserSession]) -> Response:
             input_values=post_data,
             required_fields=required_fields,
             optional_fields=optional_fields)
-    except IntegrityError as err:
+    except IntegrityError as error:
         # Integrity errors happen mostly when the tag already
         # exists.
-        raise ResourceIntegrityError(err)
-    except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e) from None
+        raise ResourceIntegrityError(error)
+    except (TypeError, FieldNotValidatedError) as error:
+        raise InvalidInputError(error) from None
 
     # Create a data object to return
     return_object = Response(success=False)
@@ -261,12 +261,12 @@ def delete(user_session: Optional[UserSession]) -> Response:
             # We create a key for the return object that will say that the data
             # is removed
             return_object.data = {'deleted': True}
-        except NotFoundError as err:
+        except NotFoundError as error:
             # If no tags are found, we set the data to False
             return_object.data = {'deleted': False}
-        except Exception as err:
+        except Exception as error:
             # Every other error should result in a ServerError.
-            raise ServerError(err) from err
+            raise ServerError(error) from error
 
         # Set the return value to True
         return_object.success = True

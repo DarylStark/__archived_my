@@ -62,8 +62,8 @@ def set_setting(user_session: Optional[UserSession]) -> Response:
             input_values=post_data,
             required_fields=required_fields,
             optional_fields=optional_fields)
-    except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e) from None
+    except (TypeError, FieldNotValidatedError) as error:
+        raise InvalidInputError(error) from None
 
     # Create a data object to return
     return_object = Response(success=False)
@@ -126,13 +126,13 @@ def get_settings(user_session: Optional[UserSession]) -> Response:
                 return_object.data = {
                     'settings': {x.setting: x.value for x in settings}
                 }
-        except NotFoundError as err:
+        except NotFoundError as error:
             # If no settings are found, we set the 'data' in the return object
             # to a empty list
             return_object.data = []
-        except Exception as err:
+        except Exception as error:
             # Every other error should result in a ServerError.
-            raise ServerError(err) from err
+            raise ServerError(error) from error
 
         # Set the return value to True
         return_object.success = True

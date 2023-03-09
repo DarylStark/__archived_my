@@ -76,8 +76,8 @@ def date_tags_create(auth: Optional[Authorization],
             input_values=post_data,
             required_fields=required_fields,
             optional_fields=optional_fields)
-    except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e) from None
+    except (TypeError, FieldNotValidatedError) as error:
+        raise InvalidInputError(error) from None
 
     # Create the tag
     try:
@@ -85,13 +85,13 @@ def date_tags_create(auth: Optional[Authorization],
             req_user=auth.data.user,
             **post_data
         )
-    except IntegrityError as db_err:
+    except IntegrityError as db_error:
         # Integrity errors happen mostly when the tag already
         # exists.
-        raise ResourceIntegrityError(db_err) from db_err
-    except Exception as db_err:
+        raise ResourceIntegrityError(db_error) from db_error
+    except Exception as db_error:
         # Every other error should result in a ServerError.
-        raise ServerError(db_err) from db_err
+        raise ServerError(db_error) from db_error
     else:
         # If nothing went wrong, return the newly created object.
         return_response.data = new_object
@@ -158,13 +158,13 @@ def tags_retrieve(auth: Optional[Authorization],
             auth.data.user,
             **filters
         )
-    except NotFoundError as err:
+    except NotFoundError as error:
         # Resource not found happens when a user tries to get a
         # tag that does not exists
-        raise ResourceNotFoundError(err)
-    except Exception as db_err:
+        raise ResourceNotFoundError(error)
+    except Exception as db_error:
         # Every other error should result in a ServerError.
-        raise ServerError(db_err) from db_err
+        raise ServerError(db_error) from db_error
 
     # Return the created Response object
     return return_response
@@ -214,22 +214,22 @@ def date_tags_delete(auth: Optional[Authorization],
             req_user=auth.data.user,
             date_tag_ids=resource_id
         )
-    except PermissionDeniedError as db_err:
+    except PermissionDeniedError as db_error:
         # Permission denied errors happen when a user tries to
         # delete a type of resource he is not allowed to delete.
-        raise ResourceForbiddenError(db_err) from db_err
-    except NotFoundError as db_err:
+        raise ResourceForbiddenError(db_error) from db_error
+    except NotFoundError as db_error:
         # Resource not found happens when a user tries to delete a
         # resource that does not exists
-        raise ResourceNotFoundError(db_err) from db_err
-    except IntegrityError as db_err:
+        raise ResourceNotFoundError(db_error) from db_error
+    except IntegrityError as db_error:
         # Integrity errors happen mostly when the resource has
         # connections to other resources that should be deleted
         # first.
-        raise ResourceIntegrityError(db_err) from db_err
-    except Exception as db_err:
+        raise ResourceIntegrityError(db_error) from db_error
+    except Exception as db_error:
         # Every other error should result in a ServerError.
-        raise ServerError(db_err) from db_err
+        raise ServerError(db_error) from db_error
     else:
         # If nothing went wrong, we create a object with the key
         # 'deleted' that we return to the client.

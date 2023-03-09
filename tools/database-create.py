@@ -158,8 +158,8 @@ if __name__ == '__main__':
                     logger.info(
                         f'Creating object "{entry}" and related objects')
                     session.add(entry)
-            except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-                logger.warning(f'IntegrityError: {str(e)}')
+            except (pymysql.err.IntegrityError, sqlalchemy.exc.IntegrityError) as error:
+                logger.warning(f'IntegrityError: {str(error)}')
 
     # Done!
     logger.info('Script done')

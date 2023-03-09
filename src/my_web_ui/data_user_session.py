@@ -83,14 +83,14 @@ def retrieve(user_session: Optional[UserSession]) -> Response:
 
             # Set the user session in the return object
             return_object.data = resources
-        except NotFoundError as err:
+        except NotFoundError as error:
             # If no resources are found, we set the 'data' in the return object
             # to a empty list. This should never happen since this endpoint can
             # only be called when a session exists
             return_object.data = []
-        except Exception as err:
+        except Exception as error:
             # Every other error should result in a ServerError.
-            raise ServerError(err) from err
+            raise ServerError(error) from error
 
         # Set the return value to True
         return_object.success = True
@@ -131,8 +131,8 @@ def update(user_session: Optional[UserSession]) -> Response:
             input_values=post_data,
             required_fields=required_fields,
             optional_fields=optional_fields)
-    except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e) from e
+    except (TypeError, FieldNotValidatedError) as error:
+        raise InvalidInputError(error) from error
 
     # Delete `session_id` from the post_data dict. If we don't do this, we can't
     # use the `post_data` dict as input for the backend
@@ -155,12 +155,12 @@ def update(user_session: Optional[UserSession]) -> Response:
             # We create a key for the return object that will say that the data
             # is removed
             return_object.data = {'update': True}
-        except NotFoundError as err:
+        except NotFoundError as error:
             # If no sessions are found, we set the data to False
             return_object.data = {'update': False}
-        except Exception as err:
+        except Exception as error:
             # Every other error should result in a ServerError.
-            raise ServerError(err) from err
+            raise ServerError(error) from error
 
         # Set the return value to True
         return_object.success = True
@@ -200,8 +200,8 @@ def delete(user_session: Optional[UserSession]) -> Response:
             input_values=post_data,
             required_fields=required_fields,
             optional_fields=optional_fields)
-    except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e) from None
+    except (TypeError, FieldNotValidatedError) as error:
+        raise InvalidInputError(error) from None
 
     # Create a data object to return
     return_object = Response(success=False)
@@ -221,12 +221,12 @@ def delete(user_session: Optional[UserSession]) -> Response:
             # We create a key for the return object that will say that the data
             # is removed
             return_object.data = {'deleted': True}
-        except NotFoundError as err:
+        except NotFoundError as error:
             # If no sessions are found, we set the data to False
             return_object.data = {'deleted': False}
-        except Exception as err:
+        except Exception as error:
             # Every other error should result in a ServerError.
-            raise ServerError(err) from err
+            raise ServerError(error) from error
 
         # Set the return value to True
         return_object.success = True
