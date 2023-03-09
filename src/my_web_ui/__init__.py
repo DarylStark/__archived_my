@@ -20,6 +20,7 @@ from my_web_ui.data_web_ui_settings import blueprint_data_web_ui_settings
 from my_web_ui.data_tags import blueprint_data_tags
 from my_web_ui.static import blueprint_static
 from my_web_ui.ui import blueprint_ui, error_page
+from my_web_ui.root import blueprint_root
 import jinja2
 
 # Load the settings
@@ -63,3 +64,4 @@ flask_app.register_blueprint(blueprint_data_tags)
 # and images and one for the real UI.
 flask_app.register_blueprint(blueprint_static)
 flask_app.register_blueprint(blueprint_ui)
+flask_app.register_blueprint(blueprint_root)
