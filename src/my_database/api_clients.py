@@ -117,10 +117,10 @@ def create_api_client(req_user: User, **kwargs: dict) -> Optional[APIClient]:
 
             # Return the created resource
             return new_resource
-    except sqlalchemy.exc.IntegrityError as e:
-        logger.error(f'create_api_client: IntegrityError: {str(e)}')
+    except sqlalchemy.exc.IntegrityError as sa_error:
+        logger.error(f'create_api_client: IntegrityError: {str(sa_error)}')
         # Add a custom text to the exception
-        raise IntegrityError('API client already exists')
+        raise IntegrityError('API client already exists') from sa_error
 
     return None
 
@@ -182,7 +182,7 @@ def get_api_clients(
             logger.error(
                 f'API client id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'API client id should be of type {int}, not {type(flt_id)}.')
+                f'API client id should be of type {int}, not {type(flt_id)}.') from None
 
         try:
             if flt_token:
@@ -193,7 +193,7 @@ def get_api_clients(
             logger.error(
                 f'API token should be of type {str}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'API token should be of type {str}, not {type(flt_id)}.')
+                f'API token should be of type {str}, not {type(flt_id)}.') from None
 
         try:
             if flt_enabled is not None:
@@ -205,7 +205,7 @@ def get_api_clients(
             logger.error(
                 f'API enabled should be of type {bool}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'API enabled should be of type {bool}, not {type(flt_id)}.')
+                f'API enabled should be of type {bool}, not {type(flt_id)}.')from None
 
         # Get the data
         if flt_id or flt_token:
@@ -316,11 +316,11 @@ def update_api_client(
         if isinstance(resource, APIClient):
             logger.debug('update_api_client: updating was a success!')
             return resource
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         # Add a custom text to the exception
         logger.error(
-            f'update_api_client: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise IntegrityError('API client already exists')
+            f'update_api_client: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
+        raise IntegrityError('API client already exists') from sa_error
 
     return None
 
@@ -368,12 +368,12 @@ def delete_api_clients(
             logger.debug('delete_api_client: deleting the resource')
             for resource in resources:
                 session.delete(resource)
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         logger.error(
             f'delete_api_client: sqlalchemy.exc.IntegrityError: {str(e)}')
         raise IntegrityError(
             'API client couldn\'t be deleted because it still has resources ' +
-            'connected to it')
+            'connected to it') from sa_error
     else:
         logger.debug('delete_api_client: return True because it was a success')
         return True

@@ -127,10 +127,10 @@ def create_user(req_user: User, **kwargs: dict) -> Optional[User]:
 
             # Return the created resource
             return new_resource
-    except sqlalchemy.exc.IntegrityError as e:
-        logger.error(f'create_user: IntegrityError: {str(e)}')
+    except sqlalchemy.exc.IntegrityError as sa_error:
+        logger.error(f'create_user: IntegrityError: {str(sa_error)}')
         # Add a custom text to the exception
-        raise IntegrityError('User already exists')
+        raise IntegrityError('User already exists') from sa_error
 
     return None
 
@@ -205,7 +205,7 @@ def get_users(
             logger.error(
                 f'User id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'User id should be of type {int}, not {type(flt_id)}.')
+                f'User id should be of type {int}, not {type(flt_id)}.') from None
 
         # Apply filter for username
         if flt_username:
@@ -339,11 +339,11 @@ def update_user(
         if isinstance(resource, User):
             logger.debug('update_user: updating was a success!')
             return resource
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         # Add a custom text to the exception
         logger.error(
-            f'update_user: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise IntegrityError('User already exists')
+            f'update_user: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
+        raise IntegrityError('User already exists') from sa_error
 
     return None
 
@@ -439,11 +439,11 @@ def update_user_password(
         if isinstance(resource, User):
             logger.debug('update_user_password: updating was a success!')
             return resource
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         # Add a custom text to the exception
         logger.error(
-            f'update_user_password: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise IntegrityError('User already exists')
+            f'update_user_password: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
+        raise IntegrityError('User already exists') from sa_error
 
     return None
 
@@ -532,11 +532,11 @@ def update_user_2fa_secret(
         if isinstance(resource, User):
             logger.debug('update_user_2fa_secret: updating was a success!')
             return resource
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         # Add a custom text to the exception
         logger.error(
-            f'update_user_2fa_secret: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise IntegrityError('User already exists')
+            f'update_user_2fa_secret: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
+        raise IntegrityError('User already exists') from sa_error
 
     return None
 
@@ -598,11 +598,11 @@ def update_user_disable_2fa(
         if isinstance(resource, User):
             logger.debug('update_user_2fa_secret: updating was a success!')
             return resource
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         # Add a custom text to the exception
         logger.error(
-            f'update_user_2fa_secret: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise IntegrityError('User already exists')
+            f'update_user_2fa_secret: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
+        raise IntegrityError('User already exists') from sa_error
 
     return None
 
@@ -655,12 +655,12 @@ def delete_user(
             # Delete the resource
             logger.debug('delete_user: deleting the resource')
             session.delete(resource)
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         logger.error(
-            f'delete_user: sqlalchemy.exc.IntegrityError: {str(e)}')
+            f'delete_user: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
         raise IntegrityError(
             'User couldn\'t be deleted because it still has resources ' +
-            'connected to it')
+            'connected to it') from sa_error
     else:
         logger.debug('delete_user: return True because it was a success')
         return True

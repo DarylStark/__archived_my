@@ -104,10 +104,10 @@ def create_web_ui_setting(req_user: User, **kwargs: dict) -> Optional[WebUISetti
 
             # Return the created resource
             return new_resource
-    except sqlalchemy.exc.IntegrityError as e:
-        logger.error(f'create_web_ui_setting: IntegrityError: {str(e)}')
+    except sqlalchemy.exc.IntegrityError as sa_error:
+        logger.error(f'create_web_ui_setting: IntegrityError: {str(sa_error)}')
         # Add a custom text to the exception
-        raise IntegrityError('Setting already exists')
+        raise IntegrityError('Setting already exists') from sa_error
 
     return None
 
@@ -168,7 +168,7 @@ def get_web_ui_settings(
             logger.error(
                 f'WebUISetting id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'WebUISetting id should be of type {int}, not {type(flt_id)}.')
+                f'WebUISetting id should be of type {int}, not {type(flt_id)}.') from None
 
         # Apply filter for setting
         if flt_setting:
@@ -291,11 +291,11 @@ def update_web_ui_setting(
         if isinstance(resource, WebUISetting):
             logger.debug('update_web_ui_setting: updating was a success!')
             return resource
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         # Add a custom text to the exception
         logger.error(
-            f'update_web_ui_setting: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise IntegrityError('WebUISetting already exists')
+            f'update_web_ui_setting: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
+        raise IntegrityError('WebUISetting already exists') from sa_error
 
     return None
 
@@ -335,12 +335,12 @@ def delete_web_ui_setting(
             # Delete the resource
             logger.debug('delete_web_ui_setting: deleting the resource')
             session.delete(resource)
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         logger.error(
-            f'delete_web_ui_setting: sqlalchemy.exc.IntegrityError: {str(e)}')
+            f'delete_web_ui_setting: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
         raise IntegrityError(
             'WebUISetting couldn\'t be deleted because it still has resources ' +
-            'connected to it')
+            'connected to it') from sa_error
     else:
         logger.debug(
             'delete_web_ui_setting: return True because it was a success')

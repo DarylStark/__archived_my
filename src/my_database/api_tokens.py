@@ -144,10 +144,10 @@ def create_api_token(req_user: User, **kwargs: dict) -> Optional[APIToken]:
 
         # Return the created resource
         return new_resource
-    except sqlalchemy.exc.IntegrityError as e:
-        logger.error(f'create_api_token: IntegrityError: {str(e)}')
+    except sqlalchemy.exc.IntegrityError as sa_error:
+        logger.error(f'create_api_token: IntegrityError: {str(sa_error)}')
         # Add a custom text to the exception
-        raise IntegrityError('API token already exists')
+        raise IntegrityError('API token already exists') from sa_error
 
     return None
 
@@ -222,7 +222,7 @@ def get_api_tokens(
             logger.error(
                 f'API token id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'API token id should be of type {int}, not {type(flt_id)}.')
+                f'API token id should be of type {int}, not {type(flt_id)}.') from None
 
         try:
             if flt_token:
@@ -233,7 +233,7 @@ def get_api_tokens(
             logger.error(
                 f'API token should be of type {str}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'API token should be of type {str}, not {type(flt_id)}.')
+                f'API token should be of type {str}, not {type(flt_id)}.') from None
 
         try:
             if flt_client_id:
@@ -245,7 +245,7 @@ def get_api_tokens(
             logger.error(
                 f'API client ID should be of type {int}, not {type(flt_client_id)}.')
             raise FilterNotValidError(
-                f'API client ID should be of type {int}, not {type(flt_client_id)}.')
+                f'API client ID should be of type {int}, not {type(flt_client_id)}.') from None
 
         # Get the data
         if flt_id or flt_token:
@@ -358,11 +358,11 @@ def update_api_token(
             # Done! Return the resource
             if isinstance(resource, APIToken):
                 logger.debug('update_api_token: updating was a success!')
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         # Add a custom text to the exception
         logger.error(
-            f'update_api_token: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise IntegrityError('API token already exists')
+            f'update_api_token: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
+        raise IntegrityError('API token already exists') from sa_error
 
     if scopes:
         try:
@@ -391,11 +391,12 @@ def update_api_token(
 
                         # Add the resource
                         session.add(new_object)
-        except sqlalchemy.exc.IntegrityError as e:
+        except sqlalchemy.exc.IntegrityError as sa_error:
             # Add a custom text to the exception
             logger.error(
-                f'update_api_token: sqlalchemy.exc.IntegrityError: {str(e)}')
-            raise IntegrityError('APITokenScope object already exists')
+                f'update_api_token: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
+            raise IntegrityError(
+                'APITokenScope object already exists') from sa_error
 
     # Done! Return the resource
     if isinstance(resource, APIToken):
@@ -448,12 +449,12 @@ def delete_api_token(
             logger.debug('delete_api_token: deleting the resource')
             for resource in resources:
                 session.delete(resource)
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         logger.error(
-            f'delete_api_token: sqlalchemy.exc.IntegrityError: {str(e)}')
+            f'delete_api_token: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
         raise IntegrityError(
             'API token couldn\'t be deleted because it still has resources ' +
-            'connected to it')
+            'connected to it') from sa_error
     else:
         logger.debug('delete_api_token: return True because it was a success')
         return True

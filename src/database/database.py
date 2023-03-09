@@ -115,8 +115,9 @@ class Database:
 
             # Bind the engine to the sessionmaker of the class
             cls.session.configure(bind=cls._engine)
-        except sqlalchemy.exc.OperationalError:
-            raise DatabaseConnectionError('Couldn\'t connect to database')
+        except sqlalchemy.exc.OperationalError as sa_error:
+            raise DatabaseConnectionError(
+                'Couldn\'t connect to database') from sa_error
 
     @classmethod
     def get_pool_statistics(cls) -> dict:

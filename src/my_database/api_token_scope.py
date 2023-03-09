@@ -79,7 +79,7 @@ def get_api_token_scopes(
             logger.error(
                 f'API token id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'API token id should be of type {int}, not {type(flt_id)}.')
+                f'API token id should be of type {int}, not {type(flt_id)}.') from None
 
         # Get the data
         if flt_id:
@@ -142,12 +142,12 @@ def delete_api_token_scopes(
             logger.debug('delete_api_token_scopes: deleting the resource')
             for resource in resources:
                 session.delete(resource)
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         logger.error(
-            f'def delete_api_token_scopes: sqlalchemy.exc.IntegrityError: {str(e)}')
+            f'def delete_api_token_scopes: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
         raise IntegrityError(
             'API token couldn\'t be deleted because it still has resources ' +
-            'connected to it')
+            'connected to it') from sa_error
     else:
         logger.debug(
             'def delete_api_token_scopes: return True because it was a success')

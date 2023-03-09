@@ -75,7 +75,7 @@ def tags_create(auth: Optional[Authorization],
             required_fields=required_fields,
             optional_fields=optional_fields)
     except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e)
+        raise InvalidInputError(e) from None
 
     # Create the tag
     try:
@@ -83,13 +83,13 @@ def tags_create(auth: Optional[Authorization],
             req_user=auth.data.user,
             **post_data
         )
-    except IntegrityError as err:
+    except IntegrityError as db_err:
         # Integrity errors happen mostly when the tag already
         # exists.
-        raise ResourceIntegrityError(err)
-    except Exception as err:
+        raise ResourceIntegrityError(db_err) from db_err
+    except Exception as db_err:
         # Every other error should result in a ServerError.
-        raise ServerError(err)
+        raise ServerError(db_err) from db_err
     else:
         # If nothing went wrong, return the newly created object.
         return_response.data = new_object
@@ -160,13 +160,13 @@ def tags_retrieve(auth: Optional[Authorization],
             auth.data.user,
             **filters
         )
-    except NotFoundError as err:
+    except NotFoundError as db_err:
         # Resource not found happens when a user tries to get a
         # tag that does not exists
-        raise ResourceNotFoundError(err)
-    except Exception as err:
+        raise ResourceNotFoundError(db_err) from db_err
+    except Exception as db_err:
         # Every other error should result in a ServerError.
-        raise ServerError(err)
+        raise ServerError(db_err) from db_err
 
     # Return the created Response object
     return return_response
@@ -231,7 +231,7 @@ def tags_update_delete(auth: Optional[Authorization],
                 required_fields=required_fields,
                 optional_fields=optional_fields)
         except (TypeError, FieldNotValidatedError) as e:
-            raise InvalidInputError(e)
+            raise InvalidInputError(e) from None
 
         # Update the tag
         try:
@@ -240,17 +240,17 @@ def tags_update_delete(auth: Optional[Authorization],
                 tag_id=resource_id,
                 **post_data
             )
-        except NotFoundError as err:
+        except NotFoundError as db_err:
             # Resource not found happens when a user tries to change a
             # tag that does not exists
-            raise ResourceNotFoundError(err)
-        except IntegrityError as err:
+            raise ResourceNotFoundError(db_err) from db_err
+        except IntegrityError as db_err:
             # Integrity errors happen mostly when the tag already
             # exists.
-            raise ResourceIntegrityError(err)
-        except Exception as err:
+            raise ResourceIntegrityError(db_err) from db_err
+        except Exception as db_err:
             # Every other error should result in a ServerError.
-            raise ServerError(err)
+            raise ServerError(db_err) from db_err
 
         # If nothing went wrong, return the newly created object.
         return_response.data = changed_resource
@@ -262,22 +262,22 @@ def tags_update_delete(auth: Optional[Authorization],
                 req_user=auth.data.user,
                 tag_id=resource_id
             )
-        except PermissionDeniedError as err:
+        except PermissionDeniedError as db_err:
             # Permission denied errors happen when a user tries to
             # delete a type of resource he is not allowed to delete.
-            raise ResourceForbiddenError(err)
-        except NotFoundError as err:
+            raise ResourceForbiddenError(db_err) from db_err
+        except NotFoundError as db_err:
             # Resource not found happens when a user tries to delete a
             # resource that does not exists
-            raise ResourceNotFoundError(err)
-        except IntegrityError as err:
+            raise ResourceNotFoundError(db_err) from db_err
+        except IntegrityError as db_err:
             # Integrity errors happen mostly when the resource has
             # connections to other resources that should be deleted
             # first.
-            raise ResourceIntegrityError(err)
-        except Exception as err:
+            raise ResourceIntegrityError(db_err) from db_err
+        except Exception as db_err:
             # Every other error should result in a ServerError.
-            raise ServerError(err)
+            raise ServerError(db_err) from db_err
         else:
             # If nothing went wrong, we create a object with the key
             # 'deleted' that we return to the client.

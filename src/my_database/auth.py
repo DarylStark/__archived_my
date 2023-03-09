@@ -211,10 +211,10 @@ def create_user_session(req_user: User, **kwargs: dict) -> Optional[UserSession]
 
             # Return the created resource
             return new_resource
-    except sqlalchemy.exc.IntegrityError as e:
-        logger.error(f'create_user_session: IntegrityError: {str(e)}')
+    except sqlalchemy.exc.IntegrityError as sa_error:
+        logger.error(f'create_user_session: IntegrityError: {str(sa_error)}')
         # Add a custom text to the exception
-        raise IntegrityError('UserSession already exists')
+        raise IntegrityError('UserSession already exists') from sa_error
 
     return None
 
@@ -277,7 +277,7 @@ def get_user_sessions(
             logger.error(
                 f'UserSession id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'UserSession id should be of type {int}, not {type(flt_id)}.')
+                f'UserSession id should be of type {int}, not {type(flt_id)}.') from None
 
         # Get the data
         if flt_id:
@@ -390,11 +390,11 @@ def update_user_session(
         if isinstance(resource, UserSession):
             logger.debug('update_user_session: updating was a success!')
             return resource
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         # Add a custom text to the exception
         logger.error(
-            f'update_user_session: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise IntegrityError('UserSession already exists')
+            f'update_user_session: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
+        raise IntegrityError('UserSession already exists') from sa_error
 
     return None
 
@@ -442,12 +442,12 @@ def delete_user_sessions(
             logger.debug('delete_user_sessions: deleting the resources')
             for resource in resources:
                 session.delete(resource)
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         logger.error(
-            f'delete_user_sessions: sqlalchemy.exc.IntegrityError: {str(e)}')
+            f'delete_user_sessions: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
         raise IntegrityError(
             'Session couldn\'t be deleted because it still has resources ' +
-            'connected to it')
+            'connected to it') from sa_error
     else:
         logger.debug(
             'delete_user_sessions: return True because it was a success')

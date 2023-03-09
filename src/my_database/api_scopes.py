@@ -74,7 +74,7 @@ def get_scopes(
             logger.error(
                 f'APIScope id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'APIScope id should be of type {int}, not {type(flt_id)}.')
+                f'APIScope id should be of type {int}, not {type(flt_id)}.') from None
 
         # Apply filter for module
         try:
@@ -86,7 +86,7 @@ def get_scopes(
             logger.error(
                 f'APIScope module should be of type {str}, not {type(flt_module)}.')
             raise FilterNotValidError(
-                f'APIScope module should be of type {str}, not {type(flt_module)}.')
+                f'APIScope module should be of type {str}, not {type(flt_module)}.') from None
 
         # Apply filter for subject
         try:
@@ -98,7 +98,7 @@ def get_scopes(
             logger.error(
                 f'APIScope subject should be of type {str}, not {type(flt_subject)}.')
             raise FilterNotValidError(
-                f'APIScope subject should be of type {str}, not {type(flt_subject)}.')
+                f'APIScope subject should be of type {str}, not {type(flt_subject)}.') from None
 
         # Get the data
         if flt_id:

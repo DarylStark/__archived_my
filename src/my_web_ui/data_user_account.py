@@ -66,7 +66,7 @@ def set_account_details(user_session: Optional[UserSession]) -> Response:
             required_fields=required_fields,
             optional_fields=optional_fields)
     except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e)
+        raise InvalidInputError(e) from None
 
     # Create a data object to return
     return_object = Response(success=False)
@@ -122,7 +122,7 @@ def update_password(user_session: Optional[UserSession]) -> Response:
             required_fields=required_fields,
             optional_fields=optional_fields)
     except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e)
+        raise InvalidInputError(e) from None
 
     # Check if current password is correct
     if not user_session.user.verify_password(post_data['current_password']):
@@ -227,7 +227,7 @@ def verify_2fa_code(user_session: Optional[UserSession]) -> Response:
             required_fields=required_fields,
             optional_fields=optional_fields)
     except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e)
+        raise InvalidInputError(e) from None
 
     # Create a data object to return
     return_object = Response(success=False)

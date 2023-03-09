@@ -140,11 +140,11 @@ class ConfigLoader:
             except FileNotFoundError:
                 # File does not exists
                 raise ConfigFileNotFoundError(
-                    f'File {cls.yaml_file} does not exist!')
-            except (ScannerError, KeyError) as err:
+                    f'File {cls.yaml_file} does not exist!') from None
+            except (ScannerError, KeyError) as parse_error:
                 # File could not be decoded
                 raise ConfigFileNotValidError(
-                    f'Error while loading configfile "{cls.yaml_file}": {err}')
+                    f'Error while loading configfile "{cls.yaml_file}": {parse_error}') from parse_error
 
             # Everything went fine
             cls.is_loaded = True

@@ -112,10 +112,10 @@ def create_date_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
 
             # Return the created resource
             return new_resource
-    except sqlalchemy.exc.IntegrityError as e:
-        logger.error(f'create_date_tag: IntegrityError: {str(e)}')
+    except sqlalchemy.exc.IntegrityError as sa_error:
+        logger.error(f'create_date_tag: IntegrityError: {str(sa_error)}')
         # Add a custom text to the exception
-        raise IntegrityError('DateTag already exists')
+        raise IntegrityError('DateTag already exists') from sa_error
 
     return None
 
@@ -180,7 +180,7 @@ def get_date_tags(
             logger.error(
                 f'DateTag id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'DateTag id should be of type {int}, not {type(flt_id)}.')
+                f'DateTag id should be of type {int}, not {type(flt_id)}.') from None
 
         # Apply filter for title
         if flt_date:
@@ -197,7 +197,7 @@ def get_date_tags(
             logger.error(
                 f'Tag id should be of type {int}, not {type(flt_tag_id)}.')
             raise FilterNotValidError(
-                f'Tag id should be of type {int}, not {type(flt_tag_id)}.')
+                f'Tag id should be of type {int}, not {type(flt_tag_id)}.') from None
 
         # Get the data
         if flt_id:
@@ -259,12 +259,12 @@ def delete_date_tags(
             logger.debug('delete_date_tags: deleting the resources')
             for resource in resources:
                 session.delete(resource)
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         logger.error(
-            f'delete_date_tags: sqlalchemy.exc.IntegrityError: {str(e)}')
+            f'delete_date_tags: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
         raise IntegrityError(
             'DateTag couldn\'t be deleted because it still has resources ' +
-            'connected to it')
+            'connected to it') from sa_error
     else:
         logger.debug('delete_date_tags: return True because it was a success')
         return True

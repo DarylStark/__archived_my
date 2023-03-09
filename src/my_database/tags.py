@@ -111,10 +111,10 @@ def create_tag(req_user: User, **kwargs: dict) -> Optional[Tag]:
 
             # Return the created resource
             return new_resource
-    except sqlalchemy.exc.IntegrityError as e:
-        logger.error(f'create_tag: IntegrityError: {str(e)}')
+    except sqlalchemy.exc.IntegrityError as sa_error:
+        logger.error(f'create_tag: IntegrityError: {str(sa_error)}')
         # Add a custom text to the exception
-        raise IntegrityError('Tag already exists')
+        raise IntegrityError('Tag already exists') from sa_error
 
     return None
 
@@ -173,7 +173,7 @@ def get_tags(
             logger.error(
                 f'Tag id should be of type {int}, not {type(flt_id)}.')
             raise FilterNotValidError(
-                f'Tag id should be of type {int}, not {type(flt_id)}.')
+                f'Tag id should be of type {int}, not {type(flt_id)}.') from None
 
         # Apply filter for title
         if flt_title:
@@ -293,11 +293,11 @@ def update_tag(
         if isinstance(resource, Tag):
             logger.debug('update_tag: updating was a success!')
             return resource
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         # Add a custom text to the exception
         logger.error(
-            f'update_tag: sqlalchemy.exc.IntegrityError: {str(e)}')
-        raise IntegrityError('Tag already exists')
+            f'update_tag: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
+        raise IntegrityError('Tag already exists') from sa_error
 
     return None
 
@@ -345,12 +345,12 @@ def delete_tags(
             logger.debug('delete_tag: deleting the resources')
             for resource in resources:
                 session.delete(resource)
-    except sqlalchemy.exc.IntegrityError as e:
+    except sqlalchemy.exc.IntegrityError as sa_error:
         logger.error(
-            f'delete_tag: sqlalchemy.exc.IntegrityError: {str(e)}')
+            f'delete_tag: sqlalchemy.exc.IntegrityError: {str(sa_error)}')
         raise IntegrityError(
             'Tag couldn\'t be deleted because it still has resources ' +
-            'connected to it')
+            'connected to it') from sa_error
     else:
         logger.debug('delete_tag: return True because it was a success')
         return True

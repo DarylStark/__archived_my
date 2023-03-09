@@ -62,7 +62,7 @@ def set_setting(user_session: Optional[UserSession]) -> Response:
             required_fields=required_fields,
             optional_fields=optional_fields)
     except (TypeError, FieldNotValidatedError) as e:
-        raise InvalidInputError(e)
+        raise InvalidInputError(e) from None
 
     # Create a data object to return
     return_object = Response(success=False)
@@ -131,7 +131,7 @@ def get_settings(user_session: Optional[UserSession]) -> Response:
             return_object.data = []
         except Exception as err:
             # Every other error should result in a ServerError.
-            raise ServerError(err)
+            raise ServerError(err) from err
 
         # Set the return value to True
         return_object.success = True
