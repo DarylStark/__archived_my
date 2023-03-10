@@ -1,10 +1,11 @@
 """ This module includes the DateTag class which will be used by
     SQLalchemy ORM. """
 
+from sqlalchemy import Column, Date, Integer, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
+
 from database import Database
-from sqlalchemy import (Column, Integer, Date, UniqueConstraint)
 
 
 class DateTag(Database.base_class):

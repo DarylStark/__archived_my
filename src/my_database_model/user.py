@@ -6,12 +6,14 @@ import enum
 import random
 import string
 from typing import Optional
-from sqlalchemy.orm import backref, relationship
-from database import Database
+
 from passlib.hash import argon2
 from pyotp import TOTP, random_base32
 from sqlalchemy import (Column, DateTime, Enum, Integer, String,
                         UniqueConstraint)
+from sqlalchemy.orm import relationship
+
+from database import Database
 
 
 class UserRole(enum.Enum):

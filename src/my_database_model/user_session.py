@@ -4,13 +4,12 @@
 import datetime
 import random
 import string
-from typing import Optional
-from sqlalchemy.orm import backref, relationship
+
+from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
+
 from database import Database
-from passlib.hash import argon2
-from pyotp import TOTP, random_base32
-from sqlalchemy import (Column, DateTime, Enum, Integer, String)
 
 
 class UserSession(Database.base_class):

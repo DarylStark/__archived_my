@@ -1,10 +1,11 @@
 """ This module includes the Tag class which will be used by
     SQLalchemy ORM. """
 
+from sqlalchemy import Column, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
+
 from database import Database
-from sqlalchemy import (Column, Integer, String, UniqueConstraint)
 
 
 class Tag(Database.base_class):

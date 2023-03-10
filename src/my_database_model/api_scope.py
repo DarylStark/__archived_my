@@ -1,9 +1,10 @@
 """ This module includes the APIScope class which will be used by
     SQLalchemy ORM. """
 
-from database import Database
 from sqlalchemy import Column, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
+
+from database import Database
 
 
 class APIScope(Database.base_class):

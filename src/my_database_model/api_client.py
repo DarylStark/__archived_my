@@ -5,10 +5,12 @@ import datetime
 import random
 import string
 from typing import Optional
-from sqlalchemy.orm import relationship
-from database import Database
+
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
                         UniqueConstraint)
+from sqlalchemy.orm import relationship
+
+from database import Database
 
 
 class APIClient(Database.base_class):

@@ -1,9 +1,10 @@
 """ This module includes the APITokenScope class which will be used by
     SQLalchemy ORM. """
 
-from database import Database
 from sqlalchemy import Column, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import relationship
+
+from database import Database
 
 
 class APITokenScope(Database.base_class):
