@@ -3,20 +3,20 @@
 
 import re
 from typing import Optional
+
 from flask import request
+
 from my_database import validate_input
-from my_database.tags import validation_fields
 from my_database.exceptions import (FieldNotValidatedError, IntegrityError,
-                                    MyDatabaseError, NotFoundError,
-                                    PermissionDeniedError)
-from my_database.tags import create_tag, delete_tags, get_tags, update_tag
+                                    NotFoundError, PermissionDeniedError)
+from my_database.tags import (create_tag, delete_tags, get_tags, update_tag,
+                              validation_fields)
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
 from rest_api_generator.exceptions import (InvalidInputError,
                                            ResourceForbiddenError,
                                            ResourceIntegrityError,
-                                           ResourceNotFoundError,
-                                           ServerError)
+                                           ResourceNotFoundError, ServerError)
 
 api_group_tags = Group(
     api_url_prefix='tags',

@@ -1,8 +1,9 @@
 """ Module that has the authorization function. This function will be
     used by the REST API to authorize API requests. """
-from datetime import datetime
 import logging
+from datetime import datetime
 from typing import List, Optional, Union
+
 from my_database.api_tokens import get_api_tokens
 from my_database_model.api_token import APIToken
 from rest_api_generator.authorization import Authorization

@@ -2,16 +2,19 @@
     This group can be used to get user information. """
 import re
 from typing import Optional
+
 from flask import request
+
 from my_database import validate_input
-from my_database.users import validation_fields
-from my_database.exceptions import (FieldNotValidatedError, IntegrityError, MyDatabaseError,
+from my_database.exceptions import (FieldNotValidatedError, IntegrityError,
                                     NotFoundError, PermissionDeniedError)
-from my_database.users import create_user, delete_user, get_users, update_user
+from my_database.users import (create_user, delete_user, get_users,
+                               update_user, validation_fields)
 from my_database_model.user import UserRole
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
-from rest_api_generator.exceptions import (InvalidInputError, ResourceForbiddenError,
+from rest_api_generator.exceptions import (InvalidInputError,
+                                           ResourceForbiddenError,
                                            ResourceIntegrityError,
                                            ResourceNotFoundError, ServerError)
 

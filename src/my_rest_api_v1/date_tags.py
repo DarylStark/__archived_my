@@ -3,21 +3,20 @@
 
 import re
 from typing import Optional
+
 from flask import request
+
 from my_database import validate_input
-from my_database.date_tags import delete_date_tags, validation_fields
+from my_database.date_tags import (create_date_tag, delete_date_tags,
+                                   get_date_tags, validation_fields)
 from my_database.exceptions import (FieldNotValidatedError, IntegrityError,
-                                    MyDatabaseError, NotFoundError,
-                                    PermissionDeniedError)
-from my_database.date_tags import (create_date_tag, get_date_tags,
-                                   delete_date_tags)
+                                    NotFoundError, PermissionDeniedError)
 from rest_api_generator import Authorization, Group, Response, ResponseType
 from rest_api_generator.endpoint_scopes import EndpointScopes
 from rest_api_generator.exceptions import (InvalidInputError,
                                            ResourceForbiddenError,
                                            ResourceIntegrityError,
-                                           ResourceNotFoundError,
-                                           ServerError)
+                                           ResourceNotFoundError, ServerError)
 
 api_group_date_tags = Group(
     api_url_prefix='date_tags',
