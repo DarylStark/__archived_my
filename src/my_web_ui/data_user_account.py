@@ -5,19 +5,17 @@
 
 from json import dumps
 from typing import Optional
+
 from flask.blueprints import Blueprint
-from flask.globals import request, session
+from flask.globals import request
 from pyotp import TOTP
+
 from my_database import validate_input
-from my_database.user_sessions import (
-    create_user_session, delete_user_sessions)
-from my_database.auth import validate_credentials
-from my_database.exceptions import (AuthCredentialsError,
-                                    AuthUserRequiresSecondFactorError,
-                                    FieldNotValidatedError, IntegrityError)
+from my_database.exceptions import FieldNotValidatedError, IntegrityError
 from my_database.field import Field
-from my_database.users import update_user, update_user_2fa_secret, update_user_disable_2fa, update_user_password, validation_fields
-from my_database_model import User
+from my_database.users import (update_user, update_user_2fa_secret,
+                               update_user_disable_2fa, update_user_password,
+                               validation_fields)
 from my_database_model.user_session import UserSession
 from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint
 from my_web_ui.exceptions import InvalidInputError, PermissionDeniedError

@@ -4,18 +4,19 @@
 """
 
 from typing import Optional
+
 from flask.blueprints import Blueprint
 from flask.globals import request, session
-from my_database.exceptions import (AuthUserRequiresSecondFactorError,
-                                    AuthCredentialsError)
+
+from my_database.auth import validate_credentials
+from my_database.exceptions import (AuthCredentialsError,
+                                    AuthUserRequiresSecondFactorError)
+from my_database.user_sessions import create_user_session, delete_user_sessions
 from my_database_model import User
 from my_database_model.user_session import UserSession
+from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint
 from my_web_ui.exceptions import InvalidInputError
 from my_web_ui.response import Response
-from my_web_ui.data_endpoint import data_endpoint, EndpointPermissions
-from my_database.auth import validate_credentials
-from my_database.user_sessions import create_user_session, delete_user_sessions
-from json import dumps
 
 # Create the Blueprint
 blueprint_data_aaa = Blueprint(

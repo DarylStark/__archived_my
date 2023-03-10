@@ -3,18 +3,21 @@
     configured API clients
 """
 
-from json import dumps
 from typing import Optional
+
 from flask.blueprints import Blueprint
-from flask.globals import request, session
+from flask.globals import request
+
 from my_database import validate_input
-from my_database.api_clients import create_api_client, delete_api_clients, get_api_clients, update_api_client, validation_fields
-from my_database.exceptions import (AuthCredentialsError,
-                                    AuthUserRequiresSecondFactorError,
-                                    FieldNotValidatedError, IntegrityError, NotFoundError)
-from my_database_model import User, UserSession, Tag
+from my_database.api_clients import (create_api_client, delete_api_clients,
+                                     get_api_clients, update_api_client,
+                                     validation_fields)
+from my_database.exceptions import (FieldNotValidatedError, IntegrityError,
+                                    NotFoundError)
+from my_database_model import UserSession
 from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint
-from my_web_ui.exceptions import InvalidInputError, ResourceIntegrityError, ServerError
+from my_web_ui.exceptions import (InvalidInputError, ResourceIntegrityError,
+                                  ServerError)
 from my_web_ui.response import Response
 
 # Create the Blueprint

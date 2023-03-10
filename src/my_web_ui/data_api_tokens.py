@@ -4,16 +4,22 @@
 """
 
 from typing import Optional
+
 from flask.blueprints import Blueprint
 from flask.globals import request
+
 from my_database import validate_input
 from my_database.api_clients import get_api_clients
 from my_database.api_token_scope import delete_api_token_scopes
-from my_database.api_tokens import create_api_token, delete_api_token, get_api_tokens, update_api_token, validation_fields
-from my_database.exceptions import FieldNotValidatedError, IntegrityError, NotFoundError
+from my_database.api_tokens import (create_api_token, delete_api_token,
+                                    get_api_tokens, update_api_token,
+                                    validation_fields)
+from my_database.exceptions import (FieldNotValidatedError, IntegrityError,
+                                    NotFoundError)
 from my_database_model import UserSession
 from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint
-from my_web_ui.exceptions import InvalidInputError, ResourceIntegrityError, ServerError
+from my_web_ui.exceptions import (InvalidInputError, ResourceIntegrityError,
+                                  ServerError)
 from my_web_ui.response import Response
 
 # Create the Blueprint

@@ -3,24 +3,21 @@
     web ui settings for the currently logged on user.
 """
 
-from json import dumps
 from typing import Optional
+
 from flask.blueprints import Blueprint
-from flask.globals import request, session
-from pyotp import TOTP
+from flask.globals import request
+
 from my_database import validate_input
-from my_database.user_sessions import (
-    create_user_session, delete_user_sessions)
-from my_database.auth import validate_credentials
-from my_database.exceptions import (AuthCredentialsError,
-                                    AuthUserRequiresSecondFactorError,
-                                    FieldNotValidatedError, IntegrityError, NotFoundError)
-from my_database.field import Field
-from my_database.web_ui_settings import create_web_ui_setting, get_web_ui_settings, update_web_ui_setting, validation_fields
-from my_database_model import User
+from my_database.exceptions import (FieldNotValidatedError, IntegrityError,
+                                    NotFoundError)
+from my_database.web_ui_settings import (create_web_ui_setting,
+                                         get_web_ui_settings,
+                                         update_web_ui_setting,
+                                         validation_fields)
 from my_database_model.user_session import UserSession
 from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint
-from my_web_ui.exceptions import InvalidInputError, PermissionDeniedError, ServerError
+from my_web_ui.exceptions import InvalidInputError, ServerError
 from my_web_ui.response import Response
 
 # Create the Blueprint

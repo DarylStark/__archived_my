@@ -1,11 +1,13 @@
 """ Module that contains a function to verify if a user is logged in,
     and return it's user object """
 
-from my_database.user_sessions import get_user_sessions
-from my_database.exceptions import NotFoundError
-from my_database_model import UserSession
 from typing import Optional
+
 from flask.globals import session
+
+from my_database.exceptions import NotFoundError
+from my_database.user_sessions import get_user_sessions
+from my_database_model import UserSession
 
 
 def get_active_user_session() -> Optional[UserSession]:

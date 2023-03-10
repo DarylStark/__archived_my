@@ -2,15 +2,19 @@
     functions. This decorator will make sure the result gets formatted
     correctly and will make sure the user is logged in (if needed). """
 
-from typing import Callable, Optional
-from flask.app import Response as FlaskResponse
-from my_database_model.user import UserRole
-from my_web_ui.response import Response
-from my_web_ui.json_encoder import WebUIJSONEncoder
-from json import dumps
-from my_web_ui.exceptions import InvalidInputError, PermissionDeniedError, ResourceIntegrityError, ResourceNotFoundError, ServerError
-from my_web_ui.authentication import get_active_user_session
 from dataclasses import dataclass
+from json import dumps
+from typing import Callable, Optional
+
+from flask.app import Response as FlaskResponse
+
+from my_database_model.user import UserRole
+from my_web_ui.authentication import get_active_user_session
+from my_web_ui.exceptions import (InvalidInputError, PermissionDeniedError,
+                                  ResourceIntegrityError,
+                                  ResourceNotFoundError, ServerError)
+from my_web_ui.json_encoder import WebUIJSONEncoder
+from my_web_ui.response import Response
 
 
 @dataclass

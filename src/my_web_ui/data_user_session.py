@@ -3,16 +3,15 @@
     information about user sessions.
 """
 
-from json import dumps
 from typing import Optional
+
 from flask.blueprints import Blueprint
-from flask.globals import request, session
+from flask.globals import request
+
 from my_database import validate_input
+from my_database.exceptions import FieldNotValidatedError, NotFoundError
 from my_database.user_sessions import (delete_user_sessions, get_user_sessions,
                                        update_user_session, validation_fields)
-from my_database.exceptions import (AuthCredentialsError,
-                                    AuthUserRequiresSecondFactorError,
-                                    FieldNotValidatedError, NotFoundError)
 from my_database_model import User
 from my_database_model.user_session import UserSession
 from my_web_ui.data_endpoint import EndpointPermissions, data_endpoint

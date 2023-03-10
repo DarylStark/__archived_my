@@ -1,8 +1,8 @@
 """ This module includes the Response which represents a backend
     response. """
+
 from dataclasses import dataclass
-from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
 
 @dataclass

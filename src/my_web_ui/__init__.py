@@ -4,24 +4,23 @@
     create the VueJS frontend """
 import logging
 
-import flask
 import werkzeug.exceptions
-from config_loader import ConfigLoader
 from flask import Flask
 from rich.logging import RichHandler
-from my_web_ui.exceptions import ConfigNotLoadedError
+
+from config_loader import ConfigLoader
 from my_web_ui.data_aaa import blueprint_data_aaa
 from my_web_ui.data_api_clients import blueprint_data_api_clients
 from my_web_ui.data_api_tokens import blueprint_data_api_tokens
 from my_web_ui.data_dashboard import blueprint_data_dashboard
-from my_web_ui.data_user_session import blueprint_data_user_sessions
-from my_web_ui.data_user_account import blueprint_data_user_account
-from my_web_ui.data_web_ui_settings import blueprint_data_web_ui_settings
 from my_web_ui.data_tags import blueprint_data_tags
+from my_web_ui.data_user_account import blueprint_data_user_account
+from my_web_ui.data_user_session import blueprint_data_user_sessions
+from my_web_ui.data_web_ui_settings import blueprint_data_web_ui_settings
+from my_web_ui.exceptions import ConfigNotLoadedError
+from my_web_ui.root import blueprint_root
 from my_web_ui.static import blueprint_static
 from my_web_ui.ui import blueprint_ui, error_page
-from my_web_ui.root import blueprint_root
-import jinja2
 
 # Load the settings
 if not ConfigLoader.load_settings():

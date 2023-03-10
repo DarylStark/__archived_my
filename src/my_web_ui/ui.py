@@ -1,12 +1,14 @@
 """ Module that creates the Flask Blueprint for the UI pages of the
     application, like the login form and the dashboard page. """
 
-from flask.blueprints import Blueprint
-from flask import redirect, Response
 from typing import Optional, Union
+
 import jinja2
-from my_web_ui.authentication import get_active_user_session
+from flask import Response, redirect
+from flask.blueprints import Blueprint
 from werkzeug.exceptions import HTTPException
+
+from my_web_ui.authentication import get_active_user_session
 
 # Create a Jinja2 environment that the application can use to retrieve
 # and parse templates

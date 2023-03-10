@@ -1,9 +1,10 @@
 """ Module that creates the Flask Blueprint for the root page of
     the application """
 
-from flask.blueprints import Blueprint
-from flask import redirect
 from typing import Optional
+
+from flask import redirect
+from flask.blueprints import Blueprint
 
 # Create the blueprint for the UI pages
 blueprint_root = Blueprint(
