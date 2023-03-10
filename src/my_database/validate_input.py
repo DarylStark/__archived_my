@@ -3,6 +3,7 @@
 
 from re import fullmatch
 from typing import Dict, Optional
+
 from my_database.exceptions import FieldNotValidatedError
 from my_database.field import Field
 

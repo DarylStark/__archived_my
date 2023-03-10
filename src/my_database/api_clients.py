@@ -1,17 +1,18 @@
 """ Module that contains the methods to get and set api client details
     from the database. """
 
-from typing import List, Optional, Union
-from my_database.field import Field
-import sqlalchemy
-from database import DatabaseSession
-from my_database import validate_input
-from my_database_model import APIClient, User
-from sqlalchemy.orm.query import Query
-from my_database import logger
 from datetime import datetime
-from my_database.exceptions import (FilterNotValidError,
-                                    IntegrityError, NotFoundError)
+from typing import List, Optional, Union
+
+import sqlalchemy
+from sqlalchemy.orm.query import Query
+
+from database import DatabaseSession
+from my_database import logger, validate_input
+from my_database.exceptions import (FilterNotValidError, IntegrityError,
+                                    NotFoundError)
+from my_database.field import Field
+from my_database_model import APIClient, User
 
 # Define the fields for validation
 validation_fields = {

@@ -2,18 +2,16 @@
     database. """
 
 from typing import List, Optional, Union
+
 import sqlalchemy
 from sqlalchemy.orm.query import Query
+
 from database import DatabaseSession
-from my_database import validate_input
-from my_database.field import Field
-from my_database_model import WebUISetting, User
-from my_database import logger
+from my_database import logger, validate_input
 from my_database.exceptions import (FilterNotValidError, IntegrityError,
                                     NotFoundError)
-from my_database.exceptions import (FilterNotValidError,
-                                    IntegrityError, NotFoundError)
-
+from my_database.field import Field
+from my_database_model import User, WebUISetting
 
 # Define the fields for validation
 validation_fields = {

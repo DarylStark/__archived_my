@@ -1,19 +1,19 @@
 """ Module that contains the methods to get and set api token details
     from the database. """
 
-from typing import List, Optional, Union
-from my_database.field import Field
-import sqlalchemy
-from database import DatabaseSession
-from my_database import validate_input
-from my_database_model import APIToken, User, APITokenScope
-from sqlalchemy.orm.query import Query
-from my_database import logger
 from datetime import datetime
-from my_database.exceptions import (FilterNotValidError,
-                                    IntegrityError, NotFoundError)
+from typing import List, Optional, Union
+
+import sqlalchemy
+from sqlalchemy.orm.query import Query
+
+from database import DatabaseSession
+from my_database import logger, validate_input
 from my_database.api_scopes import get_scopes
-from my_database_model.api_scope import APIScope
+from my_database.exceptions import (FilterNotValidError, IntegrityError,
+                                    NotFoundError)
+from my_database.field import Field
+from my_database_model import APIToken, APITokenScope, User
 
 # Define the fields for validation
 validation_fields = {

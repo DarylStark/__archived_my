@@ -2,16 +2,16 @@
     the database. """
 
 from typing import List, Optional, Union
+
 import sqlalchemy
+from sqlalchemy.orm.query import Query
+
 from database import DatabaseSession
-from my_database import validate_input
+from my_database import logger, validate_input
+from my_database.exceptions import (FilterNotValidError, IntegrityError,
+                                    NotFoundError, PermissionDeniedError)
 from my_database.field import Field
 from my_database_model import User, UserRole
-from sqlalchemy.orm.query import Query
-from my_database import logger
-from my_database.exceptions import (FilterNotValidError,
-                                    IntegrityError, PermissionDeniedError,
-                                    NotFoundError)
 
 # Define the fields for validation
 validation_fields = {

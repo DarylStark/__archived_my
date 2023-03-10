@@ -2,6 +2,7 @@
     'My' application. """
 
 from logging import getLogger
+
 from config_loader import ConfigLoader
 from database import Database
 from my_database.exceptions import ConfigNotLoadedError

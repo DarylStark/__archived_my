@@ -1,15 +1,14 @@
 """ Module that contains the functions to authorize users based on
     their credentials. """
 
-from typing import List, Optional, Union
-from my_database.field import Field
+from typing import List, Optional
+
 from database import DatabaseSession
-from my_database import validate_input
-from my_database_model import User, UserSession
-from my_database import logger
-from sqlalchemy.orm.query import Query
-from my_database.exceptions import (AuthUserRequiresSecondFactorError,
-                                    AuthCredentialsError)
+from my_database import logger, validate_input
+from my_database.exceptions import (AuthCredentialsError,
+                                    AuthUserRequiresSecondFactorError)
+from my_database.field import Field
+from my_database_model import User
 
 # Define the fields for validation
 validation_fields = {
