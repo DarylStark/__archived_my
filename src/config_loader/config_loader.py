@@ -1,9 +1,7 @@
 """ Module that contains the static 'ConfigLoader' class. This is a
     class with only class-methods. """
 
-import collections
 from collections.abc import Mapping
-import os
 import re
 from logging import getLogger
 from os import environ
