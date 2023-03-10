@@ -12,7 +12,6 @@ from yaml.scanner import ScannerError
 
 from config_loader.exceptions import (ConfigFileNotFoundError,
                                       ConfigFileNotValidError,
-                                      EnvironmentAlreadySetError,
                                       EnvironmentNotSetError)
 
 
