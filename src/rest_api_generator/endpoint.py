@@ -1,8 +1,10 @@
 """ This module includes the Endpoint which represents a API endpoint.
 """
+
 import re
 from dataclasses import dataclass, field
 from typing import Callable, List, Optional
+
 from rest_api_generator.authorization import Authorization
 from rest_api_generator.endpoint_scopes import EndpointScopes
 from rest_api_generator.response import Response

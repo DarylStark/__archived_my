@@ -8,13 +8,16 @@ from json import dumps
 from logging import getLogger
 from math import ceil
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
+
 from flask import Blueprint
 from flask import Response as FlaskResponse
 from flask import abort, request
+
 from rest_api_generator.authorization import Authorization
 from rest_api_generator.endpoint import Endpoint
 from rest_api_generator.endpoint_url import EndpointURL
-from rest_api_generator.exceptions import (InvalidGroupError, InvalidInputError,
+from rest_api_generator.exceptions import (InvalidGroupError,
+                                           InvalidInputError,
                                            ResourceForbiddenError,
                                            ResourceIntegrityError,
                                            ResourceNotFoundError, ServerError,

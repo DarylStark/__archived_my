@@ -1,5 +1,6 @@
 """ This module includes the Authorization class, which can be used to
     identify if a user is authorized to do something. """
+
 from dataclasses import dataclass
 from typing import Any
 

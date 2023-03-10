@@ -1,7 +1,9 @@
 """ This module includes the Group which represents a API group. """
+
 import re
 from logging import getLogger
 from typing import Callable, List, Optional
+
 from rest_api_generator.authorization import Authorization
 from rest_api_generator.endpoint import Endpoint
 from rest_api_generator.endpoint_scopes import EndpointScopes

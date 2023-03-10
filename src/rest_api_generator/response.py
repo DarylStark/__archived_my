@@ -1,5 +1,6 @@
 """ This module includes the Response which represents a API response.
 """
+
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Optional

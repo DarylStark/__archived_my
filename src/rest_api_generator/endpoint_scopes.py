@@ -1,5 +1,6 @@
 """ This module includes the EndpointScopes class which is a object
     that contains the auth scopes for a specific Endpoint. """
+
 from dataclasses import dataclass
 from typing import List, Optional
 

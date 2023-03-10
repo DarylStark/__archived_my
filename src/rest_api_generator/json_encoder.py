@@ -5,6 +5,7 @@ from datetime import date, datetime
 from enum import Enum
 from json import JSONEncoder
 from typing import Any, Dict, Union
+
 from database.database import Database
 from rest_api_generator.response import Response, ResponseType
 
