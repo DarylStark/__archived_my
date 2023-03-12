@@ -1,5 +1,5 @@
-""" Module that has the Group for the 'tags' group of the API.
-    This group can be used to get tag information. """
+""" Module that has the Group for the 'dashboard' group of the API.
+    This group can be used to get and update dashboard information. """
 
 import re
 from typing import Optional
@@ -18,27 +18,27 @@ from rest_api_generator.exceptions import (InvalidInputError,
                                            ResourceIntegrityError,
                                            ResourceNotFoundError, ServerError)
 
-api_group_date_tags = Group(
-    api_url_prefix='date_tags',
-    name='date_tags',
-    description='Contains endpoints for date tags'
+api_group_dashboard = Group(
+    api_url_prefix='dashboard',
+    name='dashboard',
+    description='Contains endpoints for the dashboard'
 )
 
 
-@api_group_date_tags.register_endpoint(
+@api_group_dashboard.register_endpoint(
     url_suffix=[
-        r'date_tag'
+        r'tag'
     ],
     http_methods=['POST'],
-    name='date_tag',
-    description='Endpoint to create a date tag',
+    name='tag_create',
+    description='Endpoint to tag a specific date',
     auth_needed=True,
     auth_scopes=EndpointScopes(POST=['date_tags.create'])
 )
-def date_tags_create(auth: Optional[Authorization],
-                     url_match: re.Match) -> Response:
+def tag(auth: Optional[Authorization],
+        url_match: re.Match) -> Response:
     """
-        REST API Endpoint '/date_tags/date_tag'. Creates a date tag.
+        REST API Endpoint '/dashboard/tag'. Tags a specific date.
 
         Parameters
         ----------
@@ -99,23 +99,23 @@ def date_tags_create(auth: Optional[Authorization],
     return return_response
 
 
-@api_group_date_tags.register_endpoint(
+@api_group_dashboard.register_endpoint(
     url_suffix=[
-        r'date_tags',
-        r'date_tags/',
-        r'date_tags/(?P<resource_date>[0-9]{4}-[0-9]{2}-[0-9]{2})',
-        r'date_tags/(?P<resource_id>[0-9]+)'
+        r'tags',
+        r'tags/',
+        r'tags/(?P<resource_date>[0-9]{4}-[0-9]{2}-[0-9]{2})',
+        r'tags/(?P<resource_id>[0-9]+)'
     ],
     http_methods=['GET'],
-    name='date_tags',
-    description='Endpoint to retrieve all or a subset of the date_tags',
+    name='tags_retrieve',
+    description='Endpoint to retrieve all or a subset of the tags for a specific date',
     auth_needed=True,
     auth_scopes=EndpointScopes(GET=['date_tags.retrieve'])
 )
-def tags_retrieve(auth: Optional[Authorization],
-                  url_match: re.Match) -> Response:
+def date_tags_retrieve(auth: Optional[Authorization],
+                       url_match: re.Match) -> Response:
     """
-        REST API Endpoint '/date_tags/date_tags'. Returns a list with date tags.
+        REST API Endpoint '/dashboard/tags'. Returns a list with date tags.
 
         Parameters
         ----------
@@ -169,13 +169,13 @@ def tags_retrieve(auth: Optional[Authorization],
     return return_response
 
 
-@api_group_date_tags.register_endpoint(
+@api_group_dashboard.register_endpoint(
     url_suffix=[
-        r'date_tag/([0-9]+)'
+        r'tag/([0-9]+)'
     ],
     http_methods=['DELETE'],
-    name='date_tag',
-    description='Endpoint to delete a date tag',
+    name='tag_delete',
+    description='Endpoint to delete a tag from a specific date',
     auth_needed=True,
     auth_scopes=EndpointScopes(
         DELETE=['date_tags.delete']
@@ -184,7 +184,7 @@ def tags_retrieve(auth: Optional[Authorization],
 def date_tags_delete(auth: Optional[Authorization],
                      url_match: re.Match) -> Response:
     """
-        REST API Endpoint '/date_tags/date_tag/([0-9]+)'. Deletes a date tag.
+        REST API Endpoint '/dashboard/date_tag/([0-9]+)'. Deletes a date tag.
 
         Parameters
         ----------
