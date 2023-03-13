@@ -132,6 +132,49 @@ def retrieve(user_session: Optional[UserSession]) -> Response:
 
 
 @blueprint_data_tags.route(
+    '/dates/<int:tag_id>',
+    methods=['GET']
+)
+@data_endpoint(
+    allowed_users=EndpointPermissions(
+        logged_out_users=False,
+        normal_users=True,
+        admin_users=True,
+        root_users=True))
+def retrieve_dates(user_session: Optional[UserSession], tag_id: int) -> Response:
+    """ Method that returns all dates for a specific tag """
+
+    # Create a data object to return
+    return_object = Response(success=False)
+
+    if user_session is not None:
+        try:
+            # Get the tags from the database
+            resource = get_tags(
+                req_user=user_session.user,
+                flt_id=tag_id
+            )
+
+            # Set the tag in the return object
+            return_object.data = [
+                date.date for date in resource.date_tags
+            ]
+        except NotFoundError as error:
+            # If no resource are found, we set the 'data' in the return object
+            # to a empty list.
+            return_object.data = []
+        except Exception as error:
+            # Every other error should result in a ServerError.
+            raise ServerError(error) from error
+
+        # Set the return value to True
+        return_object.success = True
+
+    # Return the created object
+    return return_object
+
+
+@blueprint_data_tags.route(
     '/update',
     methods=['PATCH']
 )
