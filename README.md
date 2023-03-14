@@ -1,6 +1,6 @@
 # The My Daryl Stark application
 
-Services for the My application that will act as a personal assistant for Daryl Stark. The personal assistant will be repsonsible for a few tasks, which will grow to demand of Daryl Stark. For starters, it will be the backend for a Notebook application with REST API. This Notebook will serve as a integral part of the complete application.
+This repository contains the services for the My application, which will act as a personal assistant for Daryl Stark. The personal assistant will be repsonsible for a few tasks, which will grow to demand of Daryl Stark. For starters, it will be the backend for a Notebook application with REST API.
 
 ## Folder structure
 
@@ -8,6 +8,7 @@ The project is divided in a few directories:
 
 ```
 .
+├── .environment
 ├── .vscode
 ├── docs
 │   ├── code
@@ -15,6 +16,7 @@ The project is divided in a few directories:
 │   ├── database
 │   └── rest_api_generator
 ├── env
+├── jenkins
 ├── src
 │   ├── config_loader
 │   ├── database
@@ -73,6 +75,7 @@ The _src_ directory will hold the source for the services for this version of th
 The following services are created:
 
 -   `my_rest_api_v1`
+-   `my_web_ui`
 
 As convention, every package that starts with the prefix `my_` is created for the sole purpose of the My-application. The other packagers can be used as reusable components for other applications.
 
@@ -97,6 +100,16 @@ Contains the complete database schema for the My-application. This package uses 
 A reusable package to easily create a JSON based REST API using a Flask Blueprint. Extended docs are in [docs/rest_api_generator](docs/rest_api_generator/00%20-%20REST%20API%20Generator.md).
 
 #### Service `my_rest_api_v1`
+
+This service exposes a REST API that can be used to interact with the data in the application.
+
+#### Service `my_web_ui`
+
+This service exposes a Flask application with the frontend files from the `my_portal` [repository](https://github.com/DarylStark/my_portal).
+
+###  /jenkins
+
+This directory contains scripts for the Jenkins pipeline. It will install the application and run the unit tests. In the future, this might be expanded to more tasks to completly do CI/CD.
 
 ###  /tests
 
