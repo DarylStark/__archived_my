@@ -10,6 +10,7 @@ from database import DatabaseSession
 from my_database.exceptions import (FilterNotValidError, IntegrityError,
                                     NotFoundError)
 from my_database_model import APIToken, APITokenScope, User
+from my_database import logger
 
 
 def get_api_token_scopes(
