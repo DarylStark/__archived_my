@@ -17,4 +17,8 @@ env*
 
 # Exclude 'rope' configuration and cache
 .vscode/.ropeproject
+
+src/service.*.yaml
+src/dispatch.yaml
+src/.gcloudignore
 #------------------------------------------------------------------------------

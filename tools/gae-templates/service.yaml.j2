@@ -1,0 +1,19 @@
+runtime: {{ runtime }}
+instance_class: {{ instance_class }}
+entrypoint: gunicorn -b :$PORT {{ service }}:flask_app
+service: {{ service_name }}
+env_variables:
+  DB_USERNAME: "{{ db_username }}"
+  DB_PASSWORD: "{{ db_password }}"
+  DB_SERVER: "{{ db_server }}"
+  DB_DATABASE: "{{ db_database }}"
+  ENVIRONMENT: "{{ environment }}"
+  CONFIG_FILE: "config.yaml"
+  FLASK_SECRET: "{{ flask_secret }}"
+handlers:
+  - url: /.*
+    secure: always
+    script: auto
+automatic_scaling:
+  min_instances: {{ min_instances }}
+  max_instances: {{ max_instances }}
