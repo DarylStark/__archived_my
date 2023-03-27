@@ -87,10 +87,24 @@ def login(user_session: Optional[UserSession]) -> Response:
             return_object.success = True
             return_object.error_code = None
 
+            # Figure out the remote address of the user. Because
+            # this application has to be able to run on Google App
+            # Engine, we have to do a little hacking here. GAE uses
+            # a webfront end which changes the `request.remote_addr`
+            # variable to be `127.0.0.1` always. GAE does however
+            # save the IP address if the original client in the
+            # `X-Forwarded-For` HTTP header. We check if that
+            # header exists, and if it does, we use that for the
+            # remote address. Otherwise, we use the remote address
+            # that Flask provides
+            host_addr = request.remote_addr
+            if 'X-Forwarded-For' in request.headers:
+                host_addr = request.headers['X-Forwarded-For'].split(',')[0]
+
             # Create a User Session object
             user_session = create_user_session(
                 req_user=user_object,
-                host=request.remote_addr)
+                host=host_addr)
 
             # Then we create a Flask Session; this session will contain the
             # ID of the session and the secret for the session. We will
