@@ -2,7 +2,9 @@
     a VueJS application that is served using a Python Flask Application.
     This package contains the Flask application and the NodeJS files to
     create the VueJS frontend """
+from datetime import timedelta
 import logging
+import flask
 
 import werkzeug.exceptions
 from flask import Flask
@@ -47,6 +49,10 @@ flask_app.register_error_handler(werkzeug.exceptions.HTTPException, error_page)
 
 # Set the Flask secret. This is used for session later on
 flask_app.secret_key = ConfigLoader.config['flask']['secret']
+
+# Configure session settings
+flask_app.permanent_session_lifetime = timedelta(
+    days=ConfigLoader.config['flask']['session_lifetime_days'])
 
 # Register the blueprints for the data. This is basically the backend
 # for the application.

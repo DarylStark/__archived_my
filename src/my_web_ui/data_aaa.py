@@ -7,6 +7,7 @@ from typing import Optional
 
 from flask.blueprints import Blueprint
 from flask.globals import request, session
+from flask import app as flask_app
 
 from my_database.auth import validate_credentials
 from my_database.exceptions import (AuthCredentialsError,
@@ -95,6 +96,7 @@ def login(user_session: Optional[UserSession]) -> Response:
             # ID of the session and the secret for the session. We will
             # verify these with the database when the user tries to
             # retrieve a protected page.
+            session.permanent = True
             session['sid'] = user_session.id
             session['secret'] = user_session.secret
         else:

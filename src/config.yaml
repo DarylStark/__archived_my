@@ -21,6 +21,7 @@ default:
       create_tables: false
     flask:
       secret: "${env:FLASK_SECRET}"
+      session_lifetime_days: 180
 
 development:
   sql_alchemy:
@@ -28,3 +29,5 @@ development:
     create_tables: true
   logging:
     level: 10
+  flask:
+    session_lifetime_days: 365
