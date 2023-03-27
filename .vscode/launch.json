@@ -27,6 +27,28 @@
             ]
         },
         {
+            "name": "Debug - Tools - Deploy - To Google App Engine (my_web_ui)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/deploy-to-gae.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--environment_file=${workspaceFolder}/.environment/production.env",
+                "my_web_ui"
+            ]
+        },
+        {
+            "name": "Debug - Tools - Deploy - To Google App Engine (my_rest_api_v1)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/deploy-to-gae.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--environment_file=${workspaceFolder}/.environment/production.env",
+                "my_rest_api_v1"
+            ]
+        },
+        {
             "name": "Debug - Services - My REST API v1",
             "type": "python",
             "request": "launch",
