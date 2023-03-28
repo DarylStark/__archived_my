@@ -408,7 +408,7 @@ def update_user_password(
     # Authorize this request; a 'normal' user can change the password of his
     # own account. A admin can change the password of every 'normal' account
     # and the root user can change all passwords
-    if req_user.role == UserRole.user and req_user != resource:
+    if req_user.role == UserRole.user and req_user.id != resource.id:
         raise PermissionDeniedError(
             'A user with role "user" can only change his own password')
     elif (req_user.role == UserRole.admin and
