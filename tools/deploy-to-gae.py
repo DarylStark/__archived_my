@@ -22,7 +22,7 @@ services = {
         'runtime': 'python311',
         'instance_class': 'F1',
         'service_name': 'default',
-        'version': '1-0-0',
+        'version': '1-1-0',
         'environment': 'production',
         'min_instances': 0,
         'max_instances': 1
