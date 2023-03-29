@@ -20,3 +20,4 @@ To increase the versionnumber, do the following steps;
 -   Upload the new version to Google App Engine
 -   Remove the old version from Google App Engine
 -   Make sure the local repo is on the `development` branch again
+-   Create a new release on GitHub for the tag. Create a good changelog. You can use commit messages to see the new features.
