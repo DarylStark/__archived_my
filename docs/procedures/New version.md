@@ -14,7 +14,9 @@ To increase the versionnumber, do the following steps;
 -   In case of the Web UI: compile _and_ install the new files
 -   Open the file `/tools/deploy-to-gae.py` and update the versionnumber for the services
 -   Git commmit the code with the versionnumber in the commit message: `Version 1.0.0`
--   Create a Git tag for the new version: `git tag -a v1.0.0`
+-   Create a Git tag for the new version: `git tag -a v1.0.0 -m "Version 1.0.0"`
+-   Enter you PGP passphrase
 -   Push the new version to GitHub with the tags: `git push --tags`
 -   Upload the new version to Google App Engine
 -   Remove the old version from Google App Engine
+-   Make sure the local repo is on the `development` branch again
