@@ -81,6 +81,16 @@ class User(Database.base_class):
         lazy='subquery',
         back_populates='user',
         cascade='all, delete, save-update')
+    notes = relationship(
+        'Note',
+        lazy='subquery',
+        back_populates='user',
+        cascade='all, delete, save-update')
+    note_folders = relationship(
+        'NoteFolder',
+        lazy='subquery',
+        back_populates='user',
+        cascade='all, delete, save-update')
 
     def __repr__(self) -> str:
         """ Represents objects of this class. """
